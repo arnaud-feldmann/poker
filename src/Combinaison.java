@@ -1,8 +1,7 @@
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Combinaison {
-    public enum Type {QUINTEFLUSHROYALE,QUINTEFLUSH,CARRE,MAINPLEINE,COULEUR,SUITE,BRELAN,DOUBLEPAIRE,PAIRE,CARTE}
+    public enum Type {QUINTEFLUSHROYALE,QUINTEFLUSH,CARRE,MAINPLEINE,COULEUR,SUITE,BRELAN,DOUBLEPAIRE,PAIRE,CARTEHAUTE}
     private Type m_type;
     private ArrayList<Carte.Valeur> m_complement = new ArrayList<>();
     @Override
@@ -30,6 +29,13 @@ public class Combinaison {
         if (m_type != null) return;
         detecte_suite(tab_valeurs);
         if (m_type != null) return;
+        detecte_brelan(tab_valeurs);
+        if (m_type != null) return;
+        detecte_double_paire(tab_valeurs);
+        if (m_type != null) return;
+        detecte_paire(tab_valeurs);
+        if (m_type != null) return;
+        detecte_cartehaute(tab_valeurs);
     }
     Carte.Couleur check_couleur(int[] tab_couleurs) {
         Carte.Couleur res = null;
@@ -50,66 +56,42 @@ public class Combinaison {
             if (m_type != null) {
                 if (m_complement.get(0) == Carte.Valeur.As) {
                     m_type = Type.QUINTEFLUSHROYALE;
-                    return;
                 } else {
                     m_type = Type.QUINTEFLUSH;
-                    return;
                 }
             }
         }
     }
-    void detecte_multiples(int[] tab_valeurs,int[] multiples) {
-        Carte.Valeur[] valeurs = new Carte.Valeur[multiples.length];
-        boolean tous_determines;
-        for (int i = tab_valeurs.length-1;i >= 0;i--) {
-            tous_determines = true;
-            for (int j = 0 ;j < multiples.length;j++) {
-                if (tab_valeurs[i] >= multiples[j]) valeurs[j] = Carte.Valeur.values()[i];
-                else if (valeurs[j] == null) tous_determines = false;
+    boolean detecter_multiples(int[] tab_valeurs,int[] multiples) {
+        m_complement = new ArrayList<>();
+        for (int multiple : multiples) {
+            for (int i = tab_valeurs.length - 1; i >= 0; i--) {
+                Carte.Valeur valeur = Carte.Valeur.values()[i];
+                if (tab_valeurs[i] >= multiple && !m_complement.contains(valeur)) {
+                    m_complement.add(valeur);
+                    break;
+                }
             }
-            if (tous_determines) break;
         }
-        Collections.addAll(m_complement,valeurs);
+        return m_complement.size() == multiples.length;
     }
     void detecte_carre(int[] tab_valeurs) {
-        m_type = null;
-        Carte.Valeur val_carre = null;
-        Carte.Valeur val_kicker = null;
-        for (int i = tab_valeurs.length-1;i >= 0;i--) {
-            if (tab_valeurs[i] >= 4) {
-                val_carre = Carte.Valeur.values()[i];
-                if (val_kicker != null) break;
-            } else if (tab_valeurs[i] != 0) {
-                val_kicker = Carte.Valeur.values()[i];
-                if (val_carre != null) break;
-            }
-        }
-        if (val_carre != null) {
-            m_type = Type.CARRE;
-            m_complement = new ArrayList<>();
-            m_complement.add(val_carre);
-            m_complement.add(val_kicker);
-        }
+        if (detecter_multiples(tab_valeurs,new int[] {4,1})) m_type = Type.CARRE;
     }
     void detecte_mainpleine(int[] tab_valeurs) {
-        m_type = null;
-        Carte.Valeur val_brelan = null;
-        Carte.Valeur val_paire = null;
-        for (int i = tab_valeurs.length-1;i >= 0;i--) {
-            if (tab_valeurs[i] >= 3) {
-                val_brelan = Carte.Valeur.values()[i];
-                if (val_paire != null) break;
-            } else if (tab_valeurs[i] >= 2) {
-                val_paire = Carte.Valeur.values()[i];
-                if (val_brelan != null) break;
-            }
-        }
-        if (val_brelan != null && val_paire != null) {
-            m_type = Type.MAINPLEINE;
-            m_complement = new ArrayList<>();
-            m_complement.add(val_brelan);
-            m_complement.add(val_paire);
-        }
+        if (detecter_multiples(tab_valeurs,new int[] {3,2})) m_type = Type.MAINPLEINE;
+    }
+    void detecte_brelan(int[] tab_valeurs) {
+        if (detecter_multiples(tab_valeurs,new int[] {3,1,1})) m_type = Type.BRELAN;
+    }
+    void detecte_double_paire(int[] tab_valeurs) {
+        if (detecter_multiples(tab_valeurs,new int[] {2,2,1})) m_type = Type.DOUBLEPAIRE;
+    }
+    void detecte_paire(int[] tab_valeurs) {
+        if (detecter_multiples(tab_valeurs,new int[] {2,1,1,1})) m_type = Type.PAIRE;
+    }
+    void detecte_cartehaute(int[] tab_valeurs) {
+        if (detecter_multiples(tab_valeurs,new int[] {1,1,1,1,1})) m_type = Type.CARTEHAUTE;
     }
     void detecte_suite(int[] tab_valeurs) {
         m_type = null;
@@ -136,25 +118,14 @@ public class Combinaison {
         final Carte.Couleur mono_couleur;
         mono_couleur = check_couleur(tab_couleurs);
         if (mono_couleur != null)  {
-            detecte_carte(tab_couleurs_valeurs[mono_couleur.ordinal()]);
+            detecte_cartehaute(tab_couleurs_valeurs[mono_couleur.ordinal()]);
             m_type = Type.COULEUR;
-        }
-    }
-    void detecte_carte(int[] tab_valeurs) {
-        m_type = Type.CARTE;
-        m_complement = new ArrayList<>();
-        for (int i = Carte.Valeur.As.ordinal(),nombre_cartes = 0; i >=-1 ; i--) {
-            if (tab_valeurs[i] != 0) {
-                m_complement.add(Carte.Valeur.values()[i]);
-                nombre_cartes++;
-                if (nombre_cartes == 5) break;
-            }
         }
     }
 
     public static void main(String[] args) {
 
-        ArrayList c = new ArrayList<>();
+        ArrayList<Carte> c = new ArrayList<>();
         c.add(new Carte(Carte.Valeur.As,Carte.Couleur.Carreau));
         c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Carreau));
         c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Carreau));
@@ -243,6 +214,71 @@ public class Combinaison {
         comb = new Combinaison(c);
         System.out.println(c);
         System.out.println("Suite[Neuf] :" + comb);
+        System.out.println();
+
+        c = new ArrayList<>();
+        c.add(new Carte(Carte.Valeur.Neuf,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Coeur));
+        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Coeur));
+        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Trefle));
+        comb = new Combinaison(c);
+        System.out.println(c);
+        System.out.println("Brelan[Six,Neuf,Huit] :" + comb);
+        System.out.println();
+
+        c = new ArrayList<>();
+        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Carreau));
+        comb = new Combinaison(c);
+        System.out.println(c);
+        System.out.println("Double Paire[Huit,Sept,Six] :" + comb);
+        System.out.println();
+
+        c = new ArrayList<>();
+        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Carreau));
+        comb = new Combinaison(c);
+        System.out.println(c);
+        System.out.println("Double Paire[Huit,Sept,Six] :" + comb);
+        System.out.println();
+
+        c = new ArrayList<>();
+        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.As,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Valet,Carte.Couleur.Carreau));
+        comb = new Combinaison(c);
+        System.out.println(c);
+        System.out.println("Paire[Huit,As,Dame,Valet] :" + comb);
+        System.out.println();
+
+        c = new ArrayList<>();
+        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.As,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Valet,Carte.Couleur.Carreau));
+        comb = new Combinaison(c);
+        System.out.println(c);
+        System.out.println("Carte Haute[As,Dame,Roi,Valet,Huit] :" + comb);
         System.out.println();
     }
 }
