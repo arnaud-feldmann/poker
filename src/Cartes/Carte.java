@@ -1,9 +1,11 @@
+package Cartes;
+
 public class Carte {
     public enum Valeur {Deux,Trois,Quatre,Cinq,Six,Sept,Huit,Neuf,Dix,Valet,Dame,Roi,As}
     public enum Couleur {Pique,Coeur,Carreau,Trefle}
     final private Valeur m_valeur;
     final private Couleur m_couleur;
-    Carte(Valeur valeur,Couleur couleur) {
+    public Carte(Valeur valeur,Couleur couleur) {
         m_valeur = valeur;
         m_couleur = couleur;
     }

@@ -1,3 +1,5 @@
+package Cartes;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -60,7 +62,7 @@ public class PaquetDeCartes {
 
     @Override
     public String toString() {
-        return "PaquetDeCartes " + m_cartes;
+        return "Cartes.PaquetDeCartes " + m_cartes;
     }
 
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-/* La méthode de comparaison beats ne renvoie pas un booléen mais un double qui va de zéro à 1, qui est une probabilité
+package Cartes;/* La méthode de comparaison beats ne renvoie pas un booléen mais un double qui va de zéro à 1, qui est une probabilité
 de victoire sur 1000 essais. Cette méthode est préférée à la comparaison booléenne simple car elle est générique peu
 importe le nombre de carte dévoilées et elle permet d'anticiper la construction d'une IA sommaire */
 
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class CollectionDeCartes {
     private final ArrayList<Carte> m_collection;
-    CollectionDeCartes(ArrayList<Carte> main) {
+    public CollectionDeCartes(ArrayList<Carte> main) {
         if (main.size() != 2) throw new IllegalArgumentException("Une main doit avoir 2 cartes");
         m_collection = main;
     }
