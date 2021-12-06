@@ -1,9 +1,8 @@
-package test;
+package Cartes;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import Cartes.*;
 import static org.junit.jupiter.api.Assertions.*;
 class CombinaisonTest {
 
@@ -245,5 +244,28 @@ class CombinaisonTest {
         Combinaison comb2 = new Combinaison(c);
         assertEquals(comb.compareTo(comb2),1);
         assertEquals(comb2.compareTo(comb),-1);
+
+        c = new ArrayList<>();
+        c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Neuf, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Trois, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Deux, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dix, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
+        comb = new Combinaison(c);
+        assertEquals(comb.compareTo(comb),0);
+
+        c = new ArrayList<>();
+        c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Neuf, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Deux, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dix, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        comb2 = new Combinaison(c);
+        assertEquals(comb.compareTo(comb2),-1);
+        assertEquals(comb2.compareTo(comb),1);
     }
 }

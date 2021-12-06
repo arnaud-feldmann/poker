@@ -7,11 +7,15 @@ public class PaquetDeCartes {
     private final ArrayList<Carte> m_cartes = new ArrayList<>();
     private final static Random piece = new Random();
 
+    public static void set_seed(long seed) {
+        piece.setSeed(seed);
+    }
+
     private static boolean pile_ou_face() {
         return piece.nextInt(2) == 1;
     }
 
-    PaquetDeCartes() {
+    public PaquetDeCartes() {
         for (Carte.Couleur couleur : Carte.Couleur.values()) {
             for (Carte.Valeur valeur : Carte.Valeur.values()) {
                 m_cartes.add(new Carte(valeur, couleur));
@@ -52,6 +56,10 @@ public class PaquetDeCartes {
         piocher_une_carte();
     }
 
+    public void retirer_des_cartes_du_jeu(ArrayList<Carte> cartes) {
+        m_cartes.removeAll(cartes);
+    }
+
     public Carte reveler_une_carte() {
         return m_cartes.get(0);
     }
@@ -65,82 +73,4 @@ public class PaquetDeCartes {
         return "Cartes.PaquetDeCartes " + m_cartes;
     }
 
-    public static void main(String[] args) {
-        PaquetDeCartes paquet;
-
-        paquet = new PaquetDeCartes();
-        System.out.println("Un paquet tout neuf :");
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-        System.out.println("Le paquet coupé ");
-        paquet.couper(0,25,51);
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-
-        paquet = new PaquetDeCartes();
-        System.out.println("Un paquet tout neuf :");
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-        System.out.println("Le paquet coupé sur la deuxième moité du paquet :");
-        paquet.couper(26,38,51);
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-
-        paquet = new PaquetDeCartes();
-        System.out.println("Un paquet tout neuf :");
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-        System.out.println("Le paquet après riffle :");
-        paquet.riffle_parfait(0,25,51);
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-
-        paquet = new PaquetDeCartes();
-        System.out.println("Un paquet tout neuf :");
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-        System.out.println("Le paquet après riffle sur la deuxième moitié du paquet :");
-        paquet.riffle_parfait(26,38,51);
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-
-        System.out.println();
-        System.out.println("-------------------------------------------------------");
-        System.out.println();
-        System.out.println("Le paquet généré au début :");
-        paquet = new PaquetDeCartes();
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-
-        piece.setSeed(2L);
-
-        System.out.println();
-        System.out.println("Le paquet mélangé :");
-        paquet.melanger_cartes();
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-
-        System.out.println();
-        System.out.println("Le paquet avec une carte brûlée :");
-        paquet.bruler_une_carte();
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-
-        System.out.println();
-        Carte carte_piochee_1 = paquet.piocher_une_carte();
-        Carte carte_piochee_2 = paquet.piocher_une_carte();
-        System.out.println("On a pioché deux cartes :" + carte_piochee_1 + " et " + carte_piochee_2);
-        if (carte_piochee_1.compareTo(carte_piochee_2) > 0) System.out.println("La première carte piochée est plus forte.");
-        if (carte_piochee_1.compareTo(carte_piochee_2) == 0) System.out.println("La première carte piochée est de valeur égale à la deuxième.");
-        if (carte_piochee_1.compareTo(carte_piochee_2) < 0) System.out.println("La première carte piochée est plus faible.");
-        System.out.println("Le paquet après ces 2 carte piochées :");
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-
-        System.out.println();
-        System.out.println("On a révélé une carte :" + paquet.reveler_une_carte());
-        System.out.println("Le paquet avec une carte révélée :");
-        System.out.println(paquet);
-        System.out.println("Le paquet a " + paquet.nombre_de_cartes() + " cartes");
-    }
 }

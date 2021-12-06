@@ -12,8 +12,8 @@ public class Combinaison {
     public Niveau get_niveau() {
         return m_niveau;
     }
-    public Combinaison(ArrayList<Carte> cartes) {
-        if (cartes.size() != 7) throw new IllegalArgumentException("Une main pleine contient 7 cartes");
+    public Combinaison(ArrayList<Carte> cartes) throws IllegalArgumentException {
+        if (cartes.size() != 7) throw new IllegalArgumentException("On ne peut comparer que les collections complètes");
         final int[] tab_couleurs = new int[Carte.Couleur.values().length];
         final int[] tab_valeurs = new int[Carte.Valeur.values().length];
         final int[][] tab_couleurs_valeurs = new int[Carte.Couleur.values().length][Carte.Valeur.values().length];
