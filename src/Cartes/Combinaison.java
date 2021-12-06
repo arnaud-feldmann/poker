@@ -3,7 +3,7 @@ package Cartes;
 import java.util.ArrayList;
 
 public class Combinaison {
-    public enum Niveau {QUINTEFLUSHROYALE,QUINTEFLUSH,CARRE,MAINPLEINE,COULEUR,SUITE,BRELAN,DOUBLEPAIRE,PAIRE,CARTEHAUTE}
+    public enum Niveau {CARTEHAUTE,PAIRE,DOUBLEPAIRE,BRELAN,SUITE,COULEUR,MAINPLEINE,CARRE,QUINTEFLUSH,QUINTEFLUSHROYALE}
     private Niveau m_niveau;
     private ArrayList<Carte.Valeur> m_rangs = new ArrayList<>();
     public ArrayList<Carte.Valeur> get_rangs() {
@@ -96,7 +96,7 @@ public class Combinaison {
         if (detecter_multiples(tab_valeurs,new int[] {2,1,1,1})) m_niveau = Niveau.PAIRE;
     }
     void detecte_cartehaute(int[] tab_valeurs) {
-        if (detecter_multiples(tab_valeurs,new int[] {1,1,1,1,1})) m_niveau = Niveau.CARTEHAUTE;
+        detecter_multiples(tab_valeurs,new int[] {1,1,1,1,1}); m_niveau = Niveau.CARTEHAUTE;
     }
     void detecte_suite(int[] tab_valeurs) {
         m_niveau = null;
@@ -126,5 +126,12 @@ public class Combinaison {
             detecte_cartehaute(tab_couleurs_valeurs[mono_couleur.ordinal()]);
             m_niveau = Niveau.COULEUR;
         }
+    }
+    public int compareTo(Combinaison combinaison) {
+        int res = m_niveau.compareTo(combinaison.get_niveau());
+        for (int i = 0 ; res == 0 && i < m_rangs.size() ; i++) {
+            res = m_rangs.get(i).compareTo(combinaison.get_rangs().get(i));
+        }
+        return res;
     }
 }

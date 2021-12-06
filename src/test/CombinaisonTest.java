@@ -221,4 +221,29 @@ class CombinaisonTest {
         assertEquals(comb.get_rangs(), res);
     }
 
+    @Test
+    void compareTo() {
+        ArrayList<Carte> c = new ArrayList<>();
+        c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dame, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Valet, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Deux, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dix, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
+        Combinaison comb = new Combinaison(c);
+        assertEquals(comb.compareTo(comb),0);
+
+        c = new ArrayList<>();
+        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Valet,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Deux,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dix,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Neuf,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        Combinaison comb2 = new Combinaison(c);
+        assertEquals(comb.compareTo(comb2),1);
+        assertEquals(comb2.compareTo(comb),-1);
+    }
 }
