@@ -1,8 +1,12 @@
-/*
+/* Arnaud FELDMANN
 Les void en detecte_*  modifient le membre niveau et le membre rang qui correspond aux Valeurs pour faire la
 différence. Si le membre niveau est non null c'est que la détection est positive.
 J'aurais pu tout aussi bien retourner des booléens mais je n'aime pas les fonctions qui mélangent effets de bord et
-retour ; je préfère soit l'un soit l'autre.*/
+retour ; je préfère soit l'un soit l'autre.
+
+La fonction aurait sans doute pu être un peu plus efficace en ne faisant pas des contrôles un peu similaires à la suite,
+mais écrite comme ça avec la fonction générique detecter_multiples, je trouve mon programme assez clair et raisonnablement
+rapide. */
 package Cartes;
 import java.util.ArrayList;
 
@@ -23,20 +27,28 @@ public class Combinaison {
         if (cartes.size() != 7) throw new IllegalArgumentException("On ne peut comparer que les collections complètes");
         final int[] tab_couleurs = new int[Carte.Couleur.values().length];
         final int[] tab_valeurs = new int[Carte.Valeur.values().length];
-        final int[][] tab_couleurs_valeurs = new int[Carte.Couleur.values().length][Carte.Valeur.values().length];
+        final int[] tab_valeurs_couleur_unique;
+        Carte.Couleur couleur_unique;
         for (Carte carte : cartes) {
             tab_couleurs[carte.get_couleur().ordinal()]++;
             tab_valeurs[carte.get_valeur().ordinal()]++;
-            tab_couleurs_valeurs[carte.get_couleur().ordinal()][carte.get_valeur().ordinal()]++;
+        }
+        couleur_unique = check_couleur(tab_couleurs);
+        if (couleur_unique == null) tab_valeurs_couleur_unique = null;
+        else {
+            tab_valeurs_couleur_unique = new int[Carte.Valeur.values().length];
+            for (Carte carte : cartes) {
+                if (carte.get_couleur() == couleur_unique) tab_valeurs_couleur_unique[carte.get_valeur().ordinal()]++;
+            }
         }
 
-        detecte_quinte_flush(tab_couleurs,tab_couleurs_valeurs);
+        detecte_quinte_flush(tab_couleurs,tab_valeurs_couleur_unique);
         if (m_niveau != null) return;
         detecte_carre(tab_valeurs);
         if (m_niveau != null) return;
         detecte_mainpleine(tab_valeurs);
         if (m_niveau != null) return;
-        detecte_flush(tab_couleurs,tab_couleurs_valeurs);
+        detecte_flush(tab_couleurs,tab_valeurs_couleur_unique);
         if (m_niveau != null) return;
         detecte_suite(tab_valeurs);
         if (m_niveau != null) return;
@@ -60,12 +72,12 @@ public class Combinaison {
         return res;
     }
 
-    void detecte_quinte_flush(int[] tab_couleurs,int[][] tab_couleurs_valeurs) {
+    void detecte_quinte_flush(int[] tab_couleurs,int[] tab_valeurs_couleur_unique) {
         m_niveau = null;
         final Carte.Couleur mono_couleur;
         mono_couleur = check_couleur(tab_couleurs);
         if (mono_couleur != null)  {
-            detecte_suite(tab_couleurs_valeurs[mono_couleur.ordinal()]);
+            detecte_suite(tab_valeurs_couleur_unique);
             if (m_niveau != null) {
                 if (m_rangs.get(0) == Carte.Valeur.As) {
                     m_rangs = new ArrayList<>();
@@ -131,12 +143,12 @@ public class Combinaison {
         }
     }
 
-    void detecte_flush(int[] tab_couleurs,int[][] tab_couleurs_valeurs) {
+    void detecte_flush(int[] tab_couleurs,int[] tab_valeurs_couleur_unique) {
         m_niveau = null;
         final Carte.Couleur mono_couleur;
         mono_couleur = check_couleur(tab_couleurs);
         if (mono_couleur != null)  {
-            detecte_cartehaute(tab_couleurs_valeurs[mono_couleur.ordinal()]);
+            detecte_cartehaute(tab_valeurs_couleur_unique);
             m_niveau = Niveau.COULEUR;
         }
     }
