@@ -61,16 +61,11 @@ public class PaquetDeCartes {
     }
 
     public Carte reveler_une_carte() {
-        return m_cartes.get(0);
+        return new Carte(m_cartes.get(0));
     }
 
     public int nombre_de_cartes() {
         return m_cartes.size();
-    }
-
-    @Override
-    public String toString() {
-        return "Cartes.PaquetDeCartes " + m_cartes;
     }
 
 }

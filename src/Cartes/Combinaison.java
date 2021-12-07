@@ -1,17 +1,24 @@
+/*
+Les void en detecte_*  modifient le membre niveau et le membre rang qui correspond aux Valeurs pour faire la
+différence. Si le membre niveau est non null c'est que la détection est positive.
+J'aurais pu tout aussi bien retourner des booléens mais je n'aime pas les fonctions qui mélangent effets de bord et
+retour ; je préfère soit l'un soit l'autre.*/
 package Cartes;
-
 import java.util.ArrayList;
 
 public class Combinaison {
     public enum Niveau {CARTEHAUTE,PAIRE,DOUBLEPAIRE,BRELAN,SUITE,COULEUR,MAINPLEINE,CARRE,QUINTEFLUSH,QUINTEFLUSHROYALE}
     private Niveau m_niveau;
     private ArrayList<Carte.Valeur> m_rangs = new ArrayList<>();
+
     public ArrayList<Carte.Valeur> get_rangs() {
         return m_rangs;
     }
+
     public Niveau get_niveau() {
         return m_niveau;
     }
+
     public Combinaison(ArrayList<Carte> cartes) throws IllegalArgumentException {
         if (cartes.size() != 7) throw new IllegalArgumentException("On ne peut comparer que les collections complètes");
         final int[] tab_couleurs = new int[Carte.Couleur.values().length];
@@ -41,6 +48,7 @@ public class Combinaison {
         if (m_niveau != null) return;
         detecte_cartehaute(tab_valeurs);
     }
+
     Carte.Couleur check_couleur(int[] tab_couleurs) {
         Carte.Couleur res = null;
         for (int i = 0;i < tab_couleurs.length;i++) {
@@ -51,6 +59,7 @@ public class Combinaison {
         }
         return res;
     }
+
     void detecte_quinte_flush(int[] tab_couleurs,int[][] tab_couleurs_valeurs) {
         m_niveau = null;
         final Carte.Couleur mono_couleur;
@@ -67,6 +76,7 @@ public class Combinaison {
             }
         }
     }
+
     boolean detecter_multiples(int[] tab_valeurs,int[] multiples) {
         m_rangs = new ArrayList<>();
         for (int multiple : multiples) {
@@ -80,6 +90,7 @@ public class Combinaison {
         }
         return m_rangs.size() == multiples.length;
     }
+
     void detecte_carre(int[] tab_valeurs) {
         if (detecter_multiples(tab_valeurs,new int[] {4,1})) m_niveau = Niveau.CARRE;
     }
@@ -98,13 +109,14 @@ public class Combinaison {
     void detecte_cartehaute(int[] tab_valeurs) {
         detecter_multiples(tab_valeurs,new int[] {1,1,1,1,1}); m_niveau = Niveau.CARTEHAUTE;
     }
+
     void detecte_suite(int[] tab_valeurs) {
         m_niveau = null;
         Carte.Valeur val_suite = null;
         for (int i = Carte.Valeur.As.ordinal(),cartes_successives = 0; i >=-1 ; i--) {
             if (i == -1) {
                 if (tab_valeurs[Carte.Valeur.As.ordinal()] != 0) cartes_successives++;
-            }
+            } // La petite exception avec l'as qui peut servir de carte faible pour les suites
             else if (tab_valeurs[i] != 0) cartes_successives++;
             else cartes_successives = 0;
             if (cartes_successives == 5) {
@@ -118,6 +130,7 @@ public class Combinaison {
             m_rangs.add(val_suite);
         }
     }
+
     void detecte_flush(int[] tab_couleurs,int[][] tab_couleurs_valeurs) {
         m_niveau = null;
         final Carte.Couleur mono_couleur;
@@ -127,6 +140,7 @@ public class Combinaison {
             m_niveau = Niveau.COULEUR;
         }
     }
+
     public int compareTo(Combinaison combinaison) {
         int res = m_niveau.compareTo(combinaison.get_niveau());
         for (int i = 0 ; res == 0 && i < m_rangs.size() ; i++) {

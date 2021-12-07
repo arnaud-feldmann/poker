@@ -1,8 +1,16 @@
 package Cartes;
 
-/* La méthode de comparaison beat ne renvoie pas un booléen mais un double qui va de zéro à 1, qui est une probabilité
+/*
+La méthode de comparaison beat ne renvoie pas un booléen mais un double qui va de zéro à 1, qui est une probabilité
 de victoire sur 10000 essais. Cette méthode est préférée à la comparaison booléenne simple car elle est générique peu
-importe le nombre de carte dévoilées et elle permet d'anticiper la construction d'une IA sommaire */
+importe le nombre de carte dévoilées et elle permet d'anticiper la construction d'une IA sommaire.
+
+m_reference_jeu est volontairement incorporée en référence, tandis que la main est copiée en valeur. De cette manière,
+on se donne la possibilité d'avoir un jeu similaire pour toutes les collections.
+
+A noter que main est en ArrayList<Carte> et aurait aussi bien pu être en Carte[] vu qu'une main a toujours 2 éléments.
+Mais pour des raisons de constance de code je préfère choisir un objet et m'y tenir.
+*/
 
 import java.util.ArrayList;
 
@@ -16,6 +24,7 @@ public class CollectionDeCartes {
         m_main = new ArrayList<>(main);
         m_reference_jeu = reference_jeu;
     }
+
     public  ArrayList<Carte> get_collection() {
         ArrayList<Carte> res = new ArrayList<>(m_reference_jeu);
         res.addAll(m_main);
@@ -23,15 +32,15 @@ public class CollectionDeCartes {
     }
 
     public ArrayList<Carte> get_main() {
-        return m_main;
+        return new ArrayList<>(m_main);
     }
 
     public ArrayList<Carte> get_reference_jeu() {
         return m_reference_jeu;
     }
 
-    public int size() {
-        return m_main.size() + m_reference_jeu.size();
+    public int nombre_de_cartes() {
+        return 2 + m_reference_jeu.size();
     }
 
     public void ajouter_carte_en_jeu(Carte carte) throws IllegalStateException {
@@ -69,28 +78,5 @@ public class CollectionDeCartes {
             if (victoire) nombre_de_victoires++;
         }
         return ((double)nombre_de_victoires)/10000d;
-    }
-
-    public static void main(String[] args) {
-        ArrayList<Carte> main = new ArrayList<>();
-        main.add(new Carte(Carte.Valeur.As,Carte.Couleur.Carreau));
-        main.add(new Carte(Carte.Valeur.As,Carte.Couleur.Trefle));
-        CollectionDeCartes c = new CollectionDeCartes(main,new ArrayList<>());
-        System.out.println("Proba de victoire avec deux as et 2 joueurs :" + c.probaVict(2)*100);
-        System.out.println("Proba de victoire avec deux as et 3 joueurs :" + c.probaVict(3)*100);
-        System.out.println("Proba de victoire avec deux as et 4 joueurs :" + c.probaVict(4)*100);
-        c.ajouter_carte_en_jeu(new Carte(Carte.Valeur.As,Carte.Couleur.Coeur));
-        c.ajouter_carte_en_jeu(new Carte(Carte.Valeur.Roi,Carte.Couleur.Trefle));
-        c.ajouter_carte_en_jeu(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
-        System.out.println("Proba de victoire avec trois as et 2 joueurs :" + c.probaVict(2)*100);
-        System.out.println("Proba de victoire avec trois as et 3 joueurs :" + c.probaVict(3)*100);
-        System.out.println("Proba de victoire avec trois as et 4 joueurs :" + c.probaVict(4)*100);
-        main = new ArrayList<>();
-        main.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Carreau));
-        main.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Trefle));
-        c = new CollectionDeCartes(main,new ArrayList<>());
-        System.out.println("Proba de victoire avec Sept et Huit et 2 joueurs :" + c.probaVict(2)*100);
-        System.out.println("Proba de victoire avec Sept et Huit et 3 joueurs :" + c.probaVict(3)*100);
-        System.out.println("Proba de victoire avec Sept et Huit et 4 joueurs :" + c.probaVict(4)*100);
     }
 }
