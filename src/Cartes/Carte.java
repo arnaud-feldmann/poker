@@ -1,5 +1,7 @@
 package Cartes;
 
+import java.util.ArrayList;
+
 public class Carte {
     public enum Valeur {Deux,Trois,Quatre,Cinq,Six,Sept,Huit,Neuf,Dix,Valet,Dame,Roi,As}
     public enum Couleur {Pique,Coeur,Carreau,Trefle}
@@ -42,6 +44,15 @@ public class Carte {
     @Override
     public String toString() {
         return get_valeur() + " de " + get_couleur();
+    }
+
+    public static void affiche(ArrayList<Carte> cartes,String nom_jeu) {
+        if (cartes.size() == 0) {
+            System.out.println(nom_jeu + " : vide");
+            return;
+        }
+        System.out.println(nom_jeu + " : ");
+        cartes.forEach(System.out::println);
     }
 
 }

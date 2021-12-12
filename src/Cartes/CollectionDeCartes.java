@@ -1,32 +1,20 @@
 package Cartes;
 
-/*
-La méthode de comparaison beat ne renvoie pas un booléen mais un double qui va de zéro à 1, qui est une probabilité
-de victoire sur 10000 essais. Cette méthode est préférée à la comparaison booléenne simple car elle est générique peu
-importe le nombre de carte dévoilées et elle permet d'anticiper la construction d'une IA sommaire.
-
-m_reference_jeu est volontairement incorporée en référence, tandis que la main est copiée en valeur. De cette manière,
-on se donne la possibilité d'avoir un jeu similaire pour toutes les collections.
-
-A noter que main est en ArrayList<Carte> et aurait aussi bien pu être en Carte[] vu qu'une main a toujours 2 éléments.
-Mais pour des raisons de constance de code je préfère choisir un objet et m'y tenir.
-*/
-
 import java.util.ArrayList;
 
 public class CollectionDeCartes {
 
     private final ArrayList<Carte> m_main;
-    private final ArrayList<Carte> m_reference_jeu;
+    private final ArrayList<Carte> m_jeu_pt;
 
-    public CollectionDeCartes(ArrayList<Carte> main,ArrayList<Carte> reference_jeu) throws IllegalArgumentException {
+    public CollectionDeCartes(ArrayList<Carte> main, ArrayList<Carte> reference_jeu) throws IllegalArgumentException {
         if (main.size() != 2) throw new IllegalArgumentException("Une main a deux cartes");
         m_main = new ArrayList<>(main);
-        m_reference_jeu = reference_jeu;
+        m_jeu_pt = reference_jeu;
     }
 
-    public  ArrayList<Carte> get_collection() {
-        ArrayList<Carte> res = new ArrayList<>(m_reference_jeu);
+    public ArrayList<Carte> get_collection() {
+        ArrayList<Carte> res = new ArrayList<>(m_jeu_pt);
         res.addAll(m_main);
         return res;
     }
@@ -36,16 +24,16 @@ public class CollectionDeCartes {
     }
 
     public ArrayList<Carte> get_reference_jeu() {
-        return m_reference_jeu;
+        return m_jeu_pt;
     }
 
     public int nombre_de_cartes() {
-        return 2 + m_reference_jeu.size();
+        return 2 + m_jeu_pt.size();
     }
 
     public void ajouter_carte_en_jeu(Carte carte) throws IllegalStateException {
-        if (m_reference_jeu.size() == 5) throw new IllegalStateException("Après la river plus de rajouts !!!");
-        m_reference_jeu.add(carte);
+        if (m_jeu_pt.size() == 5) throw new IllegalStateException("Après la river plus de rajouts !!!");
+        m_jeu_pt.add(carte);
     }
 
     public int compareTo(CollectionDeCartes collection) throws IllegalArgumentException {
@@ -78,5 +66,10 @@ public class CollectionDeCartes {
             if (victoire) nombre_de_victoires++;
         }
         return ((double)nombre_de_victoires)/10000d;
+    }
+
+    public void afficher() {
+        Carte.affiche(m_jeu_pt,"jeu");
+        Carte.affiche(m_main,"main");
     }
 }

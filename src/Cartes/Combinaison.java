@@ -1,12 +1,10 @@
-/* Arnaud FELDMANN
+/*
 Les void en detecte_*  modifient le membre niveau et le membre rang qui correspond aux Valeurs pour faire la
 différence. Si le membre niveau est non null c'est que la détection est positive.
 J'aurais pu tout aussi bien retourner des booléens mais je n'aime pas les fonctions qui mélangent effets de bord et
 retour ; je préfère soit l'un soit l'autre.
 
-La fonction aurait sans doute pu être un peu plus efficace en ne faisant pas des contrôles un peu similaires à la suite,
-mais écrite comme ça avec la fonction générique detecter_multiples, je trouve mon programme assez clair et raisonnablement
-rapide. */
+*/
 package Cartes;
 import java.util.ArrayList;
 
