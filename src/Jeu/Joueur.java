@@ -16,7 +16,7 @@ class ComplementMiseNegatifException extends IllegalArgumentException {
 
 public class Joueur {
     static int nombre_de_joueurs;
-    static int nombre_de_joueurs_couches;
+    static int nombre_de_joueurs_pouvant_relancer;
     public enum Etat {PEUT_MISER,MISE_TROP_GRANDE,COUCHE}
     private static Scanner entree_terminal = new Scanner(System.in);
     private final String m_nom_joueur;
@@ -43,6 +43,11 @@ public class Joueur {
     ArrayList<Carte> get_main() {
         return m_main;
     }
+
+    public String get_nom() {
+        return m_nom_joueur;
+    }
+
     public int get_mise() {
         return m_mise;
     }
@@ -142,7 +147,7 @@ public class Joueur {
     }
     public void coucher() {
         m_etat = Etat.COUCHE;
-        Joueur.nombre_de_joueurs_couches--;
+        Joueur.nombre_de_joueurs_pouvant_relancer--;
     }
     public void ajouter_mise(int complement,int[] pot_pt) {
         if (complement < 0) throw new ComplementMiseNegatifException();
@@ -150,6 +155,7 @@ public class Joueur {
             complement = m_tapis;
             System.out.println("La mise maximale est atteinte");
             m_etat = Etat.MISE_TROP_GRANDE;
+            Joueur.nombre_de_joueurs_pouvant_relancer--;
         }
         m_tapis -= complement;
         pot_pt[0] += complement;
