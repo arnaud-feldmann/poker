@@ -2,8 +2,8 @@ package Jeu;
 
 import Cartes.Carte;
 import Cartes.PaquetDeCartes;
-
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class TourPoker {
     private int[] m_pot_pt;
@@ -103,19 +103,27 @@ public class TourPoker {
     }
     private void abattage() {
         Joueur
-                        .stream()
-                        .filter(Joueur::pas_couche)
-                        .sorted((x,y) -> y.get_collection(m_jeu_pt).compareTo(x.get_collection(m_jeu_pt)))
-                        .forEach(gagnant -> {
-                            int[] retrait_pt = new int[] {0};
-                            int mise = gagnant.get_mise();
-                            Joueur.stream().forEach(joueur -> joueur.retirer_mise(mise,m_pot_pt,retrait_pt));
-                            if (retrait_pt[0] == 0) System.out.println(gagnant + " ne gagne rien !!");
-                            else {
-                                gagnant.encaisser(retrait_pt[0]);
-                                System.out.println(gagnant + " encaisse " + retrait_pt[0] + " euros !!");
-                            }
-                        });
+                .stream()
+                .filter(Joueur::pas_couche)
+                .sorted((x,y) -> y.get_collection(m_jeu_pt).compareTo(x.get_collection(m_jeu_pt)))
+                .forEach(gagnant -> {
+                    int gains;
+                    int[] retrait_pt;
+                    int mise = gagnant.get_mise();
+                    if (mise != 0) {
+                        retrait_pt = new int[]{0};
+                        Joueur.stream().forEach(joueur -> joueur.retirer_mise(mise, m_pot_pt, retrait_pt));
+                        ArrayList<Joueur> ex_aequos =
+                                Joueur.stream()
+                                        .filter(x -> x.get_collection(m_jeu_pt).compareTo(gagnant.get_collection(m_jeu_pt)) == 0)
+                                        .collect(Collectors.toCollection(ArrayList<Joueur>::new));
+                        gains = retrait_pt[0] / ex_aequos.size();
+                        for (Joueur ex_aequo : ex_aequos) {
+                            ex_aequo.encaisser(gains);
+                            System.out.println(gagnant + " encaisse " + gains + " euros !!");
+                        }
+                    }
+                });
         Joueur.stream().
                 forEach(joueur -> System.out.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
     }
