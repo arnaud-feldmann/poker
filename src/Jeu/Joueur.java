@@ -3,10 +3,8 @@ package Jeu;
 import Cartes.Carte;
 import Cartes.CollectionDeCartes;
 import Cartes.PaquetDeCartes;
-
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 class ComplementMiseNegatifException extends IllegalArgumentException {
@@ -17,20 +15,36 @@ class ComplementMiseNegatifException extends IllegalArgumentException {
 
 public class Joueur {
     static int nombre_de_joueurs;
-    static int nombre_de_joueurs_pouvant_relancer;
-    public enum Etat {PEUT_MISER,MISE_TROP_GRANDE,COUCHE}
+    public static Joueur donneur;
+    public enum Etat {PEUT_MISER,TAPIS,COUCHE}
     private static Scanner entree_terminal = new Scanner(System.in);
     private final String m_nom_joueur;
-    private int m_tapis;
+    private int m_cave;
     private Joueur m_joueur_suivant;
-    private Joueur m_joueur_precedent;
     private int m_mise;
     private ArrayList<Carte> m_main;
     private Etat m_etat;
-    Joueur(String nom_joueur,int tapis,Joueur joueur_suivant) {
+    public static Stream<Joueur> stream() {
+        Joueur joueur_temp = donneur;
+        Stream.Builder<Joueur> builder = Stream.builder();
+        for (int i = 0 ; i < Joueur.nombre_de_joueurs ; i++) {
+            builder.add(joueur_temp);
+            joueur_temp = joueur_temp.get_joueur_suivant();
+        }
+        return builder.build();
+    }
+    public static int nombre_de_joueurs_pouvant_relancer() {
+        return Math.toIntExact(
+                stream()
+                        .filter(Joueur::pas_couche)
+                        .filter(Joueur::pas_tapis)
+                        .count()
+        );
+    }
+    Joueur(String nom_joueur,int cave,Joueur joueur_suivant) {
         m_nom_joueur = nom_joueur;
         m_main = null;
-        m_tapis = tapis;
+        m_cave = cave;
         m_joueur_suivant = joueur_suivant;
     }
     protected void init_joueur(PaquetDeCartes paquet) {
@@ -44,6 +58,12 @@ public class Joueur {
     ArrayList<Carte> get_main() {
         return m_main;
     }
+    int get_cave() {
+        return m_cave;
+    }
+    CollectionDeCartes get_collection(ArrayList<Carte> m_jeu_pt) {
+        return new CollectionDeCartes(get_main(),m_jeu_pt);
+    }
 
     public String get_nom() {
         return m_nom_joueur;
@@ -51,6 +71,12 @@ public class Joueur {
 
     public int get_mise() {
         return m_mise;
+    }
+    public boolean pas_couche() {
+        return m_etat != Etat.COUCHE;
+    }
+    public boolean pas_tapis() {
+        return m_etat != Etat.TAPIS;
     }
     public Etat get_etat() {
         return m_etat;
@@ -64,13 +90,7 @@ public class Joueur {
     Joueur get_joueur_suivant() {
         return m_joueur_suivant;
     }
-    void set_joueur_precedent(Joueur joueur_precedent) {
-        m_joueur_precedent = joueur_precedent;
-    }
-    Joueur get_joueur_precedent() {
-        return m_joueur_precedent;
-    }
-    private static int prompt_action(int mise_actuelle,boolean peut_relancer,boolean check) {
+    private static int prompt_action(int mise_demandee,boolean peut_relancer,boolean check) {
         int res;
         System.out.println("Que voulez-vous faire ?");
         System.out.println("1) Me coucher");
@@ -124,21 +144,25 @@ public class Joueur {
         }
         return res;
     }
-    public int demander_mise(int mise_actuelle,ArrayList<Carte> jeu_pt,int pot,int relance_minimale) {
+    public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min) {
         int res;
+        int relance_max = m_cave-mise_demandee;
         CollectionDeCartes collection = new CollectionDeCartes(m_main,jeu_pt);
         prompt_tour_joueur(m_nom_joueur);
-        System.out.println("Votre mise actuelle est de " + m_mise + " et la mise actuelle du jeu est de " + mise_actuelle);
+        System.out.println("Votre mise actuelle est de " + m_mise + " et la mise actuelle du jeu est de " + mise_demandee);
         collection.afficher();
         System.out.println("Votre probabilité indicative de l'emporter avec cette main est de " +
                 Math.round(collection.probaVict(Joueur.nombre_de_joueurs-1) * 100) + " %");
-        int action = prompt_action(mise_actuelle,mise_actuelle-m_mise + relance_minimale < m_tapis,mise_actuelle == m_mise);
+        int action = prompt_action(
+                mise_demandee,
+                relance_min < relance_max,
+                mise_demandee == m_mise);
         switch (action) {
             case 2:
-                res = mise_actuelle;
+                res = mise_demandee;
                 break;
             case 3:
-                res = mise_actuelle + prompt_relance(relance_minimale,m_tapis-mise_actuelle);
+                res = mise_demandee + prompt_relance(relance_min,relance_max);
                 break;
             default:
                 res = -1;
@@ -148,28 +172,27 @@ public class Joueur {
     }
     public void coucher() {
         m_etat = Etat.COUCHE;
-        Joueur.nombre_de_joueurs_pouvant_relancer--;
     }
     public void ajouter_mise(int complement,int[] pot_pt) {
         if (complement < 0) throw new ComplementMiseNegatifException();
-        if (complement >= m_tapis) {
-            complement = m_tapis;
+        if (complement >= m_cave) {
+            complement = m_cave;
             System.out.println("La mise maximale est atteinte");
-            m_etat = Etat.MISE_TROP_GRANDE;
-            Joueur.nombre_de_joueurs_pouvant_relancer--;
+            m_etat = Etat.TAPIS;
         }
-        m_tapis -= complement;
+        m_cave -= complement;
         pot_pt[0] += complement;
         m_mise += complement;
     }
-    public Stream<Joueur> stream() {
-        Joueur joueur_temp = this;
-        Stream.Builder<Joueur> builder = Stream.builder();
-        for (int i = 0 ; i < Joueur.nombre_de_joueurs ; i++) {
-            builder.add(joueur_temp);
-            joueur_temp = joueur_temp.get_joueur_suivant();
-        }
-        return builder.build();
+    public void retirer_mise(int montant,int[] pot_pt,int[] retrait_pt) {
+        if (montant < 0) throw new ComplementMiseNegatifException();
+        if (montant >= m_mise) montant = m_mise;
+        pot_pt[0] -= montant;
+        retrait_pt[0] += montant;
+        m_mise -= montant;
+    }
+    public void encaisser(int montant) {
+        m_cave += montant;
     }
     @Override
     public String toString() {
