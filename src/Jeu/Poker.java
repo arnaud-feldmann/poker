@@ -16,7 +16,6 @@ public class Poker {
             Joueur.donneur = Joueur.donneur.get_joueur_suivant();
             System.out.println("Le donneur est maintenant " + Joueur.donneur);
         }
-
     }
 
     public void nouveau_tour() {

@@ -80,7 +80,7 @@ public class TourPoker {
         Joueur joueur_actuel = premier_joueur;
         int mise;
         Carte.affiche(m_jeu_pt,"jeu");
-        if (Joueur.donneur.nombre_de_joueurs_pouvant_relancer() == 1) return;
+        if (Joueur.nombre_de_joueurs_pouvant_relancer() == 1) return;
         do {
             if (joueur_actuel.get_etat() == Joueur.Etat.PEUT_MISER) {
                 mise = joueur_actuel.demander_mise(m_mise_actuelle, m_jeu_pt, m_pot_pt[0], m_relance_minimale);
@@ -95,7 +95,7 @@ public class TourPoker {
                 }
             }
             joueur_actuel = joueur_actuel.get_joueur_suivant();
-            if (Joueur.donneur.nombre_de_joueurs_pouvant_relancer() == 1) {
+            if (Joueur.nombre_de_joueurs_pouvant_relancer() == 1) {
                 System.out.println("Il n'y a plus qu'un seul joueur pouvant miser");
                 break;
             }
