@@ -103,10 +103,10 @@ public class TourPoker {
         } while (joueur_actuel != joueur_fin);
     }
     private void abattage() {
-        m_donneur.stream().forEach(joueur -> {
-            if (joueur.get_etat() == Joueur.Etat.COUCHE) return;
-            Carte.affiche(joueur.get_main(),joueur.get_nom());
-        });
+        m_donneur
+                .stream()
+                .filter(joueur -> joueur.get_etat() == Joueur.Etat.COUCHE)
+                .forEach(joueur -> Carte.affiche(joueur.get_main(),joueur.get_nom()));
 
     }
 }
