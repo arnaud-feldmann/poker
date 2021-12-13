@@ -7,6 +7,7 @@ import Cartes.PaquetDeCartes;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 class ComplementMiseNegatifException extends IllegalArgumentException {
     ComplementMiseNegatifException() {
@@ -161,12 +162,14 @@ public class Joueur {
         pot_pt[0] += complement;
         m_mise += complement;
     }
-    public void forEach(Consumer<Joueur> action) {
+    public Stream<Joueur> stream() {
         Joueur joueur_temp = this;
+        Stream.Builder<Joueur> builder = Stream.builder();
         for (int i = 0 ; i < Joueur.nombre_de_joueurs ; i++) {
-            action.accept(joueur_temp);
+            builder.add(joueur_temp);
             joueur_temp = joueur_temp.get_joueur_suivant();
         }
+        return builder.build();
     }
     @Override
     public String toString() {

@@ -35,7 +35,7 @@ public class TourPoker {
         joueur_temp.ajouter_mise(grosse_blinde,m_pot_pt);
         System.out.println(joueur_temp + " pose la grosse blinde (" + grosse_blinde + " euros) !!");
         paquet.bruler_une_carte();
-        m_donneur.forEach(joueur -> joueur.init_joueur(paquet));
+        m_donneur.stream().forEach(joueur -> joueur.init_joueur(paquet));
     }
     private void deroulement_du_tour() {
         tour_pre_flop();
@@ -103,7 +103,7 @@ public class TourPoker {
         } while (joueur_actuel != joueur_fin);
     }
     private void abattage() {
-        m_donneur.forEach(joueur -> {
+        m_donneur.stream().forEach(joueur -> {
             if (joueur.get_etat() == Joueur.Etat.COUCHE) return;
             Carte.affiche(joueur.get_main(),joueur.get_nom());
         });

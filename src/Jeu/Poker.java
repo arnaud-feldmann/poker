@@ -6,13 +6,13 @@ public class Poker {
     TourPoker m_tour;
     Poker(String[] noms_joueurs,int tapis_initial,int petite_blinde) {
         m_donneur = new Joueur(noms_joueurs[0],tapis_initial,null);
+        Joueur.nombre_de_joueurs = noms_joueurs.length;
         Joueur joueur_temp = m_donneur;
         for (int i = 1 ; i < noms_joueurs.length ; i++) joueur_temp = new Joueur(noms_joueurs[i], tapis_initial,joueur_temp);
         m_donneur.set_joueur_suivant(joueur_temp);
         joueur_temp.set_joueur_precedent(m_donneur);
-        joueur_temp.forEach(joueur -> joueur.get_joueur_suivant().set_joueur_precedent(joueur));
+        joueur_temp.stream().forEach(joueur -> joueur.get_joueur_suivant().set_joueur_precedent(joueur));
         m_petite_blinde = petite_blinde;
-        Joueur.nombre_de_joueurs = noms_joueurs.length;
         nouveau_tour();
     }
 
