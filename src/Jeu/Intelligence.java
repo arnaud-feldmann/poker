@@ -13,11 +13,16 @@ public interface Intelligence {
 class IntelligenceHumaine implements Intelligence {
     private final static Scanner entree_terminal = new Scanner(System.in);
     private static void prompt_tour_joueur(String nom_joueur) {
+        String res;
         System.out.println("----------------------------------------------");
         System.out.println("C'est le tour du joueur " + nom_joueur + " !");
-        System.out.println("Appuyez sur ENTREE");
+        System.out.println("validez (o/n) :");
         while (true) {
-            if (entree_terminal.hasNextLine() && entree_terminal.nextLine().isEmpty()) break;
+            System.out.print("> ");
+                res = entree_terminal.nextLine();
+            if (res.equals("o") || res.equals("O")) break;
+            else if (res.equals("n") || res.equals("N")) System.out.println("Ok j'attends un peu!");
+            System.out.println("Un peu de sérieux !");
         }
     }
     private static int prompt_relance(int relance_min,int relance_max) {

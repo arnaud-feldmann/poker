@@ -18,6 +18,6 @@ public class Poker {
     }
 
     public static void main(String[] args) {
-        Poker test = new Poker(new String[] {"Arnaud","Loup","Ludo"},1000,5);
+        new Poker(new String[] {"Arnaud","Loup","Ludo"},1000,5);
     }
 }
