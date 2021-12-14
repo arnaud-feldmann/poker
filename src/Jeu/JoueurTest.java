@@ -35,7 +35,6 @@ class JoueurTest {
         m_jeu_pt.add(paquet.piocher_une_carte());
         m_jeu_pt.add(paquet.piocher_une_carte());
         m_jeu_pt.add(paquet.piocher_une_carte());
-        Joueur.nombre_de_joueurs = 5;
         List<Joueur> joueurs =
                 Joueur
                         .stream()

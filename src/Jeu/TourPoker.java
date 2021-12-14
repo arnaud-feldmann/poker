@@ -40,6 +40,7 @@ public class TourPoker {
         tour_turn();
         tour_riviere();
         abattage();
+        banqueroute();
     }
     private void tour_pre_flop() {
         System.out.println("******************");
@@ -126,5 +127,15 @@ public class TourPoker {
                 });
         Joueur.stream().
                 forEach(joueur -> System.out.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
+    }
+    void banqueroute() {
+        Joueur.stream()
+                .forEach(joueur -> {
+                    Joueur suivant = joueur.get_joueur_suivant();
+                    if (suivant.get_cave() == 0) {
+                        System.out.println(suivant + " quitte le jeu !");
+                        joueur.set_joueur_suivant(suivant.get_joueur_suivant());
+                    }
+                });
     }
 }

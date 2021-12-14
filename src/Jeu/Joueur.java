@@ -14,7 +14,6 @@ class ComplementMiseNegatifException extends IllegalArgumentException {
 }
 
 public class Joueur {
-    static int nombre_de_joueurs;
     public static Joueur donneur;
     public enum Etat {PEUT_MISER,TAPIS,COUCHE}
     private final static Scanner entree_terminal = new Scanner(System.in);
@@ -24,10 +23,20 @@ public class Joueur {
     private int m_mise;
     private ArrayList<Carte> m_main;
     private Etat m_etat;
+    public static int nombre_de_joueurs() {
+        int res = 1;
+        for (Joueur joueur = donneur.get_joueur_suivant() ; joueur != donneur ; joueur = joueur.get_joueur_suivant()) res++;
+        return res;
+    }
+    public static boolean inc_donneur() {
+        Joueur donneur_save = donneur;
+        donneur = donneur.get_joueur_suivant();
+        return donneur_save == donneur;
+    }
     public static Stream<Joueur> stream() {
         Joueur joueur_temp = donneur;
         Stream.Builder<Joueur> builder = Stream.builder();
-        for (int i = 0 ; i < Joueur.nombre_de_joueurs ; i++) {
+        for (int i = 0 ; i < Joueur.nombre_de_joueurs() ; i++) {
             builder.add(joueur_temp);
             joueur_temp = joueur_temp.get_joueur_suivant();
         }
@@ -130,17 +139,18 @@ public class Joueur {
         CollectionDeCartes collection = new CollectionDeCartes(m_main,jeu_pt);
         prompt_tour_joueur(m_nom_joueur);
         System.out.println("Votre mise actuelle est de " + m_mise + ".");
+        System.out.println("Il vous reste " + m_cave + " dans votre cave.");
         System.out.println("Le pot actuel est de " + pot);
         System.out.println("La mise actuelle demandée en jeu est de " + mise_demandee + ".");
         collection.afficher();
         System.out.println("Votre probabilité indicative de l'emporter avec cette main est de " +
-                Math.round(collection.probaVict(Joueur.nombre_de_joueurs-1) * 100) + " %");
+                Math.round(collection.probaVict(Joueur.nombre_de_joueurs()-1) * 100) + " %");
         int action = prompt_action(
                 relance_min < relance_max,
                 mise_demandee == m_mise);
         switch (action) {
             case 2:
-                res = relance_max;
+                res = m_cave;
                 break;
             case 3:
                 res = mise_demandee;
@@ -158,8 +168,8 @@ public class Joueur {
         m_etat = Etat.COUCHE;
     }
     public void ajouter_mise(int complement,int[] pot_pt) {
-        if (complement < 0) throw new ComplementMiseNegatifException();
-        if (complement >= m_cave) {
+        if (complement < 0) complement = 0; // Pour les tapis parfois m_cave est inférieur à la mise demandée
+        if (complement >= m_cave) {         // Quand on suit la mise demandée est parfois supérieure à la cave
             complement = m_cave;
             System.out.println("La mise maximale est atteinte");
             m_etat = Etat.TAPIS;
