@@ -114,6 +114,7 @@ class IntelligenceArtificielle implements Intelligence {
             if (res < mise_demandee) res = mise_demandee;
         }
         if (m_random.nextInt(m_prudence) == 0) res /= m_random.nextInt(10)+1;
+        if (res < mise) res = mise; // On checke toujours par défaut
         return res;
     }
 }

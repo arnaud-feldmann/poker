@@ -9,10 +9,7 @@ public class Poker {
         for (int i = 1 ; i < noms_joueurs.length ; i++) joueur_temp = new Joueur(noms_joueurs[i], cave_initiale,joueur_temp,new IntelligenceArtificielle(cave_initiale));
         Joueur.donneur.set_joueur_suivant(joueur_temp);
         m_petite_blinde = petite_blinde;
-        do {
-            System.out.println("Le donneur est maintenant " + Joueur.donneur);
-            nouveau_tour();
-        } while (Joueur.inc_donneur());
+        do nouveau_tour(); while (Joueur.inc_donneur());
         System.out.println(Joueur.donneur + " a gagné la partie");
     }
 
