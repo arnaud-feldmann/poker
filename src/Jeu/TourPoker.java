@@ -90,6 +90,7 @@ public class TourPoker {
         int mise;
         Carte.affiche(m_jeu_pt, "jeu");
         do {
+            if (Joueur.stream().filter(Joueur::pas_couche).count() == 1) break;
             if (joueur_actuel.get_etat() == Joueur.Etat.PEUT_MISER) {
                 mise = joueur_actuel.demander_mise(m_mise_actuelle, m_jeu_pt, m_pot_pt[0], m_relance_minimale);
                 if (mise == -1) joueur_actuel.coucher();
