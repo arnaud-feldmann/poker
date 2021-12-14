@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class JoueurTest {
     @Test
     void joueur_stream_tri() {
-        Joueur arnaud = new Joueur("Arnaud",1000,null);
-        Joueur bebert = new Joueur("Bébert",1000,arnaud);
-        Joueur alice = new Joueur("Alice",1000,bebert);
-        Joueur emma = new Joueur("Emma",1000,alice);
-        Joueur pauline = new Joueur("Pauline",1000,emma);
+        Joueur arnaud = new Joueur("Arnaud",1000,null,new IntelligenceHumaine());
+        Joueur bebert = new Joueur("Bébert",1000,arnaud,new IntelligenceHumaine());
+        Joueur alice = new Joueur("Alice",1000,bebert,new IntelligenceHumaine());
+        Joueur emma = new Joueur("Emma",1000,alice,new IntelligenceHumaine());
+        Joueur pauline = new Joueur("Pauline",1000,emma,new IntelligenceHumaine());
         Joueur.donneur = arnaud;
         arnaud.set_joueur_suivant(pauline);
         PaquetDeCartes paquet;

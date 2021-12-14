@@ -21,6 +21,7 @@ public class Joueur {
     private int m_mise;
     private ArrayList<Carte> m_main;
     private Etat m_etat;
+    private Intelligence m_intelligence;
     public static int nombre_de_joueurs() {
         int res = 1;
         for (Joueur joueur = donneur.get_joueur_suivant() ; joueur != donneur ; joueur = joueur.get_joueur_suivant()) res++;
@@ -40,11 +41,12 @@ public class Joueur {
         }
         return builder.build();
     }
-    Joueur(String nom_joueur,int cave,Joueur joueur_suivant) {
+    Joueur(String nom_joueur,int cave,Joueur joueur_suivant,Intelligence intelligence) {
         m_nom_joueur = nom_joueur;
         m_main = null;
         m_cave = cave;
         m_joueur_suivant = joueur_suivant;
+        m_intelligence = intelligence;
     }
     protected void init_joueur(PaquetDeCartes paquet) {
         ArrayList<Carte> main = new ArrayList<>();
@@ -82,7 +84,7 @@ public class Joueur {
         m_etat = Etat.COUCHE;
     }
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min) {
-        return new IntelligenceHumaine().demander_mise(mise_demandee,jeu_pt,pot,relance_min,m_main,m_cave,m_mise,m_nom_joueur);
+        return m_intelligence.demander_mise(mise_demandee,jeu_pt,pot,relance_min,m_main,m_cave,m_mise,m_nom_joueur);
     }
     public void ajouter_mise(int complement,int[] pot_pt) {
         if (complement < 0) throw new ComplementMiseNegatifException();

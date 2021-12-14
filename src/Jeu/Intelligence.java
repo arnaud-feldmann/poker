@@ -88,3 +88,12 @@ class IntelligenceHumaine implements Intelligence {
         return res;
     }
 }
+/*
+
+class IntelligenceArtificielle implements Intelligence {
+    @Override
+    public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
+                             ArrayList<Carte> main,int cave,int mise,String nom_joueur) {
+        r
+    }
+}*/
