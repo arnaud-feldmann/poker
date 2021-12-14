@@ -71,9 +71,6 @@ public class Joueur {
     public boolean pas_couche() {
         return m_etat != Etat.COUCHE;
     }
-    public boolean pas_tapis() {
-        return m_etat != Etat.TAPIS;
-    }
     public Etat get_etat() {
         return m_etat;
     }
@@ -108,7 +105,7 @@ public class Joueur {
         System.out.println("C'est le tour du joueur " + nom_joueur + " !");
         System.out.println("Appuyez sur ENTREE");
         while (true) {
-            if (entree_terminal.nextLine().isEmpty()) break;
+            if (entree_terminal.hasNextLine() && entree_terminal.nextLine().isEmpty()) break;
         }
     }
     private static int prompt_relance(int relance_min,int relance_max) {

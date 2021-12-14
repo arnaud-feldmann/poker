@@ -105,32 +105,48 @@ public class TourPoker {
             joueur_actuel = joueur_actuel.get_joueur_suivant();
         } while (joueur_actuel != joueur_fin);
     }
+    private void affichage_mains() {
+        System.out.println("******************");
+        System.out.println("**** Abattage ****");
+        System.out.println("******************");
+        Joueur.stream().forEach(joueur -> Carte.affiche(joueur.get_main(),"Main de " + joueur));
+        System.out.println();
+    }
+    private void joueur_et_ex_aequos_empochent_leur_gain(Joueur gagnant) {
+        int gains;
+        int[] retrait_pt;
+        int mise = gagnant.get_mise();
+        if (mise != 0) {
+            retrait_pt = new int[]{0};
+            Joueur.stream().forEach(joueur -> joueur.retirer_mise(mise, m_pot_pt, retrait_pt));
+            ArrayList<Joueur> ex_aequos =
+                    Joueur.stream()
+                            .filter(x -> x.get_collection(m_jeu_pt).compareTo(gagnant.get_collection(m_jeu_pt)) == 0)
+                            .collect(Collectors.toCollection(ArrayList<Joueur>::new));
+            gains = retrait_pt[0] / ex_aequos.size();
+            for (Joueur ex_aequo : ex_aequos) {
+                ex_aequo.encaisser(gains);
+                System.out.println(gagnant + " encaisse " + gains + " euros !!");
+            }
+        }
+    }
+    private void repartition_gains() {
+        System.out.println("-----------");
+        System.out.println("|LES GAINS|");
+        System.out.println("-----------");
+        System.out.println();
 
-    private void abattage() {
         Joueur
                 .stream()
                 .filter(Joueur::pas_couche)
                 .sorted((x, y) -> y.get_collection(m_jeu_pt).compareTo(x.get_collection(m_jeu_pt)))
-                .forEach(gagnant -> {
-                    int gains;
-                    int[] retrait_pt;
-                    int mise = gagnant.get_mise();
-                    if (mise != 0) {
-                        retrait_pt = new int[]{0};
-                        Joueur.stream().forEach(joueur -> joueur.retirer_mise(mise, m_pot_pt, retrait_pt));
-                        ArrayList<Joueur> ex_aequos =
-                                Joueur.stream()
-                                        .filter(x -> x.get_collection(m_jeu_pt).compareTo(gagnant.get_collection(m_jeu_pt)) == 0)
-                                        .collect(Collectors.toCollection(ArrayList<Joueur>::new));
-                        gains = retrait_pt[0] / ex_aequos.size();
-                        for (Joueur ex_aequo : ex_aequos) {
-                            ex_aequo.encaisser(gains);
-                            System.out.println(gagnant + " encaisse " + gains + " euros !!");
-                        }
-                    }
-                });
+                .forEach(this::joueur_et_ex_aequos_empochent_leur_gain);
         Joueur.stream().
                 forEach(joueur -> System.out.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
+    }
+    private void abattage() {
+        affichage_mains();
+        repartition_gains();
     }
 
     void banqueroute() {
