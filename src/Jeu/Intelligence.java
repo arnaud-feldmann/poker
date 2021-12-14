@@ -2,6 +2,7 @@ package Jeu;
 import Cartes.Carte;
 import Cartes.CollectionDeCartes;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public interface Intelligence {
@@ -55,6 +56,7 @@ class IntelligenceHumaine implements Intelligence {
         }
         return res;
     }
+    @Override
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
                                     ArrayList<Carte> main,int cave,int mise,String nom_joueur) {
         int res;
@@ -76,7 +78,7 @@ class IntelligenceHumaine implements Intelligence {
                 res = cave + mise;
                 break;
             case 3:
-                res = mise_demandee;
+                res = Math.max(mise_demandee,mise);
                 break;
             case 4:
                 res = mise_demandee + prompt_relance(relance_min,relance_max);
@@ -88,12 +90,30 @@ class IntelligenceHumaine implements Intelligence {
         return res;
     }
 }
-/*
 
 class IntelligenceArtificielle implements Intelligence {
+    Random m_random;
+    int m_prudence;
+   //int m_sang_froid;
+    int m_cave_initiale;
+    int m_cave_precedente;
+    IntelligenceArtificielle(int cave_initiale) {
+        m_random = new Random();
+        m_prudence = m_random.nextInt(16) + 10;
+    //  m_sang_froid = m_random.nextInt(21)-10;
+        m_cave_initiale = cave_initiale;
+        m_cave_precedente = cave_initiale;
+    }
     @Override
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
                              ArrayList<Carte> main,int cave,int mise,String nom_joueur) {
-        r
+        double proba = new CollectionDeCartes(main,jeu_pt).probaVict(Joueur.nombre_de_joueurs()-1);
+        int res = (int) (proba*(double) m_cave_initiale/(double) (m_prudence+m_random.nextInt(5)));
+        if (m_random.nextInt(m_prudence) == 0) {
+            res *= m_random.nextInt(10)+1;
+            if (res < mise_demandee) res = mise_demandee;
+        }
+        if (m_random.nextInt(m_prudence) == 0) res /= m_random.nextInt(10)+1;
+        return res;
     }
-}*/
+}

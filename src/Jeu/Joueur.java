@@ -82,20 +82,27 @@ public class Joueur {
     }
     public void coucher() {
         m_etat = Etat.COUCHE;
+        System.out.println(m_nom_joueur + " se couche.");
     }
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min) {
         return m_intelligence.demander_mise(mise_demandee,jeu_pt,pot,relance_min,m_main,m_cave,m_mise,m_nom_joueur);
     }
     public void ajouter_mise(int complement,int[] pot_pt) {
         if (complement < 0) throw new ComplementMiseNegatifException();
-        if (complement >= m_cave) {         // Quand on suit la mise demandée est parfois supérieure à la cave
+        else if (complement >= m_cave) {         // Quand on suit la mise demandée est parfois supérieure à la cave
             complement = m_cave;
-            System.out.println("La mise maximale est atteinte");
+            System.out.println(m_nom_joueur + " a misé tout son tapis !");
             m_etat = Etat.TAPIS;
         }
+        else if (complement == 0) {
+            System.out.println(m_nom_joueur + " checke.");
+            return;
+        }
+        System.out.println(m_nom_joueur + " ajoute " + complement + " dans le pot.");
         m_cave -= complement;
         pot_pt[0] += complement;
         m_mise += complement;
+        System.out.println("Sa mise est maintenant de " + m_mise + " et le pot vaut " + pot_pt[0]);
     }
     public void retirer_mise(int montant,int[] pot_pt,int[] retrait_pt) {
         if (montant < 0) throw new ComplementMiseNegatifException();

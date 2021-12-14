@@ -3,10 +3,10 @@ package Jeu;
 public class Poker {
     private int m_petite_blinde;
     TourPoker m_tour;
-    Poker(String[] noms_joueurs,int tapis_initial,int petite_blinde) {
-        Joueur.donneur = new Joueur(noms_joueurs[0],tapis_initial,null,new IntelligenceHumaine());
+    Poker(String[] noms_joueurs,int cave_initiale,int petite_blinde) {
+        Joueur.donneur = new Joueur(noms_joueurs[0],cave_initiale,null,new IntelligenceHumaine());
         Joueur joueur_temp = Joueur.donneur;
-        for (int i = 1 ; i < noms_joueurs.length ; i++) joueur_temp = new Joueur(noms_joueurs[i], tapis_initial,joueur_temp,new IntelligenceHumaine());
+        for (int i = 1 ; i < noms_joueurs.length ; i++) joueur_temp = new Joueur(noms_joueurs[i], cave_initiale,joueur_temp,new IntelligenceArtificielle(cave_initiale));
         Joueur.donneur.set_joueur_suivant(joueur_temp);
         m_petite_blinde = petite_blinde;
         do {
