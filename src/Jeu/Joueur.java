@@ -31,7 +31,7 @@ public class Joueur {
     public static boolean inc_donneur() {
         Joueur donneur_save = donneur;
         donneur = donneur.get_joueur_suivant();
-        return donneur_save == donneur;
+        return donneur_save != donneur;
     }
     public static Stream<Joueur> stream() {
         Joueur joueur_temp = donneur;
@@ -41,14 +41,6 @@ public class Joueur {
             joueur_temp = joueur_temp.get_joueur_suivant();
         }
         return builder.build();
-    }
-    public static int nombre_de_joueurs_pouvant_relancer() {
-        return Math.toIntExact(
-                stream()
-                        .filter(Joueur::pas_couche)
-                        .filter(Joueur::pas_tapis)
-                        .count()
-        );
     }
     Joueur(String nom_joueur,int cave,Joueur joueur_suivant) {
         m_nom_joueur = nom_joueur;
@@ -115,7 +107,9 @@ public class Joueur {
         System.out.println("----------------------------------------------");
         System.out.println("C'est le tour du joueur " + nom_joueur + " !");
         System.out.println("Appuyez sur ENTREE");
-        entree_terminal.nextLine();
+        while (true) {
+            if (entree_terminal.nextLine().isEmpty()) break;
+        }
     }
     private static int prompt_relance(int relance_min,int relance_max) {
         int res;
@@ -150,7 +144,7 @@ public class Joueur {
                 mise_demandee == m_mise);
         switch (action) {
             case 2:
-                res = m_cave;
+                res = m_cave + m_mise;
                 break;
             case 3:
                 res = mise_demandee;
@@ -168,7 +162,7 @@ public class Joueur {
         m_etat = Etat.COUCHE;
     }
     public void ajouter_mise(int complement,int[] pot_pt) {
-        if (complement < 0) complement = 0; // Pour les tapis parfois m_cave est inférieur à la mise demandée
+        if (complement < 0) throw new ComplementMiseNegatifException();
         if (complement >= m_cave) {         // Quand on suit la mise demandée est parfois supérieure à la cave
             complement = m_cave;
             System.out.println("La mise maximale est atteinte");
