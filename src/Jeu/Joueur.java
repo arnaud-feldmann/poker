@@ -15,14 +15,14 @@ class ComplementMiseNegatifException extends IllegalArgumentException {
 public class Joueur {
     protected static Joueur donneur;
     public enum Etat {PEUT_MISER,TAPIS,COUCHE}
-    private final String m_nom_joueur;
+    final private String m_nom_joueur;
     private int m_cave;
     private Joueur m_joueur_suivant;
     private int m_mise;
     private ArrayList<Carte> m_main;
     private Etat m_etat;
-    private final Intelligence m_intelligence;
-    private final int m_numero_joueur_interface;
+    final private Intelligence m_intelligence;
+    final private int m_numero_joueur_interface;
     protected static int nombre_de_joueurs() {
         int res = 1;
         for (Joueur joueur = donneur.get_joueur_suivant() ; joueur != donneur ; joueur = joueur.get_joueur_suivant()) res++;
