@@ -2,7 +2,6 @@ package Jeu;
 
 import Cartes.Carte;
 import Cartes.PaquetDeCartes;
-import interfaceGraphique.InterfacePoker;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -12,10 +11,8 @@ public class TourPoker {
     private int m_mise_actuelle;
     private PaquetDeCartes m_paquet;
     private ArrayList<Carte> m_jeu_pt;
-    private final InterfacePoker m_interface_poker;
 
-    TourPoker(int petite_blinde,InterfacePoker interface_poker) {
-        m_interface_poker = interface_poker;
+    TourPoker(int petite_blinde) {
         init(petite_blinde);
         deroulement_du_tour();
     }
@@ -38,8 +35,8 @@ public class TourPoker {
         joueur_temp = joueur_temp.get_joueur_suivant();
         joueur_temp.ajouter_mise(grosse_blinde, m_pot_pt);
         System.out.println(joueur_temp + " pose la grosse blinde (" + grosse_blinde + " euros) !!");
-        m_interface_poker.fixeFlop(new Carte[0]);
-        m_interface_poker.raffraichit();
+        Poker.interface_graphique.fixeFlop(new Carte[0]);
+        Poker.interface_graphique.raffraichit();
     }
 
     private void deroulement_du_tour() {
@@ -72,7 +69,7 @@ public class TourPoker {
         ajouter_une_carte_en_jeu();
         ajouter_une_carte_en_jeu();
         ajouter_une_carte_en_jeu();
-        m_interface_poker.fixeFlop(new Carte[] {m_jeu_pt.get(0),m_jeu_pt.get(1),m_jeu_pt.get(2)});
+        Poker.interface_graphique.fixeFlop(new Carte[] {m_jeu_pt.get(0),m_jeu_pt.get(1),m_jeu_pt.get(2)});
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
@@ -81,7 +78,7 @@ public class TourPoker {
         System.out.println("****** Turn ******");
         System.out.println("******************");
         ajouter_une_carte_en_jeu();
-        m_interface_poker.ajouteCarteFlop(m_jeu_pt.get(3));
+        Poker.interface_graphique.ajouteCarteFlop(m_jeu_pt.get(3));
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
@@ -90,7 +87,7 @@ public class TourPoker {
         System.out.println("**** Rivière *****");
         System.out.println("******************");
         ajouter_une_carte_en_jeu();
-        m_interface_poker.ajouteCarteFlop(m_jeu_pt.get(4));
+        Poker.interface_graphique.ajouteCarteFlop(m_jeu_pt.get(4));
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
@@ -168,6 +165,8 @@ public class TourPoker {
             suivant = joueur.get_joueur_suivant();
             if (suivant.get_cave() == 0) {
                 System.out.println(suivant + " quitte le jeu !");
+                Poker.interface_graphique.joueurPasDeCarte(suivant.get_numero_joueur_interface());
+                Poker.interface_graphique.joueurSetAnnotation(suivant.get_numero_joueur_interface(),"(hors-jeu)");
                 joueur.set_joueur_suivant(suivant.get_joueur_suivant());
                 if (suivant == Joueur.donneur) Joueur.donneur = suivant.get_joueur_suivant();
             }

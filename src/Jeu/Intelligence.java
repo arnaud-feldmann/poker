@@ -117,7 +117,7 @@ class IntelligenceArtificielle implements Intelligence {
         System.out.println(nom_joueur + " a " + m_prudence + " points de prudence et " + m_sang_froid + " de sang-froid.");
     }
     private void deconcentration(String nom_joueur) {
-        if (m_prudence > 2) m_prudence--;
+        if (m_prudence >= 2) m_prudence--;
         System.out.println(nom_joueur + " est déconcentré !!! Il a dorénavant " + m_prudence + " points de prudence.");
     }
     private void reconcentration(String nom_joueur) {
@@ -128,12 +128,12 @@ class IntelligenceArtificielle implements Intelligence {
         int rnd = m_random.nextInt(21) - 10;
         if (cave != m_cave_precedente) {
             if (m_sang_froid == 0) deconcentration(m_nom_joueur);
-            if (cave < m_cave_precedente) {
+            else if (cave < m_cave_precedente) {
                 if (rnd < m_sang_froid) reconcentration(m_nom_joueur);
                 else deconcentration(m_nom_joueur);
             }
             else {
-                if (rnd < m_sang_froid) reconcentration(m_nom_joueur);
+                if (rnd > m_sang_froid) reconcentration(m_nom_joueur);
                 else deconcentration(m_nom_joueur);
             }
             m_cave_precedente = cave;
