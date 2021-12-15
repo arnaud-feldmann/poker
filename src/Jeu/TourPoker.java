@@ -133,7 +133,7 @@ public class TourPoker {
         System.out.println("******************");
         System.out.println("**** Abattage ****");
         System.out.println("******************");
-        Joueur.stream().forEach(joueur -> Carte.affiche(joueur.get_main(),"Main de " + joueur));
+        Joueur.stream().filter(Joueur::pas_couche).forEach(Joueur::affiche_main);
         System.out.println();
     }
 
@@ -165,6 +165,8 @@ public class TourPoker {
     La méthode de stream est implémentée dans la classe Joueur
      */
     private void repartition_gains() {
+        String res;
+
         System.out.println("-----------");
         System.out.println("|LES GAINS|");
         System.out.println("-----------");
@@ -177,6 +179,15 @@ public class TourPoker {
                 .forEach(this::joueur_et_ex_aequos_empochent_leur_gain);
         Joueur.stream().
                 forEach(joueur -> System.out.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
+        Poker.interface_graphique.raffraichit();
+        System.out.println("validez (o/n) :");
+        while (true) {
+            System.out.print("> ");
+            res = Poker.entree_terminal.nextLine();
+            if (res.equals("o") || res.equals("O")) break;
+            else if (res.equals("n") || res.equals("N")) System.out.println("Ok j'attends un peu!");
+            else System.out.println("Un peu de sérieux !");
+        }
     }
     private void abattage() {
         affichage_mains();

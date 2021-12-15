@@ -169,6 +169,13 @@ public class Joueur {
         Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique,Poker.jetons(m_cave));
     }
 
+    /* Cette méthode révèle la main à la fin d'un tour */
+    protected void affiche_main() {
+        Carte.affiche(m_main,"Main de " + m_nom_joueur);
+        Poker.interface_graphique.joueurSetCartesVisibles(m_numero_joueur_interface_graphique,
+                m_main.get(0),m_main.get(1));
+    }
+
     @Override
     public String toString() {
         return m_nom_joueur;

@@ -23,19 +23,9 @@ class IntelligenceHumaine implements Intelligence {
     IntelligenceHumaine(String nom_joueur) {
         m_nom_joueur = nom_joueur;
     }
-    private final static Scanner entree_terminal = new Scanner(System.in);
     private void prompt_tour_joueur() {
-        String res;
         System.out.println("----------------------------------------------");
         System.out.println("C'est le tour du joueur " + m_nom_joueur + " !");
-        System.out.println("validez (o/n) :");
-        while (true) {
-            System.out.print("> ");
-            res = entree_terminal.nextLine();
-            if (res.equals("o") || res.equals("O")) break;
-            else if (res.equals("n") || res.equals("N")) System.out.println("Ok j'attends un peu!");
-            System.out.println("Un peu de sérieux !");
-        }
     }
     private static int prompt_relance(int relance_min,int relance_max) {
         int res;
@@ -44,7 +34,7 @@ class IntelligenceHumaine implements Intelligence {
         while (true) {
             System.out.print("> ");
             try {
-                res = Integer.parseInt(entree_terminal.nextLine());
+                res = Integer.parseInt(Poker.entree_terminal.nextLine());
             } catch (NumberFormatException e) {
                 res = -1;
             }
@@ -64,7 +54,7 @@ class IntelligenceHumaine implements Intelligence {
         while (true) {
             System.out.print("> ");
             try {
-                res = Integer.parseInt(entree_terminal.nextLine());
+                res = Integer.parseInt(Poker.entree_terminal.nextLine());
             } catch (NumberFormatException e) {
                 res = -1;
             }

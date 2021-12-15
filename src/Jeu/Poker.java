@@ -2,6 +2,8 @@ package Jeu;
 
 import interfaceGraphique.InterfacePoker;
 
+import java.util.Scanner;
+
 class NombreJoueursException extends IllegalArgumentException {
     NombreJoueursException() {
         super("Le nombre de joueurs doit être entre 2 et 8!!!");
@@ -9,9 +11,10 @@ class NombreJoueursException extends IllegalArgumentException {
 }
 
 public class Poker {
-    final static int CAVE_INITIALE = 1000;
-    final static int PETITE_BLINDE_INITIALE = 5;
+    final private static int CAVE_INITIALE = 1000;
+    final private static int PETITE_BLINDE_INITIALE = 5;
     protected static InterfacePoker interface_graphique;
+    final protected  static Scanner entree_terminal = new Scanner(System.in);
 
     /* Bon, on va dire que les jetons sont immédiatement changés à la banque pour faire des jolis sets */
     protected static int[] jetons(int montant) {
