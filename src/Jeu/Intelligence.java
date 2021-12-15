@@ -117,7 +117,7 @@ class IntelligenceArtificielle implements Intelligence {
         System.out.println(nom_joueur + " a " + m_prudence + " points de prudence et " + m_sang_froid + " de sang-froid.");
     }
     private void deconcentration(String nom_joueur) {
-        m_prudence--;
+        if (m_prudence > 2) m_prudence--;
         System.out.println(nom_joueur + " est déconcentré !!! Il a dorénavant " + m_prudence + " points de prudence.");
     }
     private void reconcentration(String nom_joueur) {

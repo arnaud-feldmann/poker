@@ -2,6 +2,7 @@ package Jeu;
 
 import Cartes.Carte;
 import Cartes.PaquetDeCartes;
+import interfaceGraphique.InterfacePoker;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,11 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class JoueurTest {
     @Test
     void joueur_stream_tri() {
-        Joueur arnaud = new Joueur("Arnaud",1000,null,new IntelligenceHumaine("Arnaud"));
-        Joueur bebert = new Joueur("Bébert",1000,arnaud,new IntelligenceHumaine("Bébert"));
-        Joueur alice = new Joueur("Alice",1000,bebert,new IntelligenceHumaine("Alice"));
-        Joueur emma = new Joueur("Emma",1000,alice,new IntelligenceHumaine("Emma"));
-        Joueur pauline = new Joueur("Pauline",1000,emma,new IntelligenceHumaine("Pauline"));
+        InterfacePoker interface_poker = new InterfacePoker(2,2,2,true);
+        Joueur arnaud = new Joueur("Arnaud",1000,null,new IntelligenceHumaine("Arnaud"),interface_poker,0);
+        Joueur bebert = new Joueur("Bébert",1000,arnaud,new IntelligenceHumaine("Bébert"),interface_poker,1);
+        Joueur alice = new Joueur("Alice",1000,bebert,new IntelligenceHumaine("Alice"),interface_poker,2);
+        Joueur emma = new Joueur("Emma",1000,alice,new IntelligenceHumaine("Emma"),interface_poker,3);
+        Joueur pauline = new Joueur("Pauline",1000,emma,new IntelligenceHumaine("Pauline"),interface_poker,4);
         Joueur.donneur = arnaud;
         arnaud.set_joueur_suivant(pauline);
         PaquetDeCartes paquet;

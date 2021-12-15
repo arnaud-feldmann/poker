@@ -2,6 +2,8 @@ package Jeu;
 
 import Cartes.Carte;
 import Cartes.PaquetDeCartes;
+import interfaceGraphique.InterfacePoker;
+
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -9,10 +11,12 @@ public class TourPoker {
     private int[] m_pot_pt;
     private int m_relance_minimale;
     private int m_mise_actuelle;
-    private PaquetDeCartes paquet;
+    private PaquetDeCartes m_paquet;
     private ArrayList<Carte> m_jeu_pt;
+    private InterfacePoker m_interface_poker;
 
-    TourPoker(int petite_blinde) {
+    TourPoker(int petite_blinde,InterfacePoker interface_poker) {
+        m_interface_poker = interface_poker;
         init(petite_blinde);
         deroulement_du_tour();
     }
@@ -24,10 +28,10 @@ public class TourPoker {
         m_mise_actuelle = grosse_blinde;
         m_relance_minimale = grosse_blinde;
         m_jeu_pt = new ArrayList<>();
-        paquet = new PaquetDeCartes();
-        paquet.melanger_cartes();
-        paquet.bruler_une_carte();
-        Joueur.stream().forEach(joueur -> joueur.init_joueur(paquet));
+        m_paquet = new PaquetDeCartes();
+        m_paquet.melanger_cartes();
+        m_paquet.bruler_une_carte();
+        Joueur.stream().forEach(joueur -> joueur.init_joueur(m_paquet));
         System.out.println(Joueur.donneur + " est le donneur !!");
         joueur_temp = Joueur.donneur.get_joueur_suivant();
         joueur_temp.ajouter_mise(petite_blinde, m_pot_pt);
@@ -35,6 +39,8 @@ public class TourPoker {
         joueur_temp = joueur_temp.get_joueur_suivant();
         joueur_temp.ajouter_mise(grosse_blinde, m_pot_pt);
         System.out.println(joueur_temp + " pose la grosse blinde (" + grosse_blinde + " euros) !!");
+        m_interface_poker.fixeFlop(new Carte[0]);
+        m_interface_poker.raffraichit();
     }
 
     private void deroulement_du_tour() {
@@ -53,16 +59,21 @@ public class TourPoker {
         tour_encheres(Joueur.donneur.get_joueur_suivant().get_joueur_suivant().get_joueur_suivant());
     }
 
+    private void ajouter_une_carte_en_jeu() {
+        Carte carte;
+        m_paquet.bruler_une_carte();
+        carte = m_paquet.piocher_une_carte();
+        m_jeu_pt.add(carte);
+    }
+
     private void tour_flop() {
         System.out.println("******************");
         System.out.println("****** Flop ******");
         System.out.println("******************");
-        paquet.bruler_une_carte();
-        m_jeu_pt.add(paquet.piocher_une_carte());
-        paquet.bruler_une_carte();
-        m_jeu_pt.add(paquet.piocher_une_carte());
-        paquet.bruler_une_carte();
-        m_jeu_pt.add(paquet.piocher_une_carte());
+        ajouter_une_carte_en_jeu();
+        ajouter_une_carte_en_jeu();
+        ajouter_une_carte_en_jeu();
+        m_interface_poker.fixeFlop(new Carte[] {m_jeu_pt.get(0),m_jeu_pt.get(1),m_jeu_pt.get(2)});
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
@@ -70,8 +81,8 @@ public class TourPoker {
         System.out.println("******************");
         System.out.println("****** Turn ******");
         System.out.println("******************");
-        paquet.bruler_une_carte();
-        m_jeu_pt.add(paquet.piocher_une_carte());
+        ajouter_une_carte_en_jeu();
+        m_interface_poker.ajouteCarteFlop(m_jeu_pt.get(3));
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
@@ -79,8 +90,8 @@ public class TourPoker {
         System.out.println("******************");
         System.out.println("**** Rivière *****");
         System.out.println("******************");
-        paquet.bruler_une_carte();
-        m_jeu_pt.add(paquet.piocher_une_carte());
+        ajouter_une_carte_en_jeu();
+        m_interface_poker.ajouteCarteFlop(m_jeu_pt.get(4));
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
