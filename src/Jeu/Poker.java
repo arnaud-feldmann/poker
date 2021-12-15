@@ -9,8 +9,9 @@ class NombreJoueursException extends IllegalArgumentException {
 }
 
 public class Poker {
-    static InterfacePoker interface_graphique;
-    public static int[] jetons(int montant) {
+    protected static InterfacePoker interface_graphique;
+
+    protected static int[] jetons(int montant) {
         int[] res = new int[5];
         int reste = montant;
         final int[] jetons = {500,100,25,5,1};
@@ -20,7 +21,8 @@ public class Poker {
         }
         return res;
     }
-    public static void poker(String[] noms_joueurs,int cave_initiale,int petite_blinde) {
+
+    private static void poker(String[] noms_joueurs,int cave_initiale,int petite_blinde) {
         int m_petite_blinde;
         int m_nbtour = 0;
         if (noms_joueurs.length < 2 || noms_joueurs.length > 8) throw new NombreJoueursException();

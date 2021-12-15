@@ -3,8 +3,6 @@ package Jeu;
 import Cartes.Carte;
 import Cartes.CollectionDeCartes;
 import Cartes.PaquetDeCartes;
-import interfaceGraphique.InterfacePoker;
-
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
@@ -15,7 +13,7 @@ class ComplementMiseNegatifException extends IllegalArgumentException {
 }
 
 public class Joueur {
-    public static Joueur donneur;
+    protected static Joueur donneur;
     public enum Etat {PEUT_MISER,TAPIS,COUCHE}
     private final String m_nom_joueur;
     private int m_cave;
@@ -25,23 +23,23 @@ public class Joueur {
     private Etat m_etat;
     private final Intelligence m_intelligence;
     private final int m_numero_joueur_interface;
-    public static int nombre_de_joueurs() {
+    protected static int nombre_de_joueurs() {
         int res = 1;
         for (Joueur joueur = donneur.get_joueur_suivant() ; joueur != donneur ; joueur = joueur.get_joueur_suivant()) res++;
         return res;
     }
 
-    public int get_numero_joueur_interface() {
+    protected int get_numero_joueur_interface() {
         return m_numero_joueur_interface;
     }
 
-    public static boolean inc_donneur() {
+    protected static boolean inc_donneur() {
         Joueur donneur_save = donneur;
         donneur = donneur.get_joueur_suivant();
 
         return donneur_save != donneur;
     }
-    public static Stream<Joueur> stream() {
+    protected static Stream<Joueur> stream() {
         Joueur joueur_temp = donneur;
         Stream.Builder<Joueur> builder = Stream.builder();
         for (int i = 0 ; i < Joueur.nombre_de_joueurs() ; i++) {
@@ -50,7 +48,8 @@ public class Joueur {
         }
         return builder.build();
     }
-    Joueur(String nom_joueur, int cave, Joueur joueur_suivant, Intelligence intelligence,int numero_joueur_interface) {
+
+    protected Joueur(String nom_joueur, int cave, Joueur joueur_suivant, Intelligence intelligence,int numero_joueur_interface) {
         m_nom_joueur = nom_joueur;
         m_main = null;
         m_cave = cave;
@@ -59,6 +58,7 @@ public class Joueur {
         m_numero_joueur_interface = numero_joueur_interface;
         Poker.interface_graphique.joueurSetNom(m_numero_joueur_interface,m_nom_joueur);
     }
+
     protected void init_joueur(PaquetDeCartes paquet) {
         ArrayList<Carte> main = new ArrayList<>();
         main.add(paquet.piocher_une_carte());
@@ -70,40 +70,44 @@ public class Joueur {
         else Poker.interface_graphique.joueurSetCartesCachees(m_numero_joueur_interface);
         Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface,Poker.jetons(m_cave));
     }
-    ArrayList<Carte> get_main() {
+
+    protected ArrayList<Carte> get_main() {
         return m_main;
     }
-    int get_cave() {
+    protected int get_cave() {
         return m_cave;
     }
-    CollectionDeCartes get_collection(ArrayList<Carte> m_jeu_pt) {
+
+    protected CollectionDeCartes get_collection(ArrayList<Carte> m_jeu_pt) {
         return new CollectionDeCartes(get_main(),m_jeu_pt);
     }
-    public int get_mise() {
+    protected int get_mise() {
         return m_mise;
     }
-    public boolean pas_couche() {
+    protected boolean pas_couche() {
         return m_etat != Etat.COUCHE;
     }
-    public Etat get_etat() {
+    protected Etat get_etat() {
         return m_etat;
     }
-    void set_joueur_suivant(Joueur joueur_suivant) {
+    protected void set_joueur_suivant(Joueur joueur_suivant) {
         m_joueur_suivant = joueur_suivant;
     }
     Joueur get_joueur_suivant() {
         return m_joueur_suivant;
     }
-    public void coucher() {
+    protected void coucher() {
         m_etat = Etat.COUCHE;
         Poker.interface_graphique.joueurPasDeCarte(m_numero_joueur_interface);
         System.out.println(m_nom_joueur + " se couche.");
     }
-    public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min) {
+
+    protected int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min) {
         Poker.interface_graphique.raffraichit();
         return m_intelligence.demander_mise(mise_demandee,jeu_pt,pot,relance_min,m_main,m_cave,m_mise);
     }
-    public void ajouter_mise(int complement,int[] pot_pt) {
+
+    protected void ajouter_mise(int complement,int[] pot_pt) {
         if (complement < 0) throw new ComplementMiseNegatifException();
         else if (complement >= m_cave) {         // Quand on suit la mise demandée est parfois supérieure à la cave
             complement = m_cave;
@@ -122,7 +126,8 @@ public class Joueur {
         Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface,Poker.jetons(m_cave));
         Poker.interface_graphique.fixeMises(Poker.jetons(pot_pt[0]));
     }
-    public void retirer_mise(int montant,int[] pot_pt,int[] retrait_pt) {
+
+    protected void retirer_mise(int montant,int[] pot_pt,int[] retrait_pt) {
         if (montant < 0) throw new ComplementMiseNegatifException();
         if (montant >= m_mise) montant = m_mise;
         pot_pt[0] -= montant;
@@ -130,10 +135,12 @@ public class Joueur {
         m_mise -= montant;
         Poker.interface_graphique.fixeMises(Poker.jetons(pot_pt[0]));
     }
-    public void encaisser(int montant) {
+
+    protected void encaisser(int montant) {
         m_cave += montant;
         Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface,Poker.jetons(m_cave));
     }
+
     @Override
     public String toString() {
         return m_nom_joueur;

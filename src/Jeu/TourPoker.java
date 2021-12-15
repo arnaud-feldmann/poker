@@ -12,7 +12,7 @@ public class TourPoker {
     private PaquetDeCartes m_paquet;
     private ArrayList<Carte> m_jeu_pt;
 
-    TourPoker(int petite_blinde) {
+    protected TourPoker(int petite_blinde) {
         init(petite_blinde);
         deroulement_du_tour();
     }
@@ -158,7 +158,7 @@ public class TourPoker {
         repartition_gains();
     }
 
-    void banqueroute() {
+    private void banqueroute() {
         Joueur joueur = Joueur.donneur;
         Joueur suivant;
         while (true) {
