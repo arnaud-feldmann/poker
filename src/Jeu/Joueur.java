@@ -85,7 +85,7 @@ public class Joueur {
         System.out.println(m_nom_joueur + " se couche.");
     }
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min) {
-        return m_intelligence.demander_mise(mise_demandee,jeu_pt,pot,relance_min,m_main,m_cave,m_mise,m_nom_joueur);
+        return m_intelligence.demander_mise(mise_demandee,jeu_pt,pot,relance_min,m_main,m_cave,m_mise);
     }
     public void ajouter_mise(int complement,int[] pot_pt) {
         if (complement < 0) throw new ComplementMiseNegatifException();

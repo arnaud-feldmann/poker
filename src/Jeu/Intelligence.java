@@ -7,15 +7,19 @@ import java.util.Scanner;
 
 public interface Intelligence {
     int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                             ArrayList<Carte> main,int cave,int mise,String nom_joueur);
+                             ArrayList<Carte> main,int cave,int mise);
 }
 
 class IntelligenceHumaine implements Intelligence {
+    String m_nom_joueur;
+    IntelligenceHumaine(String nom_joueur) {
+        m_nom_joueur = nom_joueur;
+    }
     private final static Scanner entree_terminal = new Scanner(System.in);
-    private static void prompt_tour_joueur(String nom_joueur) {
+    private void prompt_tour_joueur() {
         String res;
         System.out.println("----------------------------------------------");
-        System.out.println("C'est le tour du joueur " + nom_joueur + " !");
+        System.out.println("C'est le tour du joueur " + m_nom_joueur + " !");
         System.out.println("validez (o/n) :");
         while (true) {
             System.out.print("> ");
@@ -63,11 +67,11 @@ class IntelligenceHumaine implements Intelligence {
     }
     @Override
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                                    ArrayList<Carte> main,int cave,int mise,String nom_joueur) {
+                                    ArrayList<Carte> main,int cave,int mise) {
         int res;
         int relance_max = cave-mise_demandee;
         CollectionDeCartes collection = new CollectionDeCartes(main,jeu_pt);
-        prompt_tour_joueur(nom_joueur);
+        prompt_tour_joueur();
         System.out.println("Votre mise actuelle est de " + mise + ".");
         System.out.println("Il vous reste " + cave + " dans votre cave.");
         System.out.println("Le pot actuel est de " + pot);
@@ -99,19 +103,42 @@ class IntelligenceHumaine implements Intelligence {
 class IntelligenceArtificielle implements Intelligence {
     Random m_random;
     int m_prudence;
-   //int m_sang_froid;
+    int m_sang_froid;
     int m_cave_initiale;
     int m_cave_precedente;
-    IntelligenceArtificielle(int cave_initiale) {
+    String m_nom_joueur;
+    IntelligenceArtificielle(int cave_initiale,String nom_joueur) {
         m_random = new Random();
         m_prudence = m_random.nextInt(16) + 10;
-    //  m_sang_froid = m_random.nextInt(21)-10;
+        m_sang_froid = m_random.nextInt(21) - 10;
         m_cave_initiale = cave_initiale;
         m_cave_precedente = cave_initiale;
+        m_nom_joueur = nom_joueur;
+        System.out.println(nom_joueur + " a " + m_prudence + " points de prudence et " + m_sang_froid + " de sang-froid.");
+    }
+    private void deconcentration(String nom_joueur) {
+        m_prudence--;
+        System.out.println(nom_joueur + " est déconcentré !!! Il a dorénavant " + m_prudence + " points de prudence.");
+    }
+    private void reconcentration(String nom_joueur) {
+        m_prudence--;
+        System.out.println(nom_joueur + " se concentre !!! Il a dorénavant " + m_prudence + " points de prudence.");
+    }
+    private void changements_de_prudence(int cave) {
+        int rnd = m_random.nextInt(21) - 10;
+        if (cave < m_cave_precedente) {
+            if (m_sang_froid == 0) deconcentration(m_nom_joueur);
+            else {
+                if (rnd < m_sang_froid) reconcentration(m_nom_joueur);
+                else deconcentration(m_nom_joueur);
+            }
+        }
+        m_cave_precedente = cave;
     }
     @Override
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                             ArrayList<Carte> main,int cave,int mise,String nom_joueur) {
+                             ArrayList<Carte> main,int cave,int mise) {
+        changements_de_prudence(cave+mise);
         double proba = new CollectionDeCartes(main,jeu_pt).probaVict(Joueur.nombre_de_joueurs()-1);
         int res = (int) (proba*(double) m_cave_initiale/(double) (m_prudence+m_random.nextInt(5)));
         if (m_random.nextInt(m_prudence) == 0) {
