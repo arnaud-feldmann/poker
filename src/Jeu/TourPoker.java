@@ -6,6 +6,14 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class TourPoker {
+    /*
+    Cette classe représente le déroulement d'un tour de Poker.
+    - m_pot_pt est un pointeur vers le pot, pour pouvoir communiquer avec les joueurs.
+    - m_relance_minimale est la relance minimale acceptée selon ce que j'ai compris des règles du poker ; à savoir d'abord
+    la blinde puis la dernière relance
+    - m_mise_actuelle est la somme qu'il faut miser pour rester en jeu
+    - m_jeu_pt est l'arraylist des cartes en jeu
+     */
     private int[] m_pot_pt;
     private int m_relance_minimale;
     private int m_mise_actuelle;
@@ -17,6 +25,9 @@ public class TourPoker {
         deroulement_du_tour();
     }
 
+    /*
+    Quelques initialisations à faire chaque tour
+     */
     private void init(int petite_blinde) {
         Joueur joueur_temp;
         final int grosse_blinde = 2 * petite_blinde;
@@ -91,6 +102,9 @@ public class TourPoker {
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
+    /* C'est le déroulement d'un tour d'enchères. C'est une boucle do-while. Elle est breakée si tout le monde est
+    couché à l'exception d'un joueur ; si on ne le faisait pas non seulement on ferait des demandes aux joueurs pour rien
+    mais en plus on aurait un bug si tout le monde est couché (comment redistribuer les gains ?) */
     private void tour_encheres(Joueur premier_joueur) {
         Joueur joueur_fin = premier_joueur;
         Joueur joueur_actuel = premier_joueur;
@@ -114,6 +128,7 @@ public class TourPoker {
             joueur_actuel = joueur_actuel.get_joueur_suivant();
         } while (joueur_actuel != joueur_fin);
     }
+
     private void affichage_mains() {
         System.out.println("******************");
         System.out.println("**** Abattage ****");
@@ -121,6 +136,7 @@ public class TourPoker {
         Joueur.stream().forEach(joueur -> Carte.affiche(joueur.get_main(),"Main de " + joueur));
         System.out.println();
     }
+
     private void joueur_et_ex_aequos_empochent_leur_gain(Joueur gagnant) {
         int gains;
         int[] retrait_pt;
@@ -139,6 +155,15 @@ public class TourPoker {
             }
         }
     }
+
+    /*
+    Pour partager les gains selon les règles du poker, on classe tous les joueurs selon le compareTo de collection,
+    dans le sens de la descente.
+    Ensuite, on parcourt les joueurs en faisant attention à ne pas faire gagner plus que ce que le joueur a parié.
+    D'autre part, en cas d'égalité, les mises sont partagées via la méthode
+    joueur_et_ex_aequos_empochent_leur_gain.
+    La méthode de stream est implémentée dans la classe Joueur
+     */
     private void repartition_gains() {
         System.out.println("-----------");
         System.out.println("|LES GAINS|");
@@ -158,6 +183,7 @@ public class TourPoker {
         repartition_gains();
     }
 
+    /* La méthode qui met hors-jeu les joueurs qui ont tout perdu à la fin du tour */
     private void banqueroute() {
         Joueur joueur = Joueur.donneur;
         Joueur suivant;

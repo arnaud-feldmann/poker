@@ -9,8 +9,11 @@ class NombreJoueursException extends IllegalArgumentException {
 }
 
 public class Poker {
+    final static int CAVE_INITIALE = 1000;
+    final static int PETITE_BLINDE_INITIALE = 5;
     protected static InterfacePoker interface_graphique;
 
+    /* Bon, on va dire que les jetons sont immédiatement changés à la banque pour faire des jolis sets */
     protected static int[] jetons(int montant) {
         int[] res = new int[5];
         int reste = montant;
@@ -22,17 +25,20 @@ public class Poker {
         return res;
     }
 
-    private static void poker(String[] noms_joueurs,int cave_initiale,int petite_blinde) {
+    /* La méthode statique qui lance le jeu */
+    private static void poker(String[] noms_joueurs) {
+        int petite_blinde = PETITE_BLINDE_INITIALE;
         int nbtour = 0;
+
         if (noms_joueurs.length < 2 || noms_joueurs.length > 8) throw new NombreJoueursException();
         else if (noms_joueurs.length == 2) interface_graphique = new InterfacePoker(1,1,5,true);
         else interface_graphique = new InterfacePoker(2,noms_joueurs.length/2,5,true);
         interface_graphique.afficheFenetre();
-        Joueur.donneur = new Joueur(noms_joueurs[0],cave_initiale,null,
+        Joueur.donneur = new Joueur(noms_joueurs[0],CAVE_INITIALE,null,
                 new IntelligenceHumaine(noms_joueurs[0]),0);
         Joueur joueur_temp = Joueur.donneur;
-        for (int i = 1 ; i < noms_joueurs.length ; i++) joueur_temp = new Joueur(noms_joueurs[i], cave_initiale,joueur_temp,
-                new IntelligenceArtificielle(cave_initiale,noms_joueurs[i]),i);
+        for (int i = 1 ; i < noms_joueurs.length ; i++) joueur_temp = new Joueur(noms_joueurs[i], CAVE_INITIALE,joueur_temp,
+                new IntelligenceArtificielle(CAVE_INITIALE,noms_joueurs[i]),i);
         Joueur.donneur.set_joueur_suivant(joueur_temp);
         do {
             new TourPoker(petite_blinde);
@@ -47,6 +53,6 @@ public class Poker {
     }
 
     public static void main(String[] args) {
-        poker(new String[] {"Arnaud","Loup","Ludo","Elodie","Kerry","Bettie","Peppa Pig"},1000,5);
+        poker(new String[] {"Arnaud","Loup","Ludo","Elodie","Kerry","Bettie","Peppa Pig"});
     }
 }

@@ -5,6 +5,14 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+/*
+Une Intelligence est définie comme la réponse à la question "Combien voulez-vous miser ?" en fonction de la mise
+demandée, du jeu, du pot, de la main, de la cave, de la mise déjà en jeu et de la relance minimale.
+Dans la mesure où les implémentations ne sont pas statiques, il est aussi envisageable de faire un peu évoluer le
+comportement des Intelligences artificielles au cours du jeu en fonction des défaites et victoires. C'est ce qui est
+fait très sommairement avec les changements de "prudence" via le "sang-froid". Faire un peu varier le comportement des
+IA empêche de reproduire à l'infini une technique gagnante.
+ */
 public interface Intelligence {
     int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
                       ArrayList<Carte> main,int cave,int mise);
@@ -100,6 +108,17 @@ class IntelligenceHumaine implements Intelligence {
     }
 }
 
+/* Les IA sont sommaires, mais sont définies par 2 paramètres :
+-une prudence qui définit la propension à parier dangereusement
+-un sang-froid qui fait évoluer un peu la prudence en fonction des défaites et des victoires (quelqu'un qui n'a pas
+de sang-froid se déconcentre quand il perd et vice-versa).
+
+J'ai également laissé pas mal de hasard pour émuler un peu les bluffs et éviter que tout soit devinable
+- une fois sur prudence le pari est multiplié de 1 à 10 et rajoute encore si ce n'est pas assez pour suivre.
+- Une fois sur prudence au contraire le pari est divisé de 1 à 10
+D'autres part, si le résultat est inférieur à la mise précédente, le résultat n'est pas pris en compte : l'ordinateur
+va toujours checker quand ça ne lui coute rien.
+ */
 class IntelligenceArtificielle implements Intelligence {
     Random m_random;
     int m_prudence;
