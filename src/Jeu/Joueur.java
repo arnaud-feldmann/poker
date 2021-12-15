@@ -65,7 +65,7 @@ public class Joueur {
         m_mise = 0;
         if (m_numero_joueur_interface == 0) m_interface_poker.joueurSetCartesVisibles(m_numero_joueur_interface,main.get(0),main.get(1));
         else m_interface_poker.joueurSetCartesCachees(m_numero_joueur_interface);
-        m_interface_poker.joueurSetJetons(m_numero_joueur_interface,new int[] {m_cave});
+        m_interface_poker.joueurSetJetons(m_numero_joueur_interface,Poker.jetons(m_cave));
     }
     ArrayList<Carte> get_main() {
         return m_main;
@@ -116,8 +116,8 @@ public class Joueur {
         pot_pt[0] += complement;
         m_mise += complement;
         System.out.println("Sa mise est maintenant de " + m_mise + " et le pot vaut " + pot_pt[0]);
-        m_interface_poker.joueurSetJetons(m_numero_joueur_interface,new int[] {m_cave});
-        m_interface_poker.fixeMises(new int[] {pot_pt[0]});
+        m_interface_poker.joueurSetJetons(m_numero_joueur_interface,Poker.jetons(m_cave));
+        m_interface_poker.fixeMises(Poker.jetons(pot_pt[0]));
     }
     public void retirer_mise(int montant,int[] pot_pt,int[] retrait_pt) {
         if (montant < 0) throw new ComplementMiseNegatifException();
@@ -125,11 +125,11 @@ public class Joueur {
         pot_pt[0] -= montant;
         retrait_pt[0] += montant;
         m_mise -= montant;
-        m_interface_poker.fixeMises(new int[] {pot_pt[0]});
+        m_interface_poker.fixeMises(Poker.jetons(pot_pt[0]));
     }
     public void encaisser(int montant) {
         m_cave += montant;
-        m_interface_poker.joueurSetJetons(m_numero_joueur_interface,new int[] {m_cave});
+        m_interface_poker.joueurSetJetons(m_numero_joueur_interface,Poker.jetons(m_cave));
     }
     @Override
     public String toString() {

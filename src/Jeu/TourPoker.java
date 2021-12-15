@@ -3,7 +3,6 @@ package Jeu;
 import Cartes.Carte;
 import Cartes.PaquetDeCartes;
 import interfaceGraphique.InterfacePoker;
-
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -13,7 +12,7 @@ public class TourPoker {
     private int m_mise_actuelle;
     private PaquetDeCartes m_paquet;
     private ArrayList<Carte> m_jeu_pt;
-    private InterfacePoker m_interface_poker;
+    private final InterfacePoker m_interface_poker;
 
     TourPoker(int petite_blinde,InterfacePoker interface_poker) {
         m_interface_poker = interface_poker;
