@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public interface Intelligence {
     int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                             ArrayList<Carte> main,int cave,int mise);
+                      ArrayList<Carte> main,int cave,int mise);
 }
 
 class IntelligenceHumaine implements Intelligence {
@@ -23,7 +23,7 @@ class IntelligenceHumaine implements Intelligence {
         System.out.println("validez (o/n) :");
         while (true) {
             System.out.print("> ");
-                res = entree_terminal.nextLine();
+            res = entree_terminal.nextLine();
             if (res.equals("o") || res.equals("O")) break;
             else if (res.equals("n") || res.equals("N")) System.out.println("Ok j'attends un peu!");
             System.out.println("Un peu de sérieux !");
@@ -67,7 +67,7 @@ class IntelligenceHumaine implements Intelligence {
     }
     @Override
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                                    ArrayList<Carte> main,int cave,int mise) {
+                             ArrayList<Carte> main,int cave,int mise) {
         int res;
         int relance_max = cave-mise_demandee;
         CollectionDeCartes collection = new CollectionDeCartes(main,jeu_pt);
@@ -121,19 +121,23 @@ class IntelligenceArtificielle implements Intelligence {
         System.out.println(nom_joueur + " est déconcentré !!! Il a dorénavant " + m_prudence + " points de prudence.");
     }
     private void reconcentration(String nom_joueur) {
-        m_prudence--;
+        m_prudence++;
         System.out.println(nom_joueur + " se concentre !!! Il a dorénavant " + m_prudence + " points de prudence.");
     }
     private void changements_de_prudence(int cave) {
         int rnd = m_random.nextInt(21) - 10;
-        if (cave < m_cave_precedente) {
+        if (cave != m_cave_precedente) {
             if (m_sang_froid == 0) deconcentration(m_nom_joueur);
+            if (cave < m_cave_precedente) {
+                if (rnd < m_sang_froid) reconcentration(m_nom_joueur);
+                else deconcentration(m_nom_joueur);
+            }
             else {
                 if (rnd < m_sang_froid) reconcentration(m_nom_joueur);
                 else deconcentration(m_nom_joueur);
             }
+            m_cave_precedente = cave;
         }
-        m_cave_precedente = cave;
     }
     @Override
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
