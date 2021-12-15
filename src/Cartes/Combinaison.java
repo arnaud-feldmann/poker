@@ -123,6 +123,10 @@ public class Combinaison {
     void detecte_suite(int[] tab_valeurs) {
         m_niveau = null;
         Carte.Valeur val_suite = null;
+        // C'est une boucle for qui descend selon l'ordre des cartes et checke la présence de suites de cartes successives :
+        // - Si la suite est rompue, alors le compteur de cartes successives recommence à zéro
+        // - Si la suite atteint 5, pas la peine de continuer la boucle for car on a bien détecté notre suite la plus haute.
+        // donc on pose un break.
         for (int i = Carte.Valeur.As.ordinal(),cartes_successives = 0; i >=-1 ; i--) {
             if (i == -1) {
                 if (tab_valeurs[Carte.Valeur.As.ordinal()] != 0) cartes_successives++;
