@@ -128,7 +128,7 @@ public class TourPoker {
             gains = retrait_pt[0] / ex_aequos.size();
             for (Joueur ex_aequo : ex_aequos) {
                 ex_aequo.encaisser(gains);
-                System.out.println(gagnant + " encaisse " + gains + " euros !!");
+                System.out.println(ex_aequo + " encaisse " + gains + " euros !!");
             }
         }
     }
