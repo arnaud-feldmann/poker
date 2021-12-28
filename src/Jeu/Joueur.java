@@ -35,6 +35,7 @@ public class Joueur {
     private Etat m_etat;
     final private Intelligence m_intelligence;
     final private int m_numero_joueur_interface_graphique;
+
     protected static int nombre_de_joueurs() {
         int res = 1;
         for (Joueur joueur = donneur.get_joueur_suivant() ; joueur != donneur ; joueur = joueur.get_joueur_suivant()) res++;
@@ -77,8 +78,8 @@ public class Joueur {
     }
     protected void coucher() {
         m_etat = Etat.COUCHE;
-        Poker.interface_graphique.joueurPasDeCarte(m_numero_joueur_interface_graphique);
-        Poker.println(m_nom_joueur + " se couche.");
+        InterfaceUtilisateur.interface_graphique.joueurPasDeCarte(m_numero_joueur_interface_graphique);
+        InterfaceUtilisateur.println(m_nom_joueur + " se couche.");
     }
 
     protected Joueur(String nom_joueur, int cave, Joueur joueur_suivant, Intelligence intelligence,int numero_joueur_interface) {
@@ -88,7 +89,7 @@ public class Joueur {
         m_joueur_suivant = joueur_suivant;
         m_intelligence = intelligence;
         m_numero_joueur_interface_graphique = numero_joueur_interface;
-        Poker.interface_graphique.joueurSetNom(m_numero_joueur_interface_graphique,m_nom_joueur);
+        InterfaceUtilisateur.interface_graphique.joueurSetNom(m_numero_joueur_interface_graphique,m_nom_joueur);
     }
 
     protected void init_tour_joueur(PaquetDeCartes paquet) {
@@ -99,9 +100,9 @@ public class Joueur {
         m_etat = Etat.PEUT_MISER;
         m_mise = 0;
         if (m_numero_joueur_interface_graphique == 0)
-            Poker.interface_graphique.joueurSetCartesVisibles(m_numero_joueur_interface_graphique, main.get(0), main.get(1));
-        else Poker.interface_graphique.joueurSetCartesCachees(m_numero_joueur_interface_graphique);
-        Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, Poker.jetons(m_cave));
+            InterfaceUtilisateur.interface_graphique.joueurSetCartesVisibles(m_numero_joueur_interface_graphique, main.get(0), main.get(1));
+        else InterfaceUtilisateur.interface_graphique.joueurSetCartesCachees(m_numero_joueur_interface_graphique);
+        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave));
     }
 
     /*
@@ -126,7 +127,7 @@ public class Joueur {
      rester en jeu, le joueur se couche.
      */
     protected int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min) {
-        Poker.interface_graphique.raffraichit();
+        InterfaceUtilisateur.interface_graphique.raffraichit();
         return m_intelligence.demander_mise(mise_demandee,jeu_pt,pot,relance_min,m_main,m_cave,m_mise);
     }
 
@@ -136,18 +137,18 @@ public class Joueur {
         else if (complement >= m_cave) {         // Quand on suit la mise demandée est parfois supérieure à la cave
             complement = m_cave;
             m_etat = Etat.TAPIS;
-            Poker.println(m_nom_joueur + " a misé tout son tapis !");
+            InterfaceUtilisateur.println(m_nom_joueur + " a misé tout son tapis !");
         } else if (complement == 0) {
-            Poker.println(m_nom_joueur + " checke.");
+            InterfaceUtilisateur.println(m_nom_joueur + " checke.");
             return;
         }
-        Poker.println(m_nom_joueur + " ajoute " + complement + " dans le pot.");
+        InterfaceUtilisateur.println(m_nom_joueur + " ajoute " + complement + " dans le pot.");
         m_cave -= complement;
         pot_pt[0] += complement;
         m_mise += complement;
-        Poker.println("Sa mise est maintenant de " + m_mise + " et le pot vaut " + pot_pt[0]);
-        Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, Poker.jetons(m_cave));
-        Poker.interface_graphique.fixeMises(Poker.jetons(pot_pt[0]));
+        InterfaceUtilisateur.println("Sa mise est maintenant de " + m_mise + " et le pot vaut " + pot_pt[0]);
+        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave));
+        InterfaceUtilisateur.interface_graphique.fixeMises(InterfaceUtilisateur.jetons_ig(pot_pt[0]));
     }
 
     /*
@@ -160,19 +161,19 @@ public class Joueur {
         pot_pt[0] -= montant;
         retrait_pt[0] += montant;
         m_mise -= montant;
-        Poker.interface_graphique.fixeMises(Poker.jetons(pot_pt[0]));
+        InterfaceUtilisateur.interface_graphique.fixeMises(InterfaceUtilisateur.jetons_ig(pot_pt[0]));
     }
 
     /* cette méthode encaisse les gains */
     protected void encaisser(int montant) {
         m_cave += montant;
-        Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique,Poker.jetons(m_cave));
+        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique,InterfaceUtilisateur.jetons_ig(m_cave));
     }
 
     /* Cette méthode révèle la main à la fin d'un tour */
     protected void affiche_main() {
         Carte.affiche(m_main,"Main de " + m_nom_joueur);
-        Poker.interface_graphique.joueurSetCartesVisibles(m_numero_joueur_interface_graphique,
+        InterfaceUtilisateur.interface_graphique.joueurSetCartesVisibles(m_numero_joueur_interface_graphique,
                 m_main.get(0),m_main.get(1));
     }
 

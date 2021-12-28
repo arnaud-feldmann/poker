@@ -49,11 +49,11 @@ public class TourPoker {
 
         joueur_petite_blinde.ajouter_mise(petite_blinde, m_pot_pt);
         joueur_grosse_blinde.ajouter_mise(grosse_blinde, m_pot_pt);
-        Poker.println(Joueur.donneur + " est le donneur !!");
-        Poker.println(joueur_petite_blinde + " pose la petite blinde (" + petite_blinde + " euros) !!");
-        Poker.println(joueur_grosse_blinde + " pose la grosse blinde (" + grosse_blinde + " euros) !!");
-        Poker.interface_graphique.fixeFlop(new Carte[0]);
-        Poker.interface_graphique.raffraichit();
+        InterfaceUtilisateur.println(Joueur.donneur + " est le donneur !!");
+        InterfaceUtilisateur.println(joueur_petite_blinde + " pose la petite blinde (" + petite_blinde + " euros) !!");
+        InterfaceUtilisateur.println(joueur_grosse_blinde + " pose la grosse blinde (" + grosse_blinde + " euros) !!");
+        InterfaceUtilisateur.interface_graphique.fixeFlop(new Carte[0]);
+        InterfaceUtilisateur.interface_graphique.raffraichit();
     }
 
     private void deroulement_du_tour() {
@@ -61,15 +61,15 @@ public class TourPoker {
         tour_flop();
         tour_turn();
         tour_riviere();
-        if (Poker.test_mode) return;
+        if (InterfaceUtilisateur.test_mode) return;
         abattage();
         banqueroute();
     }
 
     private void tour_pre_flop() {
-        Poker.println("******************");
-        Poker.println("**** Pre-flop ****");
-        Poker.println("******************");
+        InterfaceUtilisateur.println("******************");
+        InterfaceUtilisateur.println("**** Pre-flop ****");
+        InterfaceUtilisateur.println("******************");
         tour_encheres(Joueur.donneur.get_joueur_suivant().get_joueur_suivant().get_joueur_suivant());
     }
 
@@ -84,28 +84,28 @@ public class TourPoker {
         ajouter_une_carte_en_jeu();
         ajouter_une_carte_en_jeu();
         ajouter_une_carte_en_jeu();
-        Poker.println("******************");
-        Poker.println("****** Flop ******");
-        Poker.println("******************");
-        Poker.interface_graphique.fixeFlop(new Carte[] {m_jeu_pt.get(0),m_jeu_pt.get(1),m_jeu_pt.get(2)});
+        InterfaceUtilisateur.println("******************");
+        InterfaceUtilisateur.println("****** Flop ******");
+        InterfaceUtilisateur.println("******************");
+        InterfaceUtilisateur.interface_graphique.fixeFlop(new Carte[] {m_jeu_pt.get(0),m_jeu_pt.get(1),m_jeu_pt.get(2)});
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
     private void tour_turn() {
         ajouter_une_carte_en_jeu();
-        Poker.println("******************");
-        Poker.println("****** Turn ******");
-        Poker.println("******************");
-        Poker.interface_graphique.ajouteCarteFlop(m_jeu_pt.get(3));
+        InterfaceUtilisateur.println("******************");
+        InterfaceUtilisateur.println("****** Turn ******");
+        InterfaceUtilisateur.println("******************");
+        InterfaceUtilisateur.interface_graphique.ajouteCarteFlop(m_jeu_pt.get(3));
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
     private void tour_riviere() {
         ajouter_une_carte_en_jeu();
-        Poker.println("******************");
-        Poker.println("**** Rivière *****");
-        Poker.println("******************");
-        Poker.interface_graphique.ajouteCarteFlop(m_jeu_pt.get(4));
+        InterfaceUtilisateur.println("******************");
+        InterfaceUtilisateur.println("**** Rivière *****");
+        InterfaceUtilisateur.println("******************");
+        InterfaceUtilisateur.interface_graphique.ajouteCarteFlop(m_jeu_pt.get(4));
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
@@ -113,7 +113,7 @@ public class TourPoker {
     couché à l'exception d'un joueur ; si on ne le faisait pas non seulement on ferait des demandes aux joueurs pour rien
     mais en plus on aurait un bug si tout le monde est couché (comment redistribuer les gains ?) */
     private void tour_encheres(Joueur premier_joueur) {
-        if (Poker.test_mode) return;
+        if (InterfaceUtilisateur.test_mode) return;
         Joueur joueur_fin = premier_joueur;
         Joueur joueur_actuel = premier_joueur;
         int mise;
@@ -138,11 +138,11 @@ public class TourPoker {
     }
 
     private void affichage_mains() {
-        Poker.println("******************");
-        Poker.println("**** Abattage ****");
-        Poker.println("******************");
+        InterfaceUtilisateur.println("******************");
+        InterfaceUtilisateur.println("**** Abattage ****");
+        InterfaceUtilisateur.println("******************");
         Joueur.stream().filter(Joueur::pas_couche).forEach(Joueur::affiche_main);
-        Poker.println();
+        InterfaceUtilisateur.println();
     }
 
     private void joueur_et_ex_aequos_empochent_leur_gain(Joueur gagnant) {
@@ -159,7 +159,7 @@ public class TourPoker {
             gains = retrait_pt[0] / ex_aequos.size();
             for (Joueur ex_aequo : ex_aequos) {
                 ex_aequo.encaisser(gains);
-                Poker.println(ex_aequo + " encaisse " + gains + " euros !!");
+                InterfaceUtilisateur.println(ex_aequo + " encaisse " + gains + " euros !!");
             }
         }
     }
@@ -176,10 +176,10 @@ public class TourPoker {
     protected void repartition_gains() {
         String res;
 
-        Poker.println("-----------");
-        Poker.println("|LES GAINS|");
-        Poker.println("-----------");
-        Poker.println();
+        InterfaceUtilisateur.println("-----------");
+        InterfaceUtilisateur.println("|LES GAINS|");
+        InterfaceUtilisateur.println("-----------");
+        InterfaceUtilisateur.println();
 
         Joueur
                 .stream()
@@ -187,16 +187,16 @@ public class TourPoker {
                 .sorted((x, y) -> y.get_collection(m_jeu_pt).compareTo(x.get_collection(m_jeu_pt)))
                 .forEach(this::joueur_et_ex_aequos_empochent_leur_gain);
         Joueur.stream().
-                forEach(joueur -> Poker.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
-        Poker.interface_graphique.raffraichit();
-        Poker.println("validez (o/n) :");
-        if (!Poker.test_mode) {
+                forEach(joueur -> InterfaceUtilisateur.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
+        InterfaceUtilisateur.interface_graphique.raffraichit();
+        InterfaceUtilisateur.println("validez (o/n) :");
+        if (!InterfaceUtilisateur.test_mode) {
             while (true) {
                 System.out.print("> ");
-                res = Poker.entree_terminal.nextLine();
+                res = InterfaceUtilisateur.nextLine();
                 if (res.equals("o") || res.equals("O")) break;
-                else if (res.equals("n") || res.equals("N")) Poker.println("Ok j'attends un peu!");
-                else Poker.println("Un peu de sérieux !");
+                else if (res.equals("n") || res.equals("N")) InterfaceUtilisateur.println("Ok j'attends un peu!");
+                else InterfaceUtilisateur.println("Un peu de sérieux !");
             }
         }
     }
@@ -213,9 +213,9 @@ public class TourPoker {
         while (true) {
             suivant = joueur.get_joueur_suivant();
             if (suivant.get_cave() == 0) {
-                Poker.println(suivant + " quitte le jeu !");
-                Poker.interface_graphique.joueurPasDeCarte(suivant.get_numero_joueur_interface());
-                Poker.interface_graphique.joueurSetAnnotation(suivant.get_numero_joueur_interface(),"(hors-jeu)");
+                InterfaceUtilisateur.println(suivant + " quitte le jeu !");
+                InterfaceUtilisateur.interface_graphique.joueurPasDeCarte(suivant.get_numero_joueur_interface());
+                InterfaceUtilisateur.interface_graphique.joueurSetAnnotation(suivant.get_numero_joueur_interface(),"(hors-jeu)");
                 joueur.set_joueur_suivant(suivant.get_joueur_suivant());
                 if (suivant == Joueur.donneur) Joueur.donneur = suivant.get_joueur_suivant();
             }
@@ -229,7 +229,7 @@ public class TourPoker {
     /* Accesseur de test */
 
     public int[] get_pot_pt() {
-        if (!Poker.test_mode) throw new MethodeDeTestException();
+        if (!InterfaceUtilisateur.test_mode) throw new MethodeDeTestException();
         return m_pot_pt;
     }
 }

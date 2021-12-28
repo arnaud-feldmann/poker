@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TourPokerTest {
     public static TourPoker init_test() {
-        Poker.test_mode = true;
+        InterfaceUtilisateur.test_mode = true;
         String[] noms_joueurs = new String[] {"Arnaud","Loup","Ludo","Elodie","Kerry","Bettie","Peppa Pig"};
         Poker.init(noms_joueurs,1000);
         return new TourPoker(0);
@@ -68,7 +68,7 @@ class TourPokerTest {
         assertTrue(Joueur.inc_donneur());
 
         // Fermeture interface graphique
-        Poker.interface_graphique.ferme();
+        InterfaceUtilisateur.interface_graphique.ferme();
     }
     @Test
     void tapis_repartition_et_banqueroute() {
@@ -129,7 +129,7 @@ class TourPokerTest {
         assertTrue(Joueur.inc_donneur());
 
         // Fermeture interface graphique
-        Poker.interface_graphique.ferme();
+        InterfaceUtilisateur.interface_graphique.ferme();
     }
 
     @Test
@@ -189,7 +189,7 @@ class TourPokerTest {
         assertTrue(Joueur.inc_donneur());
 
         // Fermeture interface graphique
-        Poker.interface_graphique.ferme();
+        InterfaceUtilisateur.interface_graphique.ferme();
     }
 
     @Test
@@ -257,7 +257,7 @@ class TourPokerTest {
         assertTrue(Joueur.inc_donneur());
 
         // Fermeture interface graphique
-        Poker.interface_graphique.ferme();
+        InterfaceUtilisateur.interface_graphique.ferme();
     }
 
     @Test
@@ -311,6 +311,6 @@ class TourPokerTest {
         assertFalse(Joueur.inc_donneur());
 
         // Fermeture interface graphique
-        Poker.interface_graphique.ferme();
+        InterfaceUtilisateur.interface_graphique.ferme();
     }
 }

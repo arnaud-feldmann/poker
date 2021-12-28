@@ -12,35 +12,12 @@ class NombreJoueursException extends IllegalArgumentException {
 public class Poker {
     final private static int CAVE_INITIALE = 1000;
     final private static int PETITE_BLINDE_INITIALE = 5;
-    protected static InterfacePoker interface_graphique;
-    protected static boolean test_mode = false;
-    final protected  static Scanner entree_terminal = new Scanner(System.in);
 
-    protected static void println(String message) {
-        if (Poker.test_mode) return;
-        System.out.println(message);
-    }
-    protected static void println() {
-        if (Poker.test_mode) return;
-        System.out.println();
-    }
-
-    /* Bon, on va dire que les jetons sont immédiatement changés à la banque pour faire des jolis sets */
-    protected static int[] jetons(int montant) {
-        int[] res = new int[5];
-        int reste = montant;
-        final int[] jetons = {500,100,25,5,1};
-        for (int i = 0 ; i<jetons.length ; i++) {
-            res[i] = reste/jetons[i];
-            reste %= jetons[i];
-        }
-        return res;
-    }
     protected static void init(String[] noms_joueurs,int CAVE_INITIALE) {
         if (noms_joueurs.length < 2 || noms_joueurs.length > 8) throw new NombreJoueursException();
-        else if (noms_joueurs.length == 2) interface_graphique = new InterfacePoker(1,1,5,true);
-        else interface_graphique = new InterfacePoker(2,noms_joueurs.length/2,5,true);
-        if (!Poker.test_mode) interface_graphique.afficheFenetre();
+        else if (noms_joueurs.length == 2) InterfaceUtilisateur.interface_graphique = new InterfacePoker(1,1,5,true);
+        else InterfaceUtilisateur.interface_graphique = new InterfacePoker(2,noms_joueurs.length/2,5,true);
+        if (!InterfaceUtilisateur.test_mode) InterfaceUtilisateur.interface_graphique.afficheFenetre();
         Joueur.donneur = new Joueur(noms_joueurs[0],CAVE_INITIALE,null,
                 new IntelligenceHumaine(noms_joueurs[0]),0);
         Joueur joueur_temp = Joueur.donneur;
@@ -64,7 +41,7 @@ public class Poker {
             }
         } while (Joueur.inc_donneur());
         System.out.println(Joueur.donneur + " a gagné la partie");
-        interface_graphique.ferme();
+        InterfaceUtilisateur.interface_graphique.ferme();
     }
 
     public static void main(String[] args) {

@@ -23,42 +23,42 @@ class IntelligenceHumaine implements Intelligence {
         m_nom_joueur = nom_joueur;
     }
     private void prompt_tour_joueur() {
-        Poker.println("----------------------------------------------");
-        Poker.println("C'est le tour du joueur " + m_nom_joueur + " !");
+        InterfaceUtilisateur.println("----------------------------------------------");
+        InterfaceUtilisateur.println("C'est le tour du joueur " + m_nom_joueur + " !");
     }
     private static int prompt_relance(int relance_min,int relance_max) {
         int res;
-        Poker.println("De combien voulez-vous relancer (de " +
+        InterfaceUtilisateur.println("De combien voulez-vous relancer (de " +
                 relance_min + " à " + relance_max + ") ?");
         while (true) {
             System.out.print("> ");
             try {
-                res = Integer.parseInt(Poker.entree_terminal.nextLine());
+                res = Integer.parseInt(InterfaceUtilisateur.nextLine());
             } catch (NumberFormatException e) {
                 res = -1;
             }
             if (res >= relance_min && res <= relance_max) break;
-            Poker.println("Un peu de sérieux !");
+            InterfaceUtilisateur.println("Un peu de sérieux !");
         }
         return res;
     }
     private static int prompt_action(boolean peut_relancer,boolean check) {
         int res;
-        Poker.println("Que voulez-vous faire ?");
-        Poker.println("1) Me coucher");
-        Poker.println("2) TAPIS !");
-        if (check) Poker.println("3) Checker");
-        else Poker.println("3) Suivre");
-        if (peut_relancer) Poker.println("4) Relancer");
+        InterfaceUtilisateur.println("Que voulez-vous faire ?");
+        InterfaceUtilisateur.println("1) Me coucher");
+        InterfaceUtilisateur.println("2) TAPIS !");
+        if (check) InterfaceUtilisateur.println("3) Checker");
+        else InterfaceUtilisateur.println("3) Suivre");
+        if (peut_relancer) InterfaceUtilisateur.println("4) Relancer");
         while (true) {
             System.out.print("> ");
             try {
-                res = Integer.parseInt(Poker.entree_terminal.nextLine());
+                res = Integer.parseInt(InterfaceUtilisateur.nextLine());
             } catch (NumberFormatException e) {
                 res = -1;
             }
             if (res >= 1 && res < 4 + (peut_relancer?1:0)) break;
-            Poker.println("Un peu de sérieux !");
+            InterfaceUtilisateur.println("Un peu de sérieux !");
         }
         return res;
     }
@@ -69,12 +69,12 @@ class IntelligenceHumaine implements Intelligence {
         int relance_max = cave-mise_demandee;
         CollectionDeCartes collection = new CollectionDeCartes(main,jeu_pt);
         prompt_tour_joueur();
-        Poker.println("Votre mise actuelle est de " + mise + ".");
-        Poker.println("Il vous reste " + cave + " dans votre cave.");
-        Poker.println("Le pot actuel est de " + pot);
-        Poker.println("La mise actuelle demandée en jeu est de " + mise_demandee + ".");
+        InterfaceUtilisateur.println("Votre mise actuelle est de " + mise + ".");
+        InterfaceUtilisateur.println("Il vous reste " + cave + " dans votre cave.");
+        InterfaceUtilisateur.println("Le pot actuel est de " + pot);
+        InterfaceUtilisateur.println("La mise actuelle demandée en jeu est de " + mise_demandee + ".");
         collection.afficher();
-        Poker.println("Votre probabilité indicative de l'emporter avec cette main est de " +
+        InterfaceUtilisateur.println("Votre probabilité indicative de l'emporter avec cette main est de " +
                 Math.round(collection.probaVict(Joueur.nombre_de_joueurs()-1) * 100) + " %");
         int action = prompt_action(
                 relance_min < relance_max,
@@ -122,15 +122,15 @@ class IntelligenceArtificielle implements Intelligence {
         m_cave_initiale = cave_initiale;
         m_cave_precedente = cave_initiale;
         m_nom_joueur = nom_joueur;
-        Poker.println(nom_joueur + " a " + m_prudence + " points de prudence et " + m_sang_froid + " de sang-froid.");
+        InterfaceUtilisateur.println(nom_joueur + " a " + m_prudence + " points de prudence et " + m_sang_froid + " de sang-froid.");
     }
     private void deconcentration(String nom_joueur) {
         if (m_prudence >= 2) m_prudence--;
-        Poker.println(nom_joueur + " est déconcentré !!! Il a dorénavant " + m_prudence + " points de prudence.");
+        InterfaceUtilisateur.println(nom_joueur + " est déconcentré !!! Il a dorénavant " + m_prudence + " points de prudence.");
     }
     private void reconcentration(String nom_joueur) {
         if (m_prudence < 20) m_prudence++;
-        Poker.println(nom_joueur + " se concentre !!! Il a dorénavant " + m_prudence + " points de prudence.");
+        InterfaceUtilisateur.println(nom_joueur + " se concentre !!! Il a dorénavant " + m_prudence + " points de prudence.");
     }
     private void changements_de_prudence(int cave) {
         int rnd = m_random.nextInt(21) - 10;

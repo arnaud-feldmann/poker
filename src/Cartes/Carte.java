@@ -1,5 +1,7 @@
 package Cartes;
 
+import Jeu.InterfaceUtilisateur;
+import Jeu.Poker;
 import interfaceGraphique.IGPokerable;
 
 import java.util.ArrayList;
@@ -53,8 +55,8 @@ public class Carte implements IGPokerable {
             System.out.println(nom_jeu + " : vide");
             return;
         }
-        System.out.println(nom_jeu + " : ");
-        cartes.forEach(System.out::println);
+        InterfaceUtilisateur.println(nom_jeu + " : ");
+        cartes.forEach(InterfaceUtilisateur::println);
     }
 
     @Override
