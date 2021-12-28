@@ -61,7 +61,7 @@ public class TourPoker {
         tour_flop();
         tour_turn();
         tour_riviere();
-        if (InterfaceUtilisateur.test_mode) return;
+        if (InterfaceUtilisateur.test_tour_manuel) return;
         abattage();
         banqueroute();
     }
@@ -113,7 +113,7 @@ public class TourPoker {
     couché à l'exception d'un joueur ; si on ne le faisait pas non seulement on ferait des demandes aux joueurs pour rien
     mais en plus on aurait un bug si tout le monde est couché (comment redistribuer les gains ?) */
     private void tour_encheres(Joueur premier_joueur) {
-        if (InterfaceUtilisateur.test_mode) return;
+        if (InterfaceUtilisateur.test_tour_manuel) return;
         Joueur joueur_fin = premier_joueur;
         Joueur joueur_actuel = premier_joueur;
         int mise;
@@ -190,7 +190,7 @@ public class TourPoker {
                 forEach(joueur -> InterfaceUtilisateur.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
         InterfaceUtilisateur.interface_graphique.raffraichit();
         InterfaceUtilisateur.println("validez (o/n) :");
-        if (!InterfaceUtilisateur.test_mode) {
+        if (!InterfaceUtilisateur.test_tour_manuel) {
             while (true) {
                 System.out.print("> ");
                 res = InterfaceUtilisateur.nextLine();
@@ -229,7 +229,7 @@ public class TourPoker {
     /* Accesseur de test */
 
     public int[] get_pot_pt() {
-        if (!InterfaceUtilisateur.test_mode) throw new MethodeDeTestException();
+        if (!InterfaceUtilisateur.test_tour_manuel) throw new MethodeDeTestException();
         return m_pot_pt;
     }
 }

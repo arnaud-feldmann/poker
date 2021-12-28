@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TourPokerTest {
     public static TourPoker init_test() {
-        InterfaceUtilisateur.test_mode = true;
+        InterfaceUtilisateur.test_tour_manuel = true;
         String[] noms_joueurs = new String[] {"Arnaud","Loup","Ludo","Elodie","Kerry","Bettie","Peppa Pig"};
         Poker.init(noms_joueurs,1000);
         return new TourPoker(0);

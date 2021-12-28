@@ -109,16 +109,18 @@ D'autres part, si le résultat est inférieur à la mise précédente, le résul
 va toujours checker quand ça ne lui coute rien.
  */
 class IntelligenceArtificielle implements Intelligence {
-    Random m_random;
+    static Random random = new Random();
     int m_prudence;
     int m_sang_froid;
     int m_cave_initiale;
     int m_cave_precedente;
     String m_nom_joueur;
+    protected static void set_seed(Long seed) {
+        random.setSeed(seed);
+    }
     IntelligenceArtificielle(int cave_initiale,String nom_joueur) {
-        m_random = new Random();
-        m_prudence = m_random.nextInt(16) + 10;
-        m_sang_froid = m_random.nextInt(21) - 10;
+        m_prudence = random.nextInt(16) + 10;
+        m_sang_froid = random.nextInt(21) - 10;
         m_cave_initiale = cave_initiale;
         m_cave_precedente = cave_initiale;
         m_nom_joueur = nom_joueur;
@@ -133,7 +135,7 @@ class IntelligenceArtificielle implements Intelligence {
         InterfaceUtilisateur.println(nom_joueur + " se concentre !!! Il a dorénavant " + m_prudence + " points de prudence.");
     }
     private void changements_de_prudence(int cave) {
-        int rnd = m_random.nextInt(21) - 10;
+        int rnd = random.nextInt(21) - 10;
         if (cave != m_cave_precedente) {
             if (m_sang_froid == 0) deconcentration(m_nom_joueur);
             else if (cave < m_cave_precedente) {
@@ -152,12 +154,12 @@ class IntelligenceArtificielle implements Intelligence {
                              ArrayList<Carte> main,int cave,int mise_precedente) {
         changements_de_prudence(cave+ mise_precedente);
         double proba = new CollectionDeCartes(main,jeu_pt).probaVict(Joueur.nombre_de_joueurs()-1);
-        int res = (int) (proba*(double) m_cave_initiale/(double) (m_prudence+m_random.nextInt(5)));
-        if (m_random.nextInt(m_prudence) == 0) {
-            res *= m_random.nextInt(10)+1;
+        int res = (int) (proba*(double) m_cave_initiale/(double) (m_prudence+random.nextInt(5)));
+        if (random.nextInt(m_prudence) == 0) {
+            res *= random.nextInt(10)+1;
             if (res < mise_demandee) res = mise_demandee;
         }
-        if (m_random.nextInt(m_prudence) == 0) res /= m_random.nextInt(10)+1;
+        if (random.nextInt(m_prudence) == 0) res /= random.nextInt(10)+1;
         if (res < mise_precedente) res = mise_precedente; // On checke toujours par défaut
         return res;
     }
