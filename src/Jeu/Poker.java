@@ -1,7 +1,6 @@
 package Jeu;
 
 import interfaceGraphique.InterfacePoker;
-
 import java.util.Scanner;
 
 class NombreJoueursException extends IllegalArgumentException {
@@ -14,7 +13,17 @@ public class Poker {
     final private static int CAVE_INITIALE = 1000;
     final private static int PETITE_BLINDE_INITIALE = 5;
     protected static InterfacePoker interface_graphique;
+    protected static boolean test_mode = false;
     final protected  static Scanner entree_terminal = new Scanner(System.in);
+
+    protected static void println(String message) {
+        if (Poker.test_mode) return;
+        System.out.println(message);
+    }
+    protected static void println() {
+        if (Poker.test_mode) return;
+        System.out.println();
+    }
 
     /* Bon, on va dire que les jetons sont immédiatement changés à la banque pour faire des jolis sets */
     protected static int[] jetons(int montant) {
@@ -27,22 +36,25 @@ public class Poker {
         }
         return res;
     }
-
-    /* La méthode statique qui lance le jeu */
-    private static void poker(String[] noms_joueurs) {
-        int petite_blinde = PETITE_BLINDE_INITIALE;
-        int nbtour = 0;
-
+    protected static void init(String[] noms_joueurs,int CAVE_INITIALE) {
         if (noms_joueurs.length < 2 || noms_joueurs.length > 8) throw new NombreJoueursException();
         else if (noms_joueurs.length == 2) interface_graphique = new InterfacePoker(1,1,5,true);
         else interface_graphique = new InterfacePoker(2,noms_joueurs.length/2,5,true);
-        interface_graphique.afficheFenetre();
+        if (!Poker.test_mode) interface_graphique.afficheFenetre();
         Joueur.donneur = new Joueur(noms_joueurs[0],CAVE_INITIALE,null,
                 new IntelligenceHumaine(noms_joueurs[0]),0);
         Joueur joueur_temp = Joueur.donneur;
         for (int i = 1 ; i < noms_joueurs.length ; i++) joueur_temp = new Joueur(noms_joueurs[i], CAVE_INITIALE,joueur_temp,
                 new IntelligenceArtificielle(CAVE_INITIALE,noms_joueurs[i]),i);
         Joueur.donneur.set_joueur_suivant(joueur_temp);
+    }
+    /* La méthode statique qui lance le jeu */
+    private static void poker(String[] noms_joueurs) {
+        int petite_blinde = PETITE_BLINDE_INITIALE;
+        int nbtour = 0;
+
+        init(noms_joueurs,CAVE_INITIALE);
+
         do {
             new TourPoker(petite_blinde);
             nbtour++;

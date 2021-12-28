@@ -5,6 +5,12 @@ import Cartes.PaquetDeCartes;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+class MethodeDeTestException extends IllegalStateException {
+    MethodeDeTestException() {
+        super("Cette méthode ne peut être appelée qu'en mode de test.");
+    }
+}
+
 public class TourPoker {
     /*
     Cette classe représente le déroulement d'un tour de Poker.
@@ -21,16 +27,17 @@ public class TourPoker {
     private ArrayList<Carte> m_jeu_pt;
 
     protected TourPoker(int petite_blinde) {
-        init(petite_blinde);
+        init_tour(petite_blinde);
         deroulement_du_tour();
     }
 
     /*
     Quelques initialisations à faire chaque tour
      */
-    private void init(int petite_blinde) {
-        Joueur joueur_temp;
+    private void init_tour(int petite_blinde) {
         final int grosse_blinde = 2 * petite_blinde;
+        final Joueur joueur_petite_blinde = Joueur.donneur.get_joueur_suivant();
+        final Joueur joueur_grosse_blinde = joueur_petite_blinde.get_joueur_suivant();
         m_pot_pt = new int[]{0};
         m_mise_actuelle = grosse_blinde;
         m_relance_minimale = grosse_blinde;
@@ -38,14 +45,13 @@ public class TourPoker {
         m_paquet = new PaquetDeCartes();
         m_paquet.melanger_cartes();
         m_paquet.bruler_une_carte();
-        Joueur.stream().forEach(joueur -> joueur.init_joueur(m_paquet));
-        System.out.println(Joueur.donneur + " est le donneur !!");
-        joueur_temp = Joueur.donneur.get_joueur_suivant();
-        joueur_temp.ajouter_mise(petite_blinde, m_pot_pt);
-        System.out.println(joueur_temp + " pose la petite blinde (" + petite_blinde + " euros) !!");
-        joueur_temp = joueur_temp.get_joueur_suivant();
-        joueur_temp.ajouter_mise(grosse_blinde, m_pot_pt);
-        System.out.println(joueur_temp + " pose la grosse blinde (" + grosse_blinde + " euros) !!");
+        Joueur.stream().forEach(joueur -> joueur.init_tour_joueur(m_paquet));
+
+        joueur_petite_blinde.ajouter_mise(petite_blinde, m_pot_pt);
+        joueur_grosse_blinde.ajouter_mise(grosse_blinde, m_pot_pt);
+        Poker.println(Joueur.donneur + " est le donneur !!");
+        Poker.println(joueur_petite_blinde + " pose la petite blinde (" + petite_blinde + " euros) !!");
+        Poker.println(joueur_grosse_blinde + " pose la grosse blinde (" + grosse_blinde + " euros) !!");
         Poker.interface_graphique.fixeFlop(new Carte[0]);
         Poker.interface_graphique.raffraichit();
     }
@@ -55,18 +61,19 @@ public class TourPoker {
         tour_flop();
         tour_turn();
         tour_riviere();
+        if (Poker.test_mode) return;
         abattage();
         banqueroute();
     }
 
     private void tour_pre_flop() {
-        System.out.println("******************");
-        System.out.println("**** Pre-flop ****");
-        System.out.println("******************");
+        Poker.println("******************");
+        Poker.println("**** Pre-flop ****");
+        Poker.println("******************");
         tour_encheres(Joueur.donneur.get_joueur_suivant().get_joueur_suivant().get_joueur_suivant());
     }
 
-    private void ajouter_une_carte_en_jeu() {
+    protected void ajouter_une_carte_en_jeu() {
         Carte carte;
         m_paquet.bruler_une_carte();
         carte = m_paquet.piocher_une_carte();
@@ -74,30 +81,30 @@ public class TourPoker {
     }
 
     private void tour_flop() {
-        System.out.println("******************");
-        System.out.println("****** Flop ******");
-        System.out.println("******************");
         ajouter_une_carte_en_jeu();
         ajouter_une_carte_en_jeu();
         ajouter_une_carte_en_jeu();
+        Poker.println("******************");
+        Poker.println("****** Flop ******");
+        Poker.println("******************");
         Poker.interface_graphique.fixeFlop(new Carte[] {m_jeu_pt.get(0),m_jeu_pt.get(1),m_jeu_pt.get(2)});
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
     private void tour_turn() {
-        System.out.println("******************");
-        System.out.println("****** Turn ******");
-        System.out.println("******************");
         ajouter_une_carte_en_jeu();
+        Poker.println("******************");
+        Poker.println("****** Turn ******");
+        Poker.println("******************");
         Poker.interface_graphique.ajouteCarteFlop(m_jeu_pt.get(3));
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
     private void tour_riviere() {
-        System.out.println("******************");
-        System.out.println("**** Rivière *****");
-        System.out.println("******************");
         ajouter_une_carte_en_jeu();
+        Poker.println("******************");
+        Poker.println("**** Rivière *****");
+        Poker.println("******************");
         Poker.interface_graphique.ajouteCarteFlop(m_jeu_pt.get(4));
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
@@ -106,6 +113,7 @@ public class TourPoker {
     couché à l'exception d'un joueur ; si on ne le faisait pas non seulement on ferait des demandes aux joueurs pour rien
     mais en plus on aurait un bug si tout le monde est couché (comment redistribuer les gains ?) */
     private void tour_encheres(Joueur premier_joueur) {
+        if (Poker.test_mode) return;
         Joueur joueur_fin = premier_joueur;
         Joueur joueur_actuel = premier_joueur;
         int mise;
@@ -130,11 +138,11 @@ public class TourPoker {
     }
 
     private void affichage_mains() {
-        System.out.println("******************");
-        System.out.println("**** Abattage ****");
-        System.out.println("******************");
+        Poker.println("******************");
+        Poker.println("**** Abattage ****");
+        Poker.println("******************");
         Joueur.stream().filter(Joueur::pas_couche).forEach(Joueur::affiche_main);
-        System.out.println();
+        Poker.println();
     }
 
     private void joueur_et_ex_aequos_empochent_leur_gain(Joueur gagnant) {
@@ -151,7 +159,7 @@ public class TourPoker {
             gains = retrait_pt[0] / ex_aequos.size();
             for (Joueur ex_aequo : ex_aequos) {
                 ex_aequo.encaisser(gains);
-                System.out.println(ex_aequo + " encaisse " + gains + " euros !!");
+                Poker.println(ex_aequo + " encaisse " + gains + " euros !!");
             }
         }
     }
@@ -164,13 +172,14 @@ public class TourPoker {
     joueur_et_ex_aequos_empochent_leur_gain.
     La méthode de stream est implémentée dans la classe Joueur
      */
-    private void repartition_gains() {
+
+    protected void repartition_gains() {
         String res;
 
-        System.out.println("-----------");
-        System.out.println("|LES GAINS|");
-        System.out.println("-----------");
-        System.out.println();
+        Poker.println("-----------");
+        Poker.println("|LES GAINS|");
+        Poker.println("-----------");
+        Poker.println();
 
         Joueur
                 .stream()
@@ -178,30 +187,33 @@ public class TourPoker {
                 .sorted((x, y) -> y.get_collection(m_jeu_pt).compareTo(x.get_collection(m_jeu_pt)))
                 .forEach(this::joueur_et_ex_aequos_empochent_leur_gain);
         Joueur.stream().
-                forEach(joueur -> System.out.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
+                forEach(joueur -> Poker.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
         Poker.interface_graphique.raffraichit();
-        System.out.println("validez (o/n) :");
-        while (true) {
-            System.out.print("> ");
-            res = Poker.entree_terminal.nextLine();
-            if (res.equals("o") || res.equals("O")) break;
-            else if (res.equals("n") || res.equals("N")) System.out.println("Ok j'attends un peu!");
-            else System.out.println("Un peu de sérieux !");
+        Poker.println("validez (o/n) :");
+        if (!Poker.test_mode) {
+            while (true) {
+                System.out.print("> ");
+                res = Poker.entree_terminal.nextLine();
+                if (res.equals("o") || res.equals("O")) break;
+                else if (res.equals("n") || res.equals("N")) Poker.println("Ok j'attends un peu!");
+                else Poker.println("Un peu de sérieux !");
+            }
         }
     }
+
     private void abattage() {
         affichage_mains();
         repartition_gains();
     }
 
     /* La méthode qui met hors-jeu les joueurs qui ont tout perdu à la fin du tour */
-    private void banqueroute() {
+    protected void banqueroute() {
         Joueur joueur = Joueur.donneur;
         Joueur suivant;
         while (true) {
             suivant = joueur.get_joueur_suivant();
             if (suivant.get_cave() == 0) {
-                System.out.println(suivant + " quitte le jeu !");
+                Poker.println(suivant + " quitte le jeu !");
                 Poker.interface_graphique.joueurPasDeCarte(suivant.get_numero_joueur_interface());
                 Poker.interface_graphique.joueurSetAnnotation(suivant.get_numero_joueur_interface(),"(hors-jeu)");
                 joueur.set_joueur_suivant(suivant.get_joueur_suivant());
@@ -213,4 +225,12 @@ public class TourPoker {
             }
         }
     }
+
+    /* Accesseur de test */
+
+    public int[] get_pot_pt() {
+        if (!Poker.test_mode) throw new MethodeDeTestException();
+        return m_pot_pt;
+    }
 }
+

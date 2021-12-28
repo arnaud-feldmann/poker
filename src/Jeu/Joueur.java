@@ -78,7 +78,7 @@ public class Joueur {
     protected void coucher() {
         m_etat = Etat.COUCHE;
         Poker.interface_graphique.joueurPasDeCarte(m_numero_joueur_interface_graphique);
-        System.out.println(m_nom_joueur + " se couche.");
+        Poker.println(m_nom_joueur + " se couche.");
     }
 
     protected Joueur(String nom_joueur, int cave, Joueur joueur_suivant, Intelligence intelligence,int numero_joueur_interface) {
@@ -91,16 +91,17 @@ public class Joueur {
         Poker.interface_graphique.joueurSetNom(m_numero_joueur_interface_graphique,m_nom_joueur);
     }
 
-    protected void init_joueur(PaquetDeCartes paquet) {
+    protected void init_tour_joueur(PaquetDeCartes paquet) {
         ArrayList<Carte> main = new ArrayList<>();
         main.add(paquet.piocher_une_carte());
         main.add(paquet.piocher_une_carte());
         m_main = new ArrayList<>(main);
         m_etat = Etat.PEUT_MISER;
         m_mise = 0;
-        if (m_numero_joueur_interface_graphique == 0) Poker.interface_graphique.joueurSetCartesVisibles(m_numero_joueur_interface_graphique,main.get(0),main.get(1));
+        if (m_numero_joueur_interface_graphique == 0)
+            Poker.interface_graphique.joueurSetCartesVisibles(m_numero_joueur_interface_graphique, main.get(0), main.get(1));
         else Poker.interface_graphique.joueurSetCartesCachees(m_numero_joueur_interface_graphique);
-        Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique,Poker.jetons(m_cave));
+        Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, Poker.jetons(m_cave));
     }
 
     /*
@@ -134,19 +135,18 @@ public class Joueur {
         if (complement < 0) throw new ComplementMiseNegatifException();
         else if (complement >= m_cave) {         // Quand on suit la mise demandée est parfois supérieure à la cave
             complement = m_cave;
-            System.out.println(m_nom_joueur + " a misé tout son tapis !");
             m_etat = Etat.TAPIS;
-        }
-        else if (complement == 0) {
-            System.out.println(m_nom_joueur + " checke.");
+            Poker.println(m_nom_joueur + " a misé tout son tapis !");
+        } else if (complement == 0) {
+            Poker.println(m_nom_joueur + " checke.");
             return;
         }
-        System.out.println(m_nom_joueur + " ajoute " + complement + " dans le pot.");
+        Poker.println(m_nom_joueur + " ajoute " + complement + " dans le pot.");
         m_cave -= complement;
         pot_pt[0] += complement;
         m_mise += complement;
-        System.out.println("Sa mise est maintenant de " + m_mise + " et le pot vaut " + pot_pt[0]);
-        Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique,Poker.jetons(m_cave));
+        Poker.println("Sa mise est maintenant de " + m_mise + " et le pot vaut " + pot_pt[0]);
+        Poker.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, Poker.jetons(m_cave));
         Poker.interface_graphique.fixeMises(Poker.jetons(pot_pt[0]));
     }
 
