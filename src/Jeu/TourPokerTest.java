@@ -65,6 +65,7 @@ class TourPokerTest {
         assertEquals(elodie.get_joueur_suivant(), ludo);
         assertEquals(ludo.get_joueur_suivant(), loup);
         assertEquals(loup.get_joueur_suivant(), arnaud);
+        assertTrue(Joueur.inc_donneur());
 
         // Fermeture interface graphique
         Poker.interface_graphique.ferme();
@@ -124,6 +125,8 @@ class TourPokerTest {
         assertEquals(kerry.get_joueur_suivant(), elodie);
         assertEquals(elodie.get_joueur_suivant(), loup);
         assertEquals(loup.get_joueur_suivant(), kerry);
+        assertEquals(Joueur.donneur,kerry);
+        assertTrue(Joueur.inc_donneur());
 
         // Fermeture interface graphique
         Poker.interface_graphique.ferme();
@@ -182,6 +185,8 @@ class TourPokerTest {
         assertEquals(elodie.get_joueur_suivant(), ludo);
         assertEquals(ludo.get_joueur_suivant(), loup);
         assertEquals(loup.get_joueur_suivant(), arnaud);
+        assertEquals(Joueur.donneur,arnaud);
+        assertTrue(Joueur.inc_donneur());
 
         // Fermeture interface graphique
         Poker.interface_graphique.ferme();
@@ -248,6 +253,62 @@ class TourPokerTest {
         assertEquals(elodie.get_joueur_suivant(), ludo);
         assertEquals(ludo.get_joueur_suivant(), loup);
         assertEquals(loup.get_joueur_suivant(), arnaud);
+        assertEquals(Joueur.donneur,arnaud);
+        assertTrue(Joueur.inc_donneur());
+
+        // Fermeture interface graphique
+        Poker.interface_graphique.ferme();
+    }
+
+    @Test
+    void gagne_le_jeu() {
+        PaquetDeCartes.set_seed(8);
+        TourPoker tour = init_test();
+        Joueur arnaud = Joueur.donneur;
+        Joueur peppa_pig = arnaud.get_joueur_suivant();
+        Joueur bettie = peppa_pig.get_joueur_suivant();
+        Joueur kerry = bettie.get_joueur_suivant();
+        Joueur elodie = kerry.get_joueur_suivant();
+        Joueur ludo = elodie.get_joueur_suivant();
+        Joueur loup = ludo.get_joueur_suivant();
+
+        // Les mises
+        arnaud.ajouter_mise(1000,tour.get_pot_pt());
+        loup.ajouter_mise(1000,tour.get_pot_pt());
+        ludo.ajouter_mise(1000,tour.get_pot_pt());
+        elodie.ajouter_mise(1000,tour.get_pot_pt());
+        kerry.ajouter_mise(1000,tour.get_pot_pt());
+        bettie.ajouter_mise(1000,tour.get_pot_pt());
+        peppa_pig.ajouter_mise(1000, tour.get_pot_pt());
+
+        // Tests des états d'après mise
+        assertEquals(arnaud.get_etat(), Joueur.Etat.TAPIS);
+        assertEquals(loup.get_etat(), Joueur.Etat.TAPIS);
+        assertEquals(ludo.get_etat(), Joueur.Etat.TAPIS);
+        assertEquals(elodie.get_etat(), Joueur.Etat.TAPIS);
+        assertEquals(kerry.get_etat(), Joueur.Etat.TAPIS);
+        assertEquals(bettie.get_etat(), Joueur.Etat.TAPIS);
+        assertEquals(peppa_pig.get_etat(), Joueur.Etat.TAPIS);
+
+        // Répartition des gains
+        tour.repartition_gains();
+
+        // Tests de répartition
+        assertEquals(kerry.get_cave(),0);
+        assertEquals(loup.get_cave(),0);
+        assertEquals(elodie.get_cave(),7000);
+        assertEquals(arnaud.get_cave(),0);
+        assertEquals(ludo.get_cave(),0);
+        assertEquals(peppa_pig.get_cave(),0);
+        assertEquals(bettie.get_cave(),0);
+
+        // Banqueroute
+        tour.banqueroute();
+
+        // Tests des banqueroutes
+        assertEquals(elodie.get_joueur_suivant(), elodie);
+        assertEquals(Joueur.donneur, elodie);
+        assertFalse(Joueur.inc_donneur());
 
         // Fermeture interface graphique
         Poker.interface_graphique.ferme();
