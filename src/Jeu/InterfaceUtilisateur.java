@@ -2,16 +2,23 @@ package Jeu;
 
 import interfaceGraphique.InterfacePoker;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class InterfaceUtilisateur {
     protected static InterfacePoker interface_graphique;
     final protected  static Scanner entree_terminal = new Scanner(System.in);
     protected static boolean test_mode = false;
+    protected static ArrayList<String> test_mock_nextline = null;
 
     public static <T> void println(T object) {
         if (test_mode) return;
         System.out.println(object);
+    }
+
+    public static <T> void print(T object) {
+        if (test_mode) return;
+        System.out.print(object);
     }
     
     protected static void println() {
@@ -20,6 +27,7 @@ public class InterfaceUtilisateur {
     }
 
     protected static String nextLine() {
+        if (test_mode) return test_mock_nextline.remove(0);
         return entree_terminal.nextLine();
     }
 

@@ -1,7 +1,6 @@
 package Jeu;
 
 import interfaceGraphique.InterfacePoker;
-import java.util.Scanner;
 
 class NombreJoueursException extends IllegalArgumentException {
     NombreJoueursException() {

@@ -14,7 +14,7 @@ IA empêche de reproduire à l'infini une technique gagnante.
  */
 public interface Intelligence {
     int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                      ArrayList<Carte> main,int cave,int mise);
+                      ArrayList<Carte> main,int cave,int mise_precedente);
 }
 
 class IntelligenceHumaine implements Intelligence {
@@ -31,7 +31,7 @@ class IntelligenceHumaine implements Intelligence {
         InterfaceUtilisateur.println("De combien voulez-vous relancer (de " +
                 relance_min + " à " + relance_max + ") ?");
         while (true) {
-            System.out.print("> ");
+            InterfaceUtilisateur.print("> ");
             try {
                 res = Integer.parseInt(InterfaceUtilisateur.nextLine());
             } catch (NumberFormatException e) {
@@ -51,7 +51,7 @@ class IntelligenceHumaine implements Intelligence {
         else InterfaceUtilisateur.println("3) Suivre");
         if (peut_relancer) InterfaceUtilisateur.println("4) Relancer");
         while (true) {
-            System.out.print("> ");
+            InterfaceUtilisateur.print("> ");
             try {
                 res = Integer.parseInt(InterfaceUtilisateur.nextLine());
             } catch (NumberFormatException e) {
@@ -64,12 +64,12 @@ class IntelligenceHumaine implements Intelligence {
     }
     @Override
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                             ArrayList<Carte> main,int cave,int mise) {
+                             ArrayList<Carte> main,int cave,int mise_precedente) {
         int res;
         int relance_max = cave-mise_demandee;
         CollectionDeCartes collection = new CollectionDeCartes(main,jeu_pt);
         prompt_tour_joueur();
-        InterfaceUtilisateur.println("Votre mise actuelle est de " + mise + ".");
+        InterfaceUtilisateur.println("Votre mise actuelle est de " + mise_precedente + ".");
         InterfaceUtilisateur.println("Il vous reste " + cave + " dans votre cave.");
         InterfaceUtilisateur.println("Le pot actuel est de " + pot);
         InterfaceUtilisateur.println("La mise actuelle demandée en jeu est de " + mise_demandee + ".");
@@ -78,13 +78,13 @@ class IntelligenceHumaine implements Intelligence {
                 Math.round(collection.probaVict(Joueur.nombre_de_joueurs()-1) * 100) + " %");
         int action = prompt_action(
                 relance_min < relance_max,
-                mise_demandee == mise);
+                mise_demandee == mise_precedente);
         switch (action) {
             case 2:
-                res = cave + mise;
+                res = cave + mise_precedente;
                 break;
             case 3:
-                res = Math.max(mise_demandee,mise);
+                res = Math.max(mise_demandee, mise_precedente);
                 break;
             case 4:
                 res = mise_demandee + prompt_relance(relance_min,relance_max);
@@ -149,8 +149,8 @@ class IntelligenceArtificielle implements Intelligence {
     }
     @Override
     public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                             ArrayList<Carte> main,int cave,int mise) {
-        changements_de_prudence(cave+mise);
+                             ArrayList<Carte> main,int cave,int mise_precedente) {
+        changements_de_prudence(cave+ mise_precedente);
         double proba = new CollectionDeCartes(main,jeu_pt).probaVict(Joueur.nombre_de_joueurs()-1);
         int res = (int) (proba*(double) m_cave_initiale/(double) (m_prudence+m_random.nextInt(5)));
         if (m_random.nextInt(m_prudence) == 0) {
@@ -158,7 +158,7 @@ class IntelligenceArtificielle implements Intelligence {
             if (res < mise_demandee) res = mise_demandee;
         }
         if (m_random.nextInt(m_prudence) == 0) res /= m_random.nextInt(10)+1;
-        if (res < mise) res = mise; // On checke toujours par défaut
+        if (res < mise_precedente) res = mise_precedente; // On checke toujours par défaut
         return res;
     }
 }
