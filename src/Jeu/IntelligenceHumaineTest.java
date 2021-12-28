@@ -8,7 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IntelligenceHumaineTest {
     public static void init_test() {
-        InterfaceUtilisateur.test_desactiver_interface_utilisateur = true;
+        InterfaceUtilisateur.test_cacher_interface_graphique = true;
+        InterfaceUtilisateur.test_tour_manuel = false;
         String[] noms_joueurs = new String[] {"Arnaud","Loup","Ludo","Elodie","Kerry","Bettie","Peppa Pig"};
         Poker.init(noms_joueurs,1000);
     }

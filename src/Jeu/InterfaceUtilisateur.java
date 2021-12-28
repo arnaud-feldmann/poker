@@ -1,34 +1,30 @@
 package Jeu;
 
 import interfaceGraphique.InterfacePoker;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class InterfaceUtilisateur {
     protected static InterfacePoker interface_graphique;
     final protected  static Scanner entree_terminal = new Scanner(System.in);
-    protected static boolean test_desactiver_interface_utilisateur = false;
     protected static ArrayList<String> test_mock_nextline = null;
     protected static boolean test_tour_manuel;
+    protected static boolean test_cacher_interface_graphique;
 
     public static <T> void println(T object) {
-        if (test_desactiver_interface_utilisateur) return;
         System.out.println(object);
     }
 
     public static <T> void print(T object) {
-        if (test_desactiver_interface_utilisateur) return;
         System.out.print(object);
     }
     
     protected static void println() {
-        if (test_desactiver_interface_utilisateur) return;
         System.out.println();
     }
 
     protected static String nextLine() {
-        if (test_desactiver_interface_utilisateur) return test_mock_nextline.remove(0);
+        if (test_mock_nextline != null) return test_mock_nextline.remove(0);
         return entree_terminal.nextLine();
     }
 

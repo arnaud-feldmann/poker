@@ -16,7 +16,7 @@ public class Poker {
         if (noms_joueurs.length < 2 || noms_joueurs.length > 8) throw new NombreJoueursException();
         else if (noms_joueurs.length == 2) InterfaceUtilisateur.interface_graphique = new InterfacePoker(1,1,5,true);
         else InterfaceUtilisateur.interface_graphique = new InterfacePoker(2,noms_joueurs.length/2,5,true);
-        if (!InterfaceUtilisateur.test_desactiver_interface_utilisateur) InterfaceUtilisateur.interface_graphique.afficheFenetre();
+        if (!InterfaceUtilisateur.test_cacher_interface_graphique) InterfaceUtilisateur.interface_graphique.afficheFenetre();
         Joueur.donneur = new Joueur(noms_joueurs[0],CAVE_INITIALE,null,
                 new IntelligenceHumaine(noms_joueurs[0]),0);
         Joueur joueur_temp = Joueur.donneur;

@@ -9,10 +9,12 @@ class PokerTest {
 
     @Test
     void poker() {
+        InterfaceUtilisateur.test_cacher_interface_graphique = true;
+        InterfaceUtilisateur.test_tour_manuel = false;
+
         PaquetDeCartes.set_seed(1);
         IntelligenceArtificielle.set_seed(1);
 
-        InterfaceUtilisateur.test_desactiver_interface_utilisateur = true;
         InterfaceUtilisateur.test_mock_nextline = new ArrayList<>();
         for (int i = 0 ; i < 1000 ; i++) {
             InterfaceUtilisateur.test_mock_nextline.add("2"); // que des tapis
