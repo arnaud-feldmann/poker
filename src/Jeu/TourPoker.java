@@ -147,6 +147,7 @@ public class TourPoker {
 
     private void joueur_et_ex_aequos_empochent_leur_gain(Joueur gagnant) {
         int gains;
+        int reste;
         int[] retrait_pt;
         int mise = gagnant.get_mise();
         if (mise != 0) {
@@ -160,6 +161,11 @@ public class TourPoker {
             for (Joueur ex_aequo : ex_aequos) {
                 ex_aequo.encaisser(gains);
                 InterfaceUtilisateur.println(ex_aequo + " encaisse " + gains + " euros !!");
+            }
+            reste = retrait_pt[0] - ex_aequos.size() * gains;
+            if (reste != 0) {
+                ex_aequos.get(0).encaisser(reste);
+                InterfaceUtilisateur.println(ex_aequos.get(0) + " encaisse un petit reste de division de " + reste + " euros car il est le premier après le dealer !!");
             }
         }
     }
@@ -192,7 +198,7 @@ public class TourPoker {
         InterfaceUtilisateur.println("validez (o/n) :");
         if (!InterfaceUtilisateur.test_tour_manuel) {
             while (true) {
-                System.out.print("> ");
+                InterfaceUtilisateur.print("> ");
                 res = InterfaceUtilisateur.nextLine();
                 if (res.equals("o") || res.equals("O")) break;
                 else if (res.equals("n") || res.equals("N")) InterfaceUtilisateur.println("Ok j'attends un peu!");

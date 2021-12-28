@@ -115,9 +115,11 @@ class IntelligenceArtificielle implements Intelligence {
     int m_cave_initiale;
     int m_cave_precedente;
     String m_nom_joueur;
-    protected static void set_seed(Long seed) {
+
+    public static void set_seed(long seed) {
         random.setSeed(seed);
     }
+
     IntelligenceArtificielle(int cave_initiale,String nom_joueur) {
         m_prudence = random.nextInt(16) + 10;
         m_sang_froid = random.nextInt(21) - 10;

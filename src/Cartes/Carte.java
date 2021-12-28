@@ -52,7 +52,7 @@ public class Carte implements IGPokerable {
 
     public static void affiche(ArrayList<Carte> cartes,String nom_jeu) {
         if (cartes.size() == 0) {
-            System.out.println(nom_jeu + " : vide");
+            InterfaceUtilisateur.println(nom_jeu + " : vide");
             return;
         }
         InterfaceUtilisateur.println(nom_jeu + " : ");

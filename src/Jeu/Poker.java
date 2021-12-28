@@ -16,7 +16,7 @@ public class Poker {
         if (noms_joueurs.length < 2 || noms_joueurs.length > 8) throw new NombreJoueursException();
         else if (noms_joueurs.length == 2) InterfaceUtilisateur.interface_graphique = new InterfacePoker(1,1,5,true);
         else InterfaceUtilisateur.interface_graphique = new InterfacePoker(2,noms_joueurs.length/2,5,true);
-        if (!InterfaceUtilisateur.test_desactiver_terminal) InterfaceUtilisateur.interface_graphique.afficheFenetre();
+        if (!InterfaceUtilisateur.test_desactiver_interface_utilisateur) InterfaceUtilisateur.interface_graphique.afficheFenetre();
         Joueur.donneur = new Joueur(noms_joueurs[0],CAVE_INITIALE,null,
                 new IntelligenceHumaine(noms_joueurs[0]),0);
         Joueur joueur_temp = Joueur.donneur;
@@ -25,7 +25,7 @@ public class Poker {
         Joueur.donneur.set_joueur_suivant(joueur_temp);
     }
     /* La méthode statique qui lance le jeu */
-    private static void poker(String[] noms_joueurs) {
+    protected static void poker(String[] noms_joueurs) {
         int petite_blinde = PETITE_BLINDE_INITIALE;
         int nbtour = 0;
 
@@ -36,10 +36,10 @@ public class Poker {
             nbtour++;
             if (nbtour % 20 == 0) {
                 petite_blinde *= 2;
-                System.out.println("La petite blinde augmente à " + petite_blinde + " et la grosse blinde à " + petite_blinde * 2);
+                InterfaceUtilisateur.println("La petite blinde augmente à " + petite_blinde + " et la grosse blinde à " + petite_blinde * 2);
             }
         } while (Joueur.inc_donneur());
-        System.out.println(Joueur.donneur + " a gagné la partie");
+        InterfaceUtilisateur.println(Joueur.donneur + " a gagné la partie");
         InterfaceUtilisateur.interface_graphique.ferme();
     }
 
