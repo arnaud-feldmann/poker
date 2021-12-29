@@ -2,6 +2,7 @@ package Cartes;
 
 import Jeu.InterfaceUtilisateur;
 import interfaceGraphique.IGPokerable;
+
 import java.util.ArrayList;
 
 public class Carte implements IGPokerable {

@@ -2,9 +2,10 @@ package Jeu;
 
 import Cartes.Carte;
 import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class IntelligenceHumaineTest {
     public static void init_test() {
