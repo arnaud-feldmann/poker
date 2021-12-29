@@ -12,7 +12,7 @@ public class PaquetDeCartes {
     }
 
     private static boolean pile_ou_face() {
-        return piece.nextInt(2) == 1;
+        return piece.nextBoolean();
     }
 
     public PaquetDeCartes() {
