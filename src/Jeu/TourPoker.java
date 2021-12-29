@@ -126,9 +126,9 @@ public class TourPoker {
                 if (mise < m_mise_actuelle) joueur_actuel.coucher();
                 else if (mise >= m_mise_actuelle + m_relance_minimale) {
                     joueur_fin = joueur_actuel;
-                    m_relance_minimale = mise - m_mise_actuelle;
-                    m_mise_actuelle = mise;
                     joueur_actuel.ajouter_mise(mise - joueur_actuel.get_mise(), m_pot_pt);
+                    m_relance_minimale = joueur_actuel.get_mise() - m_mise_actuelle;
+                    m_mise_actuelle = joueur_actuel.get_mise();
                 } else if (mise >= joueur_actuel.get_cave()) {
                     joueur_actuel.ajouter_mise(mise - joueur_actuel.get_mise(), m_pot_pt);
                 } else {

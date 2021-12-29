@@ -48,7 +48,7 @@ public class CollectionDeCartes {
         boolean victoire;
         int nombre_de_victoires = 0;
         PaquetDeCartes paquet;
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 1000; i++) {
             reference_jeu = new ArrayList<>(get_reference_jeu());
             collection_joueur_ref = new CollectionDeCartes(get_main(), reference_jeu);
             paquet = new PaquetDeCartes();

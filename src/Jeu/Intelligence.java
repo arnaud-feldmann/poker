@@ -16,7 +16,7 @@ IA empêche de reproduire à l'infini une technique gagnante.
  */
 public interface Intelligence {
     int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
-                      ArrayList<Carte> main, int cave, int mise_deja_en_jeu);
+                      ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu);
 }
 
 class IntelligenceHumaine implements Intelligence {
@@ -71,13 +71,13 @@ class IntelligenceHumaine implements Intelligence {
 
     @Override
     public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
-                             ArrayList<Carte> main, int cave, int mise_deja_en_jeu) {
+                             ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
         int res;
-        int relance_max = cave - mise_demandee;
+        int relance_max = cave_non_misee - mise_demandee;
         CollectionDeCartes collection = new CollectionDeCartes(main, jeu_pt);
         prompt_tour_joueur();
         InterfaceUtilisateur.println("Votre mise actuelle est de " + mise_deja_en_jeu + ".");
-        InterfaceUtilisateur.println("Il vous reste " + cave + " dans votre cave.");
+        InterfaceUtilisateur.println("Il vous reste " + cave_non_misee + " dans votre cave.");
         InterfaceUtilisateur.println("Le pot actuel est de " + pot);
         InterfaceUtilisateur.println("La mise actuelle demandée en jeu est de " + mise_demandee + ".");
         collection.afficher();
@@ -88,7 +88,7 @@ class IntelligenceHumaine implements Intelligence {
                 mise_demandee == mise_deja_en_jeu);
         switch (action) {
             case 2:
-                res = cave + mise_deja_en_jeu;
+                res = cave_non_misee + mise_deja_en_jeu;
                 break;
             case 3:
                 res = Math.max(mise_demandee, mise_deja_en_jeu);
@@ -117,64 +117,59 @@ va toujours checker quand ça ne lui coute rien.
  */
 class IntelligenceArtificielle implements Intelligence {
     static Random random = new Random();
-    final int PRUDENCE_MAX = 8; // une puissance de 2
-    int m_prudence;
+    final static int IMPETUOSITE_MAX = 2048; // une puissance de 2
+    int m_impetuosite;
     int m_cave_initiale;
     int m_cave_precedente;
-    int[] statistiques_de_gain = new int[PRUDENCE_MAX];
+    static int[] statistiques_de_gain = new int[IMPETUOSITE_MAX];
     String m_nom_joueur;
 
     IntelligenceArtificielle(int cave_initiale, String nom_joueur) {
-        m_prudence = random.nextInt(PRUDENCE_MAX) + 1;
+        m_impetuosite = 3;
         m_cave_initiale = cave_initiale;
         m_cave_precedente = cave_initiale;
         m_nom_joueur = nom_joueur;
-        InterfaceUtilisateur.println(nom_joueur + " a " + m_prudence + " points de prudence.");
+        InterfaceUtilisateur.println(nom_joueur + " a " + m_impetuosite + " points d'impétuosité.");
     }
 
     public static void set_seed(long seed) {
         random.setSeed(seed);
     }
 
+    private int mil(int x, int y) {
+        return x + (y - x + 1) / 2 - 1;
+    }
+
     private int choisir_nouvelle_prudence(int debut, int fin) {
         if (debut == fin) return debut;
         int meandeb = 0;
         int meanfin = 0;
-        final int milieu = debut + (fin - debut + 1) / 2 - 1;
+        final int milieu = mil(debut,fin);
         for (int i = debut; i <= milieu; i++) meandeb += statistiques_de_gain[i];
         meandeb /= (milieu - debut + 1);
         for (int i = milieu + 1; i <= fin; i++) meanfin += statistiques_de_gain[i];
         meanfin /= (fin - milieu);
         if (meandeb > meanfin) return choisir_nouvelle_prudence(debut, milieu);
         else if (meandeb < meanfin) return choisir_nouvelle_prudence(milieu + 1, fin);
-        else {
-            if (random.nextBoolean()) return choisir_nouvelle_prudence(debut, milieu);
-            else return choisir_nouvelle_prudence(milieu + 1, fin);
-        }
+        else if (Math.abs(mil(debut,milieu) - m_impetuosite) <= Math.abs(mil(milieu,fin) - m_impetuosite)) return choisir_nouvelle_prudence(debut, milieu);
+        else return choisir_nouvelle_prudence(milieu + 1, fin);
     }
 
-    private void changements_de_prudence(int cave) {
+    private void changements_impetuosite(int cave) {
         if (cave != m_cave_precedente) {
-            statistiques_de_gain[m_prudence - 1] += cave - m_cave_precedente;
-            m_prudence = choisir_nouvelle_prudence(0, PRUDENCE_MAX - 1) + 1;
-            InterfaceUtilisateur.println(m_nom_joueur + " a maintenant " + m_prudence + " points de prudence");
+            statistiques_de_gain[m_impetuosite - 1] += cave - m_cave_precedente;
+            m_impetuosite = choisir_nouvelle_prudence(0, IMPETUOSITE_MAX - 1) + 1;
+            InterfaceUtilisateur.println(m_nom_joueur + " a maintenant " + m_impetuosite + " points de prudence");
             m_cave_precedente = cave;
         }
     }
 
     @Override
     public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
-                             ArrayList<Carte> main, int cave, int mise_deja_en_jeu) {
-        changements_de_prudence(cave + mise_deja_en_jeu);
+                             ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
+        changements_impetuosite(cave_non_misee + mise_deja_en_jeu);
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
-        int res = (int) (proba * (double) m_cave_initiale / (double) (m_prudence + random.nextInt(5)) *
-                ((double) mise_deja_en_jeu / (double) cave + 1) * // Pour éviter de suivre puis se retirer
-                ((double) pot / (double) cave)); // L'appât du gain
-        if (random.nextInt(m_prudence) == 0) {
-            res *= random.nextInt(10) + 1;
-            if (res < mise_demandee) res = mise_demandee;
-        }
-        if (random.nextInt(m_prudence) == 0) res /= random.nextInt(10) + 1;
+        int res = (int) (proba * (double) (pot - mise_demandee) * (double) m_impetuosite);
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
         return res;
     }
