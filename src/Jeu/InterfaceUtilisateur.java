@@ -24,8 +24,13 @@ public class InterfaceUtilisateur {
     }
 
     protected static String nextLine() {
-        if (test_mock_nextline != null) return test_mock_nextline.remove(0);
-        return entree_terminal.nextLine();
+        String res;
+        if (test_mock_nextline != null) {
+            res = test_mock_nextline.remove(0);
+            println(res);
+        }
+        else  res = entree_terminal.nextLine();
+        return res;
     }
 
     /* Bon, on va dire que les jetons sont immédiatement changés à la banque pour faire des jolis sets */

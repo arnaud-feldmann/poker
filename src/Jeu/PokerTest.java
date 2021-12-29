@@ -12,7 +12,7 @@ class PokerTest {
         InterfaceUtilisateur.test_cacher_interface_graphique = true;
         InterfaceUtilisateur.test_tour_manuel = false;
 
-        PaquetDeCartes.set_seed(1);
+        PaquetDeCartes.set_seed(2);
         IntelligenceArtificielle.set_seed(1);
 
         InterfaceUtilisateur.test_mock_nextline = new ArrayList<>();

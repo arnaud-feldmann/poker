@@ -123,10 +123,13 @@ public class TourPoker {
             if (joueur_actuel.get_etat() == Joueur.Etat.PEUT_MISER) {
                 mise = joueur_actuel.demander_mise(m_mise_actuelle, m_jeu_pt, m_pot_pt[0], m_relance_minimale);
                 if (mise < m_mise_actuelle) joueur_actuel.coucher();
-                else if (mise >= Math.min(m_mise_actuelle + m_relance_minimale,joueur_actuel.get_cave())) {
+                else if (mise >= m_mise_actuelle + m_relance_minimale) {
                     joueur_fin = joueur_actuel;
                     m_relance_minimale = mise - m_mise_actuelle;
                     m_mise_actuelle = mise;
+                    joueur_actuel.ajouter_mise(mise - joueur_actuel.get_mise(), m_pot_pt);
+                }
+                else if (mise >= joueur_actuel.get_cave()) {
                     joueur_actuel.ajouter_mise(mise - joueur_actuel.get_mise(), m_pot_pt);
                 }
                 else {
@@ -145,6 +148,21 @@ public class TourPoker {
         InterfaceUtilisateur.println();
     }
 
+    // Au départ j'avais redistribué avec un filtre sur les pas couchés, mais il y a un cas exceptionnel où
+    // La personne couchée a parié plus que le meilleur gagnant. Si on rencontre ce cas, il faut exceptionnellement
+    // redistribuer à la personne couchée. Donc la manière la plus triviale de le dire est de les ajouter à la relation
+    // d'ordre.
+    // Cette relation est dans l'ordre décroissant car on veut redistribuer dans l'ordre décroissant des valeurs de
+    // jeux.
+    private int ordre_des_gains(Joueur joueur1,Joueur joueur2) {
+        if (joueur1.get_etat() == Joueur.Etat.COUCHE) {
+            if (joueur2.get_etat() == Joueur.Etat.COUCHE) return 0;
+            else return 1;
+        }
+        else if (joueur2.get_etat() == Joueur.Etat.COUCHE) return -1;
+        else return joueur2.get_collection(m_jeu_pt).compareTo(joueur1.get_collection(m_jeu_pt));
+    }
+
     private void joueur_et_ex_aequos_empochent_leur_gain(Joueur gagnant) {
         int gains;
         int reste;
@@ -155,7 +173,7 @@ public class TourPoker {
             Joueur.stream().forEach(joueur -> joueur.retirer_mise(mise, m_pot_pt, retrait_pt));
             ArrayList<Joueur> ex_aequos =
                     Joueur.stream()
-                            .filter(x -> x.get_collection(m_jeu_pt).compareTo(gagnant.get_collection(m_jeu_pt)) == 0)
+                            .filter(x -> ordre_des_gains(x,gagnant) == 0)
                             .collect(Collectors.toCollection(ArrayList<Joueur>::new));
             gains = retrait_pt[0] / ex_aequos.size();
             for (Joueur ex_aequo : ex_aequos) {
@@ -189,8 +207,7 @@ public class TourPoker {
 
         Joueur
                 .stream()
-                .filter(Joueur::pas_couche)
-                .sorted((x, y) -> y.get_collection(m_jeu_pt).compareTo(x.get_collection(m_jeu_pt)))
+                .sorted(this::ordre_des_gains)
                 .forEach(this::joueur_et_ex_aequos_empochent_leur_gain);
         Joueur.stream().
                 forEach(joueur -> InterfaceUtilisateur.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
