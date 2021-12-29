@@ -109,11 +109,12 @@ D'autres part, si le résultat est inférieur à la mise précédente, le résul
 va toujours checker quand ça ne lui coute rien.
  */
 class IntelligenceArtificielle implements Intelligence {
+    final int PRUDENCE_MAX = 32; // une puissance de 2
     static Random random = new Random();
     int m_prudence;
-    int m_sang_froid;
     int m_cave_initiale;
     int m_cave_precedente;
+    int[] statistiques_de_gain = new int[PRUDENCE_MAX];
     String m_nom_joueur;
 
     public static void set_seed(long seed) {
@@ -121,33 +122,33 @@ class IntelligenceArtificielle implements Intelligence {
     }
 
     IntelligenceArtificielle(int cave_initiale,String nom_joueur) {
-        m_prudence = random.nextInt(16) + 10;
-        m_sang_froid = random.nextInt(21) - 10;
+        m_prudence = random.nextInt(PRUDENCE_MAX) + 1;
         m_cave_initiale = cave_initiale;
         m_cave_precedente = cave_initiale;
         m_nom_joueur = nom_joueur;
-        InterfaceUtilisateur.println(nom_joueur + " a " + m_prudence + " points de prudence et " + m_sang_froid + " de sang-froid.");
+        InterfaceUtilisateur.println(nom_joueur + " a " + m_prudence + " points de prudence.");
     }
-    private void deconcentration(String nom_joueur) {
-        if (m_prudence >= 2) m_prudence--;
-        InterfaceUtilisateur.println(nom_joueur + " est déconcentré !!! Il a dorénavant " + m_prudence + " points de prudence.");
-    }
-    private void reconcentration(String nom_joueur) {
-        if (m_prudence < 20) m_prudence++;
-        InterfaceUtilisateur.println(nom_joueur + " se concentre !!! Il a dorénavant " + m_prudence + " points de prudence.");
+    private int choisir_nouvelle_prudence(int debut,int fin) {
+        if (debut == fin) return debut;
+        int meandeb = 0;
+        int meanfin = 0;
+        final int milieu = debut + (fin - debut + 1) / 2 - 1;
+        for (int i = debut ; i <= milieu ; i++) meandeb += statistiques_de_gain[i];
+        meandeb /= (milieu-debut + 1);
+        for (int i = milieu + 1 ; i <= fin ; i++) meanfin += statistiques_de_gain[i];
+        meanfin /= (fin-milieu);
+        if (meandeb > meanfin) return choisir_nouvelle_prudence(debut,milieu);
+        else if (meandeb < meanfin) return choisir_nouvelle_prudence(milieu+1,fin);
+        else {
+            if (random.nextBoolean()) return choisir_nouvelle_prudence(debut,milieu);
+            else return choisir_nouvelle_prudence(milieu+1,fin);
+        }
     }
     private void changements_de_prudence(int cave) {
-        int rnd = random.nextInt(21) - 10;
         if (cave != m_cave_precedente) {
-            if (m_sang_froid == 0) deconcentration(m_nom_joueur);
-            else if (cave < m_cave_precedente) {
-                if (rnd < m_sang_froid) reconcentration(m_nom_joueur);
-                else deconcentration(m_nom_joueur);
-            }
-            else {
-                if (rnd > m_sang_froid) reconcentration(m_nom_joueur);
-                else deconcentration(m_nom_joueur);
-            }
+            statistiques_de_gain[m_prudence-1] += cave-m_cave_precedente;
+            m_prudence = choisir_nouvelle_prudence(0,PRUDENCE_MAX-1)+1;
+            InterfaceUtilisateur.println(m_nom_joueur + " a maintenant " + m_prudence + " points de prudence");
             m_cave_precedente = cave;
         }
     }
