@@ -27,13 +27,13 @@ class CombinaisonTest {
     void quinte_flush() {
         ArrayList<Carte> c;
         c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Valet,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Deux,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Dix,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Neuf,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dame, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Valet, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Deux, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dix, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Neuf, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
         Combinaison comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.QUINTEFLUSH);
         ArrayList<Carte.Valeur> res = new ArrayList<>();
@@ -41,13 +41,13 @@ class CombinaisonTest {
         assertEquals(comb.get_rangs(), res);
 
         c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Cinq,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Trois,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Valet,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.As,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Deux,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Cinq, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Trois, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Valet, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Deux, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
         comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.QUINTEFLUSH);
         res = new ArrayList<>();
@@ -59,13 +59,13 @@ class CombinaisonTest {
     void carre() {
         ArrayList<Carte> c;
         c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Pique));
-        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.As,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Coeur));
-        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Pique));
+        c.add(new Carte(Carte.Valeur.Dame, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Coeur));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Carreau));
         Combinaison comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.CARRE);
         ArrayList<Carte.Valeur> res = new ArrayList<>();
@@ -77,13 +77,13 @@ class CombinaisonTest {
     @Test
     void main_pleine() {
         ArrayList<Carte> c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Pique));
-        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.As,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Coeur));
-        c.add(new Carte(Carte.Valeur.As,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Pique));
+        c.add(new Carte(Carte.Valeur.Dame, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Coeur));
+        c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Trefle));
         Combinaison comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.MAINPLEINE);
         ArrayList<Carte.Valeur> res = new ArrayList<>();
@@ -95,13 +95,13 @@ class CombinaisonTest {
     @Test
     void couleur() {
         ArrayList<Carte> c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Dix,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Deux,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.As,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Cinq,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Dix, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Huit, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Dame, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Deux, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Cinq, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Trefle));
         Combinaison comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.COULEUR);
         ArrayList<Carte.Valeur> res = new ArrayList<>();
@@ -116,13 +116,13 @@ class CombinaisonTest {
     @Test
     void suite() {
         ArrayList<Carte> c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Neuf,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Coeur));
-        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Deux,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Cinq,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Neuf, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Huit, Carte.Couleur.Coeur));
+        c.add(new Carte(Carte.Valeur.Dame, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Deux, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Six, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Cinq, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Trefle));
         Combinaison comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.SUITE);
         ArrayList<Carte.Valeur> res = new ArrayList<>();
@@ -133,13 +133,13 @@ class CombinaisonTest {
     @Test
     void brelan() {
         ArrayList<Carte> c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Neuf,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Coeur));
-        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Coeur));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Neuf, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Huit, Carte.Couleur.Coeur));
+        c.add(new Carte(Carte.Valeur.Six, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Six, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Six, Carte.Couleur.Coeur));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Trefle));
         Combinaison comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.BRELAN);
         ArrayList<Carte.Valeur> res = new ArrayList<>();
@@ -148,16 +148,17 @@ class CombinaisonTest {
         res.add(Carte.Valeur.Huit);
         assertEquals(comb.get_rangs(), res);
     }
+
     @Test
     void double_paire() {
         ArrayList<Carte> c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Six, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Six, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Huit, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Huit, Carte.Couleur.Carreau));
         Combinaison comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.DOUBLEPAIRE);
         ArrayList<Carte.Valeur> res = new ArrayList<>();
@@ -167,28 +168,29 @@ class CombinaisonTest {
         assertEquals(comb.get_rangs(), res);
 
         c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Six,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Huit, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Huit, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Six, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Six, Carte.Couleur.Carreau));
         comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.DOUBLEPAIRE);
         assertEquals(comb.get_rangs(), res);
 
     }
+
     @Test
     void paire() {
         ArrayList<Carte> c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.As,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Valet,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Huit, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Huit, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dame, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Valet, Carte.Couleur.Carreau));
         Combinaison comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.PAIRE);
 
@@ -204,13 +206,13 @@ class CombinaisonTest {
     void carte_haute() {
 
         ArrayList<Carte> c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Huit,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.As,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Sept,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
-        c.add(new Carte(Carte.Valeur.Valet,Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Huit, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dame, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Valet, Carte.Couleur.Carreau));
         Combinaison comb = new Combinaison(c);
         assertEquals(comb.get_niveau(), Combinaison.Niveau.CARTEHAUTE);
         ArrayList<Carte.Valeur> res = new ArrayList<>();
@@ -233,19 +235,19 @@ class CombinaisonTest {
         c.add(new Carte(Carte.Valeur.Dix, Carte.Couleur.Carreau));
         c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
         Combinaison comb = new Combinaison(c);
-        assertEquals(comb.compareTo(comb),0);
+        assertEquals(comb.compareTo(comb), 0);
 
         c = new ArrayList<>();
-        c.add(new Carte(Carte.Valeur.Roi,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Dame,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Valet,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Deux,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Dix,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Neuf,Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dame, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Valet, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Deux, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Dix, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Neuf, Carte.Couleur.Carreau));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
         Combinaison comb2 = new Combinaison(c);
-        assertEquals(comb.compareTo(comb2),1);
-        assertEquals(comb2.compareTo(comb),-1);
+        assertEquals(comb.compareTo(comb2), 1);
+        assertEquals(comb2.compareTo(comb), -1);
 
         c = new ArrayList<>();
         c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Carreau));
@@ -256,7 +258,7 @@ class CombinaisonTest {
         c.add(new Carte(Carte.Valeur.Dix, Carte.Couleur.Carreau));
         c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
         comb = new Combinaison(c);
-        assertEquals(comb.compareTo(comb),0);
+        assertEquals(comb.compareTo(comb), 0);
 
         c = new ArrayList<>();
         c.add(new Carte(Carte.Valeur.As, Carte.Couleur.Carreau));
@@ -265,9 +267,9 @@ class CombinaisonTest {
         c.add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Carreau));
         c.add(new Carte(Carte.Valeur.Deux, Carte.Couleur.Carreau));
         c.add(new Carte(Carte.Valeur.Dix, Carte.Couleur.Carreau));
-        c.add(new Carte(Carte.Valeur.Quatre,Carte.Couleur.Trefle));
+        c.add(new Carte(Carte.Valeur.Quatre, Carte.Couleur.Trefle));
         comb2 = new Combinaison(c);
-        assertEquals(comb.compareTo(comb2),-1);
-        assertEquals(comb2.compareTo(comb),1);
+        assertEquals(comb.compareTo(comb2), -1);
+        assertEquals(comb2.compareTo(comb), 1);
     }
 }

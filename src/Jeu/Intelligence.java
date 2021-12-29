@@ -15,20 +15,18 @@ fait très sommairement avec les changements de "prudence" via le "sang-froid". 
 IA empêche de reproduire à l'infini une technique gagnante.
  */
 public interface Intelligence {
-    int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                      ArrayList<Carte> main,int cave,int mise_precedente);
+    int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
+                      ArrayList<Carte> main, int cave, int mise_precedente);
 }
 
 class IntelligenceHumaine implements Intelligence {
     String m_nom_joueur;
+
     IntelligenceHumaine(String nom_joueur) {
         m_nom_joueur = nom_joueur;
     }
-    private void prompt_tour_joueur() {
-        InterfaceUtilisateur.println("----------------------------------------------");
-        InterfaceUtilisateur.println("C'est le tour du joueur " + m_nom_joueur + " !");
-    }
-    private static int prompt_relance(int relance_min,int relance_max) {
+
+    private static int prompt_relance(int relance_min, int relance_max) {
         int res;
         InterfaceUtilisateur.println("De combien voulez-vous relancer (de " +
                 relance_min + " à " + relance_max + ") ?");
@@ -44,7 +42,8 @@ class IntelligenceHumaine implements Intelligence {
         }
         return res;
     }
-    private static int prompt_action(boolean peut_relancer,boolean check) {
+
+    private static int prompt_action(boolean peut_relancer, boolean check) {
         int res;
         InterfaceUtilisateur.println("Que voulez-vous faire ?");
         InterfaceUtilisateur.println("1) Me coucher");
@@ -59,17 +58,23 @@ class IntelligenceHumaine implements Intelligence {
             } catch (NumberFormatException e) {
                 res = -1;
             }
-            if (res >= 1 && res < 4 + (peut_relancer?1:0)) break;
+            if (res >= 1 && res < 4 + (peut_relancer ? 1 : 0)) break;
             InterfaceUtilisateur.println("Un peu de sérieux !");
         }
         return res;
     }
+
+    private void prompt_tour_joueur() {
+        InterfaceUtilisateur.println("----------------------------------------------");
+        InterfaceUtilisateur.println("C'est le tour du joueur " + m_nom_joueur + " !");
+    }
+
     @Override
-    public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                             ArrayList<Carte> main,int cave,int mise_precedente) {
+    public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
+                             ArrayList<Carte> main, int cave, int mise_precedente) {
         int res;
-        int relance_max = cave-mise_demandee;
-        CollectionDeCartes collection = new CollectionDeCartes(main,jeu_pt);
+        int relance_max = cave - mise_demandee;
+        CollectionDeCartes collection = new CollectionDeCartes(main, jeu_pt);
         prompt_tour_joueur();
         InterfaceUtilisateur.println("Votre mise actuelle est de " + mise_precedente + ".");
         InterfaceUtilisateur.println("Il vous reste " + cave + " dans votre cave.");
@@ -77,7 +82,7 @@ class IntelligenceHumaine implements Intelligence {
         InterfaceUtilisateur.println("La mise actuelle demandée en jeu est de " + mise_demandee + ".");
         collection.afficher();
         InterfaceUtilisateur.println("Votre probabilité indicative de l'emporter avec cette main est de " +
-                Math.round(collection.probaVict(Joueur.nombre_de_joueurs()-1) * 100) + " %");
+                Math.round(collection.probaVict(Joueur.nombre_de_joueurs() - 1) * 100) + " %");
         int action = prompt_action(
                 relance_min < relance_max,
                 mise_demandee == mise_precedente);
@@ -89,7 +94,7 @@ class IntelligenceHumaine implements Intelligence {
                 res = Math.max(mise_demandee, mise_precedente);
                 break;
             case 4:
-                res = mise_demandee + prompt_relance(relance_min,relance_max);
+                res = mise_demandee + prompt_relance(relance_min, relance_max);
                 break;
             default:
                 res = -1;
@@ -111,60 +116,63 @@ D'autres part, si le résultat est inférieur à la mise précédente, le résul
 va toujours checker quand ça ne lui coute rien.
  */
 class IntelligenceArtificielle implements Intelligence {
-    final int PRUDENCE_MAX = 32; // une puissance de 2
     static Random random = new Random();
+    final int PRUDENCE_MAX = 32; // une puissance de 2
     int m_prudence;
     int m_cave_initiale;
     int m_cave_precedente;
     int[] statistiques_de_gain = new int[PRUDENCE_MAX];
     String m_nom_joueur;
 
-    public static void set_seed(long seed) {
-        random.setSeed(seed);
-    }
-
-    IntelligenceArtificielle(int cave_initiale,String nom_joueur) {
+    IntelligenceArtificielle(int cave_initiale, String nom_joueur) {
         m_prudence = random.nextInt(PRUDENCE_MAX) + 1;
         m_cave_initiale = cave_initiale;
         m_cave_precedente = cave_initiale;
         m_nom_joueur = nom_joueur;
         InterfaceUtilisateur.println(nom_joueur + " a " + m_prudence + " points de prudence.");
     }
-    private int choisir_nouvelle_prudence(int debut,int fin) {
+
+    public static void set_seed(long seed) {
+        random.setSeed(seed);
+    }
+
+    private int choisir_nouvelle_prudence(int debut, int fin) {
         if (debut == fin) return debut;
         int meandeb = 0;
         int meanfin = 0;
         final int milieu = debut + (fin - debut + 1) / 2 - 1;
-        for (int i = debut ; i <= milieu ; i++) meandeb += statistiques_de_gain[i];
-        meandeb /= (milieu-debut + 1);
-        for (int i = milieu + 1 ; i <= fin ; i++) meanfin += statistiques_de_gain[i];
-        meanfin /= (fin-milieu);
-        if (meandeb > meanfin) return choisir_nouvelle_prudence(debut,milieu);
-        else if (meandeb < meanfin) return choisir_nouvelle_prudence(milieu+1,fin);
+        for (int i = debut; i <= milieu; i++) meandeb += statistiques_de_gain[i];
+        meandeb /= (milieu - debut + 1);
+        for (int i = milieu + 1; i <= fin; i++) meanfin += statistiques_de_gain[i];
+        meanfin /= (fin - milieu);
+        if (meandeb > meanfin) return choisir_nouvelle_prudence(debut, milieu);
+        else if (meandeb < meanfin) return choisir_nouvelle_prudence(milieu + 1, fin);
         else {
-            if (random.nextBoolean()) return choisir_nouvelle_prudence(debut,milieu);
-            else return choisir_nouvelle_prudence(milieu+1,fin);
+            if (random.nextBoolean()) return choisir_nouvelle_prudence(debut, milieu);
+            else return choisir_nouvelle_prudence(milieu + 1, fin);
         }
     }
+
     private void changements_de_prudence(int cave) {
         if (cave != m_cave_precedente) {
-            statistiques_de_gain[m_prudence-1] += cave-m_cave_precedente;
-            m_prudence = choisir_nouvelle_prudence(0,PRUDENCE_MAX-1)+1;
+            statistiques_de_gain[m_prudence - 1] += cave - m_cave_precedente;
+            m_prudence = choisir_nouvelle_prudence(0, PRUDENCE_MAX - 1) + 1;
             InterfaceUtilisateur.println(m_nom_joueur + " a maintenant " + m_prudence + " points de prudence");
             m_cave_precedente = cave;
         }
     }
+
     @Override
-    public int demander_mise(int mise_demandee,ArrayList<Carte> jeu_pt,int pot,int relance_min,
-                             ArrayList<Carte> main,int cave,int mise_precedente) {
-        changements_de_prudence(cave+ mise_precedente);
-        double proba = new CollectionDeCartes(main,jeu_pt).probaVict(Joueur.nombre_de_joueurs()-1);
-        int res = (int) (proba*(double) m_cave_initiale/(double) (m_prudence+random.nextInt(5)));
+    public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
+                             ArrayList<Carte> main, int cave, int mise_precedente) {
+        changements_de_prudence(cave + mise_precedente);
+        double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
+        int res = (int) (proba * (double) m_cave_initiale / (double) (m_prudence + random.nextInt(5)));
         if (random.nextInt(m_prudence) == 0) {
-            res *= random.nextInt(10)+1;
+            res *= random.nextInt(10) + 1;
             if (res < mise_demandee) res = mise_demandee;
         }
-        if (random.nextInt(m_prudence) == 0) res /= random.nextInt(10)+1;
+        if (random.nextInt(m_prudence) == 0) res /= random.nextInt(10) + 1;
         if (res < mise_precedente) res = mise_precedente; // On checke toujours par défaut
         return res;
     }

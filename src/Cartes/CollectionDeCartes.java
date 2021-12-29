@@ -50,7 +50,7 @@ public class CollectionDeCartes {
         PaquetDeCartes paquet;
         for (int i = 0; i < 10000; i++) {
             reference_jeu = new ArrayList<>(get_reference_jeu());
-            collection_joueur_ref  = new CollectionDeCartes(get_main(),reference_jeu);
+            collection_joueur_ref = new CollectionDeCartes(get_main(), reference_jeu);
             paquet = new PaquetDeCartes();
             paquet.melanger_cartes();
             paquet.retirer_des_cartes_du_jeu(get_collection());
@@ -60,16 +60,16 @@ public class CollectionDeCartes {
                 main_autre_joueur = new ArrayList<>();
                 main_autre_joueur.add(paquet.piocher_une_carte());
                 main_autre_joueur.add(paquet.piocher_une_carte());
-                collection_autre_joueur = new CollectionDeCartes(main_autre_joueur,reference_jeu);
+                collection_autre_joueur = new CollectionDeCartes(main_autre_joueur, reference_jeu);
                 if (collection_joueur_ref.compareTo(collection_autre_joueur) < 0) victoire = false;
             }
             if (victoire) nombre_de_victoires++;
         }
-        return ((double)nombre_de_victoires)/10000d;
+        return ((double) nombre_de_victoires) / 10000d;
     }
 
     public void afficher() {
-        Carte.affiche(m_jeu_pt,"jeu");
-        Carte.affiche(m_main,"main");
+        Carte.affiche(m_jeu_pt, "jeu");
+        Carte.affiche(m_main, "main");
     }
 }

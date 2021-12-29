@@ -4,16 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class PaquetDeCartes {
-    private final ArrayList<Carte> m_cartes = new ArrayList<>();
     private final static Random piece = new Random();
-
-    public static void set_seed(long seed) {
-        piece.setSeed(seed);
-    }
-
-    private static boolean pile_ou_face() {
-        return piece.nextBoolean();
-    }
+    private final ArrayList<Carte> m_cartes = new ArrayList<>();
 
     public PaquetDeCartes() {
         for (Carte.Couleur couleur : Carte.Couleur.values()) {
@@ -21,6 +13,14 @@ public class PaquetDeCartes {
                 m_cartes.add(new Carte(valeur, couleur));
             }
         }
+    }
+
+    public static void set_seed(long seed) {
+        piece.setSeed(seed);
+    }
+
+    private static boolean pile_ou_face() {
+        return piece.nextBoolean();
     }
 
     private void couper(int debut, int milieu, int fin) {

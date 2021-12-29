@@ -88,7 +88,7 @@ public class TourPoker {
         InterfaceUtilisateur.println("******************");
         InterfaceUtilisateur.println("****** Flop ******");
         InterfaceUtilisateur.println("******************");
-        InterfaceUtilisateur.interface_graphique.fixeFlop(new Carte[] {m_jeu_pt.get(0),m_jeu_pt.get(1),m_jeu_pt.get(2)});
+        InterfaceUtilisateur.interface_graphique.fixeFlop(new Carte[]{m_jeu_pt.get(0), m_jeu_pt.get(1), m_jeu_pt.get(2)});
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
@@ -129,11 +129,9 @@ public class TourPoker {
                     m_relance_minimale = mise - m_mise_actuelle;
                     m_mise_actuelle = mise;
                     joueur_actuel.ajouter_mise(mise - joueur_actuel.get_mise(), m_pot_pt);
-                }
-                else if (mise >= joueur_actuel.get_cave()) {
+                } else if (mise >= joueur_actuel.get_cave()) {
                     joueur_actuel.ajouter_mise(mise - joueur_actuel.get_mise(), m_pot_pt);
-                }
-                else {
+                } else {
                     joueur_actuel.ajouter_mise(m_mise_actuelle - joueur_actuel.get_mise(), m_pot_pt);
                 }
             }
@@ -155,12 +153,11 @@ public class TourPoker {
     // d'ordre.
     // Cette relation est dans l'ordre décroissant car on veut redistribuer dans l'ordre décroissant des valeurs de
     // jeux.
-    private int ordre_des_gains(Joueur joueur1,Joueur joueur2) {
+    private int ordre_des_gains(Joueur joueur1, Joueur joueur2) {
         if (joueur1.get_etat() == Joueur.Etat.COUCHE) {
             if (joueur2.get_etat() == Joueur.Etat.COUCHE) return 0;
             else return 1;
-        }
-        else if (joueur2.get_etat() == Joueur.Etat.COUCHE) return -1;
+        } else if (joueur2.get_etat() == Joueur.Etat.COUCHE) return -1;
         else return joueur2.get_collection(m_jeu_pt).compareTo(joueur1.get_collection(m_jeu_pt));
     }
 
@@ -174,7 +171,7 @@ public class TourPoker {
             Joueur.stream().forEach(joueur -> joueur.retirer_mise(mise, m_pot_pt, retrait_pt));
             ArrayList<Joueur> ex_aequos =
                     Joueur.stream()
-                            .filter(x -> ordre_des_gains(x,gagnant) == 0)
+                            .filter(x -> ordre_des_gains(x, gagnant) == 0)
                             .collect(Collectors.toCollection(ArrayList<Joueur>::new));
             gains = retrait_pt[0] / ex_aequos.size();
             for (Joueur ex_aequo : ex_aequos) {
@@ -239,11 +236,10 @@ public class TourPoker {
             if (suivant.get_cave() == 0) {
                 InterfaceUtilisateur.println(suivant + " quitte le jeu !");
                 InterfaceUtilisateur.interface_graphique.joueurPasDeCarte(suivant.get_numero_joueur_interface());
-                InterfaceUtilisateur.interface_graphique.joueurSetAnnotation(suivant.get_numero_joueur_interface(),"(hors-jeu)");
+                InterfaceUtilisateur.interface_graphique.joueurSetAnnotation(suivant.get_numero_joueur_interface(), "(hors-jeu)");
                 joueur.set_joueur_suivant(suivant.get_joueur_suivant());
                 if (suivant == Joueur.donneur) Joueur.donneur = suivant.get_joueur_suivant();
-            }
-            else {
+            } else {
                 joueur = joueur.get_joueur_suivant();
                 if (joueur == Joueur.donneur) break;
             }

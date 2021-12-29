@@ -10,10 +10,11 @@ class TourPokerTest {
     public static TourPoker init_test() {
         InterfaceUtilisateur.test_cacher_interface_graphique = true;
         InterfaceUtilisateur.test_tour_manuel = true;
-        String[] noms_joueurs = new String[] {"Arnaud","Loup","Ludo","Elodie","Kerry","Bettie","Peppa Pig"};
-        Poker.init(noms_joueurs,1000);
+        String[] noms_joueurs = new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"};
+        Poker.init(noms_joueurs, 1000);
         return new TourPoker(0);
     }
+
     @Test
     void tout_le_monde_couche_sauf_un() {
         PaquetDeCartes.set_seed(1);
@@ -27,7 +28,7 @@ class TourPokerTest {
         Joueur loup = ludo.get_joueur_suivant();
 
         // Les mises
-        elodie.ajouter_mise(400,tour.get_pot_pt());
+        elodie.ajouter_mise(400, tour.get_pot_pt());
         arnaud.coucher();
         peppa_pig.coucher();
         bettie.coucher();
@@ -48,13 +49,13 @@ class TourPokerTest {
         tour.repartition_gains();
 
         // Tests de répartition
-        assertEquals(kerry.get_cave(),1000);
-        assertEquals(loup.get_cave(),1000);
-        assertEquals(elodie.get_cave(),1000);
-        assertEquals(arnaud.get_cave(),1000);
-        assertEquals(ludo.get_cave(),1000);
-        assertEquals(peppa_pig.get_cave(),1000);
-        assertEquals(bettie.get_cave(),1000);
+        assertEquals(kerry.get_cave(), 1000);
+        assertEquals(loup.get_cave(), 1000);
+        assertEquals(elodie.get_cave(), 1000);
+        assertEquals(arnaud.get_cave(), 1000);
+        assertEquals(ludo.get_cave(), 1000);
+        assertEquals(peppa_pig.get_cave(), 1000);
+        assertEquals(bettie.get_cave(), 1000);
 
         // Banqueroute
         tour.banqueroute();
@@ -72,6 +73,7 @@ class TourPokerTest {
         // Fermeture interface graphique
         InterfaceUtilisateur.interface_graphique.ferme();
     }
+
     @Test
     void tapis_repartition_et_banqueroute() {
         PaquetDeCartes.set_seed(2);
@@ -91,12 +93,12 @@ class TourPokerTest {
         peppa_pig.encaisser(500);
 
         // Les mises
-        arnaud.ajouter_mise(1000,tour.get_pot_pt());
-        loup.ajouter_mise(1500,tour.get_pot_pt());
-        ludo.ajouter_mise(1000,tour.get_pot_pt());
+        arnaud.ajouter_mise(1000, tour.get_pot_pt());
+        loup.ajouter_mise(1500, tour.get_pot_pt());
+        ludo.ajouter_mise(1000, tour.get_pot_pt());
         elodie.coucher();
-        kerry.ajouter_mise(700,tour.get_pot_pt());
-        bettie.ajouter_mise(300,tour.get_pot_pt());
+        kerry.ajouter_mise(700, tour.get_pot_pt());
+        bettie.ajouter_mise(300, tour.get_pot_pt());
         peppa_pig.ajouter_mise(1500, tour.get_pot_pt());
 
         // Tests des états d'après mise
@@ -112,13 +114,13 @@ class TourPokerTest {
         tour.repartition_gains();
 
         // Tests de répartition
-        assertEquals(kerry.get_cave(),3800);
-        assertEquals(loup.get_cave(),2200);
-        assertEquals(elodie.get_cave(),1000);
-        assertEquals(arnaud.get_cave(),0);
-        assertEquals(ludo.get_cave(),0);
-        assertEquals(peppa_pig.get_cave(),0);
-        assertEquals(bettie.get_cave(),0);
+        assertEquals(kerry.get_cave(), 3800);
+        assertEquals(loup.get_cave(), 2200);
+        assertEquals(elodie.get_cave(), 1000);
+        assertEquals(arnaud.get_cave(), 0);
+        assertEquals(ludo.get_cave(), 0);
+        assertEquals(peppa_pig.get_cave(), 0);
+        assertEquals(bettie.get_cave(), 0);
 
         // Banqueroute
         tour.banqueroute();
@@ -127,7 +129,7 @@ class TourPokerTest {
         assertEquals(kerry.get_joueur_suivant(), elodie);
         assertEquals(elodie.get_joueur_suivant(), loup);
         assertEquals(loup.get_joueur_suivant(), kerry);
-        assertEquals(Joueur.donneur,kerry);
+        assertEquals(Joueur.donneur, kerry);
         assertTrue(Joueur.inc_donneur());
 
         // Fermeture interface graphique
@@ -148,11 +150,11 @@ class TourPokerTest {
 
         // Les mises
         arnaud.coucher();
-        loup.ajouter_mise(200,tour.get_pot_pt());
-        ludo.ajouter_mise(200,tour.get_pot_pt());
-        elodie.ajouter_mise(200,tour.get_pot_pt());
+        loup.ajouter_mise(200, tour.get_pot_pt());
+        ludo.ajouter_mise(200, tour.get_pot_pt());
+        elodie.ajouter_mise(200, tour.get_pot_pt());
         kerry.coucher();
-        bettie.ajouter_mise(200,tour.get_pot_pt());
+        bettie.ajouter_mise(200, tour.get_pot_pt());
         peppa_pig.ajouter_mise(200, tour.get_pot_pt());
 
         // Tests des états d'après mise
@@ -168,13 +170,13 @@ class TourPokerTest {
         tour.repartition_gains();
 
         // Tests de répartition
-        assertEquals(kerry.get_cave(),1000);
-        assertEquals(loup.get_cave(),800);
-        assertEquals(elodie.get_cave(),1800);
-        assertEquals(arnaud.get_cave(),1000);
-        assertEquals(ludo.get_cave(),800);
-        assertEquals(peppa_pig.get_cave(),800);
-        assertEquals(bettie.get_cave(),800);
+        assertEquals(kerry.get_cave(), 1000);
+        assertEquals(loup.get_cave(), 800);
+        assertEquals(elodie.get_cave(), 1800);
+        assertEquals(arnaud.get_cave(), 1000);
+        assertEquals(ludo.get_cave(), 800);
+        assertEquals(peppa_pig.get_cave(), 800);
+        assertEquals(bettie.get_cave(), 800);
 
         // Banqueroute
         tour.banqueroute();
@@ -187,7 +189,7 @@ class TourPokerTest {
         assertEquals(elodie.get_joueur_suivant(), ludo);
         assertEquals(ludo.get_joueur_suivant(), loup);
         assertEquals(loup.get_joueur_suivant(), arnaud);
-        assertEquals(Joueur.donneur,arnaud);
+        assertEquals(Joueur.donneur, arnaud);
         assertTrue(Joueur.inc_donneur());
 
         // Fermeture interface graphique
@@ -215,12 +217,12 @@ class TourPokerTest {
         bettie.get_main().add(new Carte(Carte.Valeur.Sept, Carte.Couleur.Coeur));
 
         // Les mises
-        arnaud.ajouter_mise(200,tour.get_pot_pt());
-        loup.ajouter_mise(200,tour.get_pot_pt());
-        ludo.ajouter_mise(200,tour.get_pot_pt());
-        elodie.ajouter_mise(200,tour.get_pot_pt());
-        kerry.ajouter_mise(200,tour.get_pot_pt());
-        bettie.ajouter_mise(200,tour.get_pot_pt());
+        arnaud.ajouter_mise(200, tour.get_pot_pt());
+        loup.ajouter_mise(200, tour.get_pot_pt());
+        ludo.ajouter_mise(200, tour.get_pot_pt());
+        elodie.ajouter_mise(200, tour.get_pot_pt());
+        kerry.ajouter_mise(200, tour.get_pot_pt());
+        bettie.ajouter_mise(200, tour.get_pot_pt());
         peppa_pig.ajouter_mise(200, tour.get_pot_pt());
 
         // Tests des états d'après mise
@@ -236,13 +238,13 @@ class TourPokerTest {
         tour.repartition_gains();
 
         // Tests de répartition
-        assertEquals(kerry.get_cave(),800);
-        assertEquals(loup.get_cave(),800);
-        assertEquals(elodie.get_cave(),800);
-        assertEquals(arnaud.get_cave(),800);
-        assertEquals(ludo.get_cave(),800);
-        assertEquals(peppa_pig.get_cave(),1500);
-        assertEquals(bettie.get_cave(),1500);
+        assertEquals(kerry.get_cave(), 800);
+        assertEquals(loup.get_cave(), 800);
+        assertEquals(elodie.get_cave(), 800);
+        assertEquals(arnaud.get_cave(), 800);
+        assertEquals(ludo.get_cave(), 800);
+        assertEquals(peppa_pig.get_cave(), 1500);
+        assertEquals(bettie.get_cave(), 1500);
 
         // Banqueroute
         tour.banqueroute();
@@ -255,7 +257,7 @@ class TourPokerTest {
         assertEquals(elodie.get_joueur_suivant(), ludo);
         assertEquals(ludo.get_joueur_suivant(), loup);
         assertEquals(loup.get_joueur_suivant(), arnaud);
-        assertEquals(Joueur.donneur,arnaud);
+        assertEquals(Joueur.donneur, arnaud);
         assertTrue(Joueur.inc_donneur());
 
         // Fermeture interface graphique
@@ -275,12 +277,12 @@ class TourPokerTest {
         Joueur loup = ludo.get_joueur_suivant();
 
         // Les mises
-        arnaud.ajouter_mise(1000,tour.get_pot_pt());
-        loup.ajouter_mise(1000,tour.get_pot_pt());
-        ludo.ajouter_mise(1000,tour.get_pot_pt());
-        elodie.ajouter_mise(1000,tour.get_pot_pt());
-        kerry.ajouter_mise(1000,tour.get_pot_pt());
-        bettie.ajouter_mise(1000,tour.get_pot_pt());
+        arnaud.ajouter_mise(1000, tour.get_pot_pt());
+        loup.ajouter_mise(1000, tour.get_pot_pt());
+        ludo.ajouter_mise(1000, tour.get_pot_pt());
+        elodie.ajouter_mise(1000, tour.get_pot_pt());
+        kerry.ajouter_mise(1000, tour.get_pot_pt());
+        bettie.ajouter_mise(1000, tour.get_pot_pt());
         peppa_pig.ajouter_mise(1000, tour.get_pot_pt());
 
         // Tests des états d'après mise
@@ -296,13 +298,13 @@ class TourPokerTest {
         tour.repartition_gains();
 
         // Tests de répartition
-        assertEquals(kerry.get_cave(),0);
-        assertEquals(loup.get_cave(),0);
-        assertEquals(elodie.get_cave(),7000);
-        assertEquals(arnaud.get_cave(),0);
-        assertEquals(ludo.get_cave(),0);
-        assertEquals(peppa_pig.get_cave(),0);
-        assertEquals(bettie.get_cave(),0);
+        assertEquals(kerry.get_cave(), 0);
+        assertEquals(loup.get_cave(), 0);
+        assertEquals(elodie.get_cave(), 7000);
+        assertEquals(arnaud.get_cave(), 0);
+        assertEquals(ludo.get_cave(), 0);
+        assertEquals(peppa_pig.get_cave(), 0);
+        assertEquals(bettie.get_cave(), 0);
 
         // Banqueroute
         tour.banqueroute();
