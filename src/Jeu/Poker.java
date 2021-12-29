@@ -41,8 +41,12 @@ public class Poker {
                 petite_blinde *= 2;
                 InterfaceUtilisateur.println("La petite blinde augmente à " + petite_blinde + " et la grosse blinde à " + petite_blinde * 2);
             }
-        } while (Joueur.inc_donneur());
-        InterfaceUtilisateur.println(Joueur.donneur + " a gagné la partie");
+        } while (Joueur.inc_donneur() &&
+                (InterfaceUtilisateur.test_arreter_si_humain_a_perdu &&
+                        Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0))
+        );
+        if (Joueur.nombre_de_joueurs() == 1) InterfaceUtilisateur.println(Joueur.donneur + " a gagné la partie");
+        else InterfaceUtilisateur.println(noms_joueurs[0] + " a perdu la partie");
         InterfaceUtilisateur.interface_graphique.ferme();
     }
 

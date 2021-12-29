@@ -1,6 +1,8 @@
 package Jeu;
 
 import Cartes.Carte;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -8,17 +10,22 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class IntelligenceHumaineTest {
-    public static void init_test() {
+    @BeforeEach
+    public void before() {
         InterfaceUtilisateur.test_cacher_interface_graphique = true;
-        InterfaceUtilisateur.test_tour_manuel = false;
+        InterfaceUtilisateur.test_mock_nextline = new ArrayList<>();
         String[] noms_joueurs = new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"};
         Poker.init(noms_joueurs, 1000);
     }
 
+    @AfterEach
+    public void after() {
+        InterfaceUtilisateur.test_cacher_interface_graphique = false;
+        InterfaceUtilisateur.test_mock_nextline = null;
+    }
+
     @Test
     void demander_mise() {
-        init_test();
-        InterfaceUtilisateur.test_mock_nextline = new ArrayList<>();
 
         IntelligenceHumaine intelligence_humaine = new IntelligenceHumaine("Arnaud");
         ArrayList<Carte> jeu_pt = new ArrayList<>();

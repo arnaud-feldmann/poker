@@ -1,6 +1,8 @@
 package Jeu;
 
 import Cartes.PaquetDeCartes;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -8,13 +10,23 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class PokerTest {
+class IntelligenceArtificielleTest {
+
+    @BeforeEach
+    public void before() {
+        InterfaceUtilisateur.test_cacher_interface_graphique = true;
+        InterfaceUtilisateur.test_arreter_si_humain_a_perdu = true;
+    }
+
+    @AfterEach
+    public void after() {
+        InterfaceUtilisateur.test_cacher_interface_graphique = false;
+        InterfaceUtilisateur.test_arreter_si_humain_a_perdu = false;
+    }
 
     @Test
-    void poker() {
-        InterfaceUtilisateur.test_cacher_interface_graphique = true;
-        InterfaceUtilisateur.test_tour_manuel = false;
-
+    public void faire_que_des_tapis_perd() {
+        boolean joueur_gagne;
         PaquetDeCartes.set_seed(1);
         IntelligenceArtificielle.set_seed(1);
 
@@ -24,7 +36,8 @@ class PokerTest {
             InterfaceUtilisateur.test_mock_nextline.add("o"); // validation à la fin du tour
         }
         Poker.poker(new String[]{"Arnaud", "Loup", "Ludo"});
-        assertFalse(Joueur.inc_donneur()); // Quelqu'un a gagné la partie.
-        assertEquals(Joueur.donneur.get_cave(), 3000); // On n'a pas d'argent disparu
+        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 3000); // On n'a pas d'argent disparu
+
+        assertFalse(Joueur.nombre_de_joueurs() == 1); // Le joueur ne gagne pas en faisant que des tapis
     }
 }

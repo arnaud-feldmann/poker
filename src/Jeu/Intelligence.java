@@ -16,7 +16,7 @@ IA empêche de reproduire à l'infini une technique gagnante.
  */
 public interface Intelligence {
     int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
-                      ArrayList<Carte> main, int cave, int mise_precedente);
+                      ArrayList<Carte> main, int cave, int mise_deja_en_jeu);
 }
 
 class IntelligenceHumaine implements Intelligence {
@@ -71,12 +71,12 @@ class IntelligenceHumaine implements Intelligence {
 
     @Override
     public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
-                             ArrayList<Carte> main, int cave, int mise_precedente) {
+                             ArrayList<Carte> main, int cave, int mise_deja_en_jeu) {
         int res;
         int relance_max = cave - mise_demandee;
         CollectionDeCartes collection = new CollectionDeCartes(main, jeu_pt);
         prompt_tour_joueur();
-        InterfaceUtilisateur.println("Votre mise actuelle est de " + mise_precedente + ".");
+        InterfaceUtilisateur.println("Votre mise actuelle est de " + mise_deja_en_jeu + ".");
         InterfaceUtilisateur.println("Il vous reste " + cave + " dans votre cave.");
         InterfaceUtilisateur.println("Le pot actuel est de " + pot);
         InterfaceUtilisateur.println("La mise actuelle demandée en jeu est de " + mise_demandee + ".");
@@ -85,13 +85,13 @@ class IntelligenceHumaine implements Intelligence {
                 Math.round(collection.probaVict(Joueur.nombre_de_joueurs() - 1) * 100) + " %");
         int action = prompt_action(
                 relance_min < relance_max,
-                mise_demandee == mise_precedente);
+                mise_demandee == mise_deja_en_jeu);
         switch (action) {
             case 2:
-                res = cave + mise_precedente;
+                res = cave + mise_deja_en_jeu;
                 break;
             case 3:
-                res = Math.max(mise_demandee, mise_precedente);
+                res = Math.max(mise_demandee, mise_deja_en_jeu);
                 break;
             case 4:
                 res = mise_demandee + prompt_relance(relance_min, relance_max);
@@ -117,7 +117,7 @@ va toujours checker quand ça ne lui coute rien.
  */
 class IntelligenceArtificielle implements Intelligence {
     static Random random = new Random();
-    final int PRUDENCE_MAX = 32; // une puissance de 2
+    final int PRUDENCE_MAX = 8; // une puissance de 2
     int m_prudence;
     int m_cave_initiale;
     int m_cave_precedente;
@@ -164,16 +164,18 @@ class IntelligenceArtificielle implements Intelligence {
 
     @Override
     public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
-                             ArrayList<Carte> main, int cave, int mise_precedente) {
-        changements_de_prudence(cave + mise_precedente);
+                             ArrayList<Carte> main, int cave, int mise_deja_en_jeu) {
+        changements_de_prudence(cave + mise_deja_en_jeu);
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
-        int res = (int) (proba * (double) m_cave_initiale / (double) (m_prudence + random.nextInt(5)));
+        int res = (int) (proba * (double) m_cave_initiale / (double) (m_prudence + random.nextInt(5)) *
+                ((double) mise_deja_en_jeu / (double) cave + 1) * // Pour éviter de suivre puis se retirer
+                ((double) pot / (double) cave)); // L'appât du gain
         if (random.nextInt(m_prudence) == 0) {
             res *= random.nextInt(10) + 1;
             if (res < mise_demandee) res = mise_demandee;
         }
         if (random.nextInt(m_prudence) == 0) res /= random.nextInt(10) + 1;
-        if (res < mise_precedente) res = mise_precedente; // On checke toujours par défaut
+        if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
         return res;
     }
 }

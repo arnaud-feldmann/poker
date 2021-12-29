@@ -2,23 +2,36 @@ package Jeu;
 
 import Cartes.Carte;
 import Cartes.PaquetDeCartes;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TourPokerTest {
-    public static TourPoker init_test() {
-        InterfaceUtilisateur.test_cacher_interface_graphique = true;
-        InterfaceUtilisateur.test_tour_manuel = true;
+
+    public static TourPoker tour_poker() {
         String[] noms_joueurs = new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"};
         Poker.init(noms_joueurs, 1000);
         return new TourPoker(0);
     }
 
+    @BeforeEach
+    void before() {
+        InterfaceUtilisateur.test_cacher_interface_graphique = true;
+        InterfaceUtilisateur.test_tour_manuel = true;
+    }
+
+    @AfterEach
+    void after() {
+        InterfaceUtilisateur.test_cacher_interface_graphique = false;
+        InterfaceUtilisateur.test_tour_manuel = false;
+    }
+
     @Test
     void tout_le_monde_couche_sauf_un() {
         PaquetDeCartes.set_seed(1);
-        TourPoker tour = init_test();
+        TourPoker tour = tour_poker();
         Joueur arnaud = Joueur.donneur;
         Joueur peppa_pig = arnaud.get_joueur_suivant();
         Joueur bettie = peppa_pig.get_joueur_suivant();
@@ -77,7 +90,7 @@ class TourPokerTest {
     @Test
     void tapis_repartition_et_banqueroute() {
         PaquetDeCartes.set_seed(2);
-        TourPoker tour = init_test();
+        TourPoker tour = tour_poker();
         Joueur arnaud = Joueur.donneur;
         Joueur peppa_pig = arnaud.get_joueur_suivant();
         Joueur bettie = peppa_pig.get_joueur_suivant();
@@ -139,7 +152,7 @@ class TourPokerTest {
     @Test
     void un_seul_gagnant() {
         PaquetDeCartes.set_seed(3);
-        TourPoker tour = init_test();
+        TourPoker tour = tour_poker();
         Joueur arnaud = Joueur.donneur;
         Joueur peppa_pig = arnaud.get_joueur_suivant();
         Joueur bettie = peppa_pig.get_joueur_suivant();
@@ -199,7 +212,7 @@ class TourPokerTest {
     @Test
     void egalite() {
         PaquetDeCartes.set_seed(4);
-        TourPoker tour = init_test();
+        TourPoker tour = tour_poker();
         Joueur arnaud = Joueur.donneur;
         Joueur peppa_pig = arnaud.get_joueur_suivant();
         Joueur bettie = peppa_pig.get_joueur_suivant();
@@ -267,7 +280,7 @@ class TourPokerTest {
     @Test
     void gagne_le_jeu() {
         PaquetDeCartes.set_seed(8);
-        TourPoker tour = init_test();
+        TourPoker tour = tour_poker();
         Joueur arnaud = Joueur.donneur;
         Joueur peppa_pig = arnaud.get_joueur_suivant();
         Joueur bettie = peppa_pig.get_joueur_suivant();
