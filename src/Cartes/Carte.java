@@ -15,6 +15,7 @@ public class Carte implements IGPokerable {
         m_valeur = valeur;
         m_couleur = couleur;
     }
+
     public Carte(Carte carte) {
         this(carte.get_valeur(), carte.get_couleur());
     }

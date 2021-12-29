@@ -35,6 +35,7 @@ public class Joueur {
     private int m_mise;
     private ArrayList<Carte> m_main;
     private Etat m_etat;
+
     protected Joueur(String nom_joueur, int cave, Joueur joueur_suivant, Intelligence intelligence, int numero_joueur_interface) {
         m_nom_joueur = nom_joueur;
         m_main = null;

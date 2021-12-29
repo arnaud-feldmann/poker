@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class Combinaison {
     private Niveau m_niveau;
     private ArrayList<Carte.Valeur> m_rangs = new ArrayList<>();
+
     public Combinaison(ArrayList<Carte> cartes) throws IllegalArgumentException {
         if (cartes.size() != 7) throw new IllegalArgumentException("On ne peut comparer que les collections complètes");
         final int[] tab_couleurs = new int[Carte.Couleur.values().length];
