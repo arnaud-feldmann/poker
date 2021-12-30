@@ -110,12 +110,32 @@ class IntelligenceHumaine implements Intelligence {
     }
 }
 
+/*
+L'IA sommaire est principalement appuyée sur ces points
+* La méthode probaVict de CollectionDeCartes qui simule 10000 lancers et donne une probabilité de victoire pour une main.
+* A partir de cette probabilité de victoire on calcule 3 espérances :
+    - une calculée à partir des mises immédiates (pour donner une approximation du cas où l'on perd directement d'une manière ou d'une autre)
+    - une calculée dans le cas où tout le monde suit (c'est ce que le parieur espère la plupart du temps)
+    - une calculée dans le cas où tout le monde fait tapis (c'est pour représenter l'espoir de siphoner tout le tapis de l'adversaire)
+* On fait une moyenne de ces 3 espérances
+* On multiplie ce montant par une variable d'audace qui représente le degré de prise
+de risque d'une IA. Cette variable peut augmenter en fonction des circonstances. Sans cela, si l'IA était trop raisonnable,
+on pourrait gagner contre elle en faisant que des tapis.
+
+Il y a aussi deux modifications annexes :
+* A chaque fois que l'IA joue, elle a une chance sur m_bluffeur de "bluffer" en rajoutant  m_cave_initiale / 10 à ses
+mises. Ce comportement est fait pour éviter d'avoir un comportement trop mécanique de l'IA où l'on pourrait savoir
+que toutes ses hautes mises correspondent à des bonnes cartes. Lorsque l'IA bluffe, elle bluffe jusqu'à la fin du tour.
+* La probabilité probaVict est légèrement et arbitrairement baissée en dessous de 1/nombre_de_joueurs car,
+même dans le cas d'une forte espérance, celle-ci serait dûe uniquement à un fort gain potentiel, mais cette victoire
+serait très incertaine.
+ */
+
 class IntelligenceArtificielle implements Intelligence {
 
     static Random random = new Random();
     final static int AUDACE_MAX = 5;
-    int m_audace; // Un entier déterminé en fonction de statistiques de gain, qui décide le degré de prises de risques de l'IA.
-    // Si elle joue face à quelqu'un qui ne fait que des tapis, en particulier, elle est obligé de prendre des risques.
+    int m_audace;
     int[] statistiques_de_gain = new int[AUDACE_MAX];
     final int m_bluffeur; // Le nombre de coups joués avant un bluff.
     Object m_bluff_sur_ce_jeu = null; // Lors d'un bluff on garde en mémoire l'adresse du jeu considéré pour bluffer jusqu'à la fin
@@ -165,34 +185,25 @@ class IntelligenceArtificielle implements Intelligence {
         changements_audace(cave_non_misee + mise_deja_en_jeu);
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
         double proba_modif = Math.min(Math.pow(proba,2) * Joueur.nombre_de_joueurs(),proba);
-        // Le but de la modification est de pénaliser les probabilités inférieures à 1/nombre_de_joueurs
-        // car alors même dans le cas d'une forte espérance, on aurait une variance trop importante.
         double esperance_actuelle = proba_modif * (double) (pot + mise_demandee) - (double) mise_demandee;
-        // L'espérance actuelle mais souvent faible en début de tours même sur des bonnes mains.
         double esperance_suivi = proba_modif * (double) (pot + Joueur.stream()
                 .filter(Joueur::pas_couche)
                 .mapToInt(joueur -> mise_demandee-joueur.get_mise())
                 .sum()) -
                 (double) mise_demandee;
-        // L'espérance si tout le monde suit
         double esperance_tapis = proba_modif * (double) (pot + Joueur.stream()
                 .filter(Joueur::pas_couche)
                 .mapToInt(joueur -> cave_non_misee + mise_deja_en_jeu - joueur.get_mise())
                 .sum()) -
                 (double) cave_non_misee -
                 (double) mise_deja_en_jeu;
-        // On applique cette correction sinon l'espérance du tapis compte trop fort dans la moyenne.
         res = (int) ((esperance_actuelle + esperance_suivi + esperance_tapis) / 3 *
                 Math.pow(2,m_audace));
-        InterfaceUtilisateur.println("RES = " + res);
-        InterfaceUtilisateur.println(proba);
         if (m_bluff_sur_ce_jeu != null) {
-            if (m_bluff_sur_ce_jeu != jeu_pt) m_bluff_sur_ce_jeu = null; // C'est un nouveau coup
+            if (m_bluff_sur_ce_jeu != jeu_pt) m_bluff_sur_ce_jeu = null; // Si le pointeur change c'est qu'on est dans un nouveau tour
             if (res < mise_demandee) res += m_cave_initiale / 10;
-            InterfaceUtilisateur.println("BLUFF CONTINUE !!!" + res);
         } else if (random.nextInt(m_bluffeur) == 0) {
             if (res < mise_demandee) res += m_cave_initiale / 10;
-            InterfaceUtilisateur.println("BLUFF DEBUT !!!" + res);
             m_bluff_sur_ce_jeu = jeu_pt;
         }
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
