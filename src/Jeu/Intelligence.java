@@ -161,24 +161,28 @@ class IntelligenceArtificielle implements Intelligence {
     @Override
     public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
                              ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
+        int res;
         changements_audace(cave_non_misee + mise_deja_en_jeu);
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
-        double esperance_actuelle = proba * (double) (pot + mise_demandee) - (double) mise_demandee;
+        double proba_modif = Math.min(Math.pow(proba,2) * Joueur.nombre_de_joueurs(),proba);
+        // Le but de la modification est de pénaliser les probabilités inférieures à 1/nombre_de_joueurs
+        // car alors même dans le cas d'une forte espérance, on aurait une variance trop importante.
+        double esperance_actuelle = proba_modif * (double) (pot + mise_demandee) - (double) mise_demandee;
         // L'espérance actuelle mais souvent faible en début de tours même sur des bonnes mains.
-        double esperance_suivi = proba * (double) (pot + Joueur.stream()
+        double esperance_suivi = proba_modif * (double) (pot + Joueur.stream()
                 .filter(Joueur::pas_couche)
                 .mapToInt(joueur -> mise_demandee-joueur.get_mise())
                 .sum()) -
                 (double) mise_demandee;
         // L'espérance si tout le monde suit
-        double esperance_tapis = proba * (double) (pot + Joueur.stream()
+        double esperance_tapis = proba_modif * (double) (pot + Joueur.stream()
                 .filter(Joueur::pas_couche)
                 .mapToInt(joueur -> cave_non_misee + mise_deja_en_jeu - joueur.get_mise())
                 .sum()) -
                 (double) cave_non_misee -
                 (double) mise_deja_en_jeu;
         // On applique cette correction sinon l'espérance du tapis compte trop fort dans la moyenne.
-        int res = (int) ((esperance_actuelle + esperance_suivi + esperance_tapis) /3 *
+        res = (int) ((esperance_actuelle + esperance_suivi + esperance_tapis) / 3 *
                 Math.pow(2,m_audace));
         InterfaceUtilisateur.println("RES = " + res);
         InterfaceUtilisateur.println(proba);
