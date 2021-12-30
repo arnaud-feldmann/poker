@@ -4,7 +4,6 @@ import Cartes.Carte;
 import Cartes.CollectionDeCartes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 /*
@@ -113,8 +112,7 @@ class IntelligenceHumaine implements Intelligence {
 /*
 L'IA sommaire est principalement appuyée sur ces points
 * La méthode probaVict de CollectionDeCartes qui simule 10000 lancers et donne une probabilité de victoire pour une main.
-* A partir de cette probabilité de victoire on calcule 3 espérances :
-    - une calculée à partir des mises immédiates (pour donner une approximation du cas où l'on perd directement d'une manière ou d'une autre)
+* A partir de cette probabilité de victoire on calcule 2 espérances :
     - une calculée dans le cas où tout le monde suit (c'est ce que le parieur espère la plupart du temps)
     - une calculée dans le cas où tout le monde fait tapis (c'est pour représenter l'espoir de siphoner tout le tapis de l'adversaire)
 * On fait une moyenne de ces 3 espérances
@@ -183,7 +181,6 @@ class IntelligenceArtificielle implements Intelligence {
         changements_audace(cave_non_misee + mise_deja_en_jeu);
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
         double proba_modif = Math.min(Math.pow(proba,2) * Joueur.nombre_de_joueurs(),proba);
-        double esperance_actuelle = proba_modif * (double) (pot + mise_demandee) - (double) mise_demandee;
         double esperance_suivi = proba_modif * (double) (pot + Joueur.stream()
                 .filter(Joueur::pas_couche)
                 .mapToInt(joueur -> mise_demandee-joueur.get_mise())
@@ -195,7 +192,7 @@ class IntelligenceArtificielle implements Intelligence {
                 .sum()) -
                 (double) cave_non_misee -
                 (double) mise_deja_en_jeu;
-        res = (int) ((esperance_actuelle + esperance_suivi + esperance_tapis) / 3 *
+        res = (int) ((esperance_suivi + esperance_tapis) / 2 *
                 Math.pow(2,m_audace));
         if (m_bluff_sur_ce_jeu != null) {
             if (m_bluff_sur_ce_jeu != jeu_pt) m_bluff_sur_ce_jeu = null; // Si le pointeur change c'est qu'on est dans un nouveau tour
