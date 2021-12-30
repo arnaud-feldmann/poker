@@ -4,6 +4,7 @@ import Cartes.Carte;
 import Cartes.CollectionDeCartes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /*
@@ -112,7 +113,8 @@ class IntelligenceHumaine implements Intelligence {
 /*
 L'IA sommaire est principalement appuyée sur ces points
 * La méthode probaVict de CollectionDeCartes qui simule 10000 lancers et donne une probabilité de victoire pour une main.
-* A partir de cette probabilité de victoire on calcule 2 espérances :
+* A partir de cette probabilité de victoire on calcule 3 espérances :
+    - une calculée sans suivi, pour pouvoir inclure les cas où l'on suit mais tout le monde se couche puis on perd.
     - une calculée dans le cas où tout le monde suit (c'est ce que le parieur espère la plupart du temps)
     - une calculée dans le cas où tout le monde fait tapis (c'est pour représenter l'espoir de siphoner tout le tapis
     de l'adversaire et ça permet d'avoir une IA agressive plus drôle à jouer que si elle n'attaque jamais)
@@ -143,7 +145,7 @@ class IntelligenceArtificielle implements Intelligence {
     String m_nom_joueur;
 
     IntelligenceArtificielle(int cave_initiale, String nom_joueur) {
-        m_bluffeur = 10 + random.nextInt(50);
+        m_bluffeur = 99 + random.nextInt(50);
         m_audace = 0;
         m_cave_initiale = cave_initiale;
         m_cave_precedente = cave_initiale;
@@ -182,19 +184,30 @@ class IntelligenceArtificielle implements Intelligence {
         changements_audace(cave_non_misee + mise_deja_en_jeu);
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
         double proba_modif = Math.min(Math.pow(proba,2) * Joueur.nombre_de_joueurs(),proba);
-        double esperance_suivi = proba_modif * (double) (pot + Joueur.stream()
-                .filter(Joueur::pas_couche)
-                .mapToInt(joueur -> mise_demandee-joueur.get_mise())
-                .sum()) -
-                (double) mise_demandee;
-        double esperance_tapis = proba_modif * (double) (pot + Joueur.stream()
-                .filter(Joueur::pas_couche)
-                .mapToInt(joueur -> cave_non_misee + mise_deja_en_jeu - joueur.get_mise())
-                .sum()) -
-                (double) cave_non_misee -
-                (double) mise_deja_en_jeu;
-        res = (int) ((esperance_suivi + esperance_tapis) / 2 *
+        int mise_demandee_tronquee = Math.min(mise_demandee,cave_non_misee + mise_deja_en_jeu);
+        double esperance_sans_suivi = proba_modif * (double) (pot + mise_demandee_tronquee) - (double) mise_demandee_tronquee;
+        double esperance_suivi =
+                proba_modif *
+                        (double) (pot +
+                                Joueur.stream()
+                                        .filter(Joueur::pas_couche)
+                                        .mapToInt(joueur -> Math.min(mise_demandee_tronquee,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise())
+                                        .sum()) - // ce qui serait rajouté au pot dans le cas d'un suivi
+                        (double) mise_demandee_tronquee; // c'est ce qu'on mise dans ce cas
+        double esperance_tapis =
+                proba_modif *
+                        (double) (pot +
+                                Joueur.stream()
+                                        .filter(Joueur::pas_couche)
+                                        .mapToInt(joueur -> Math.min(cave_non_misee + mise_deja_en_jeu,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise())
+                                        .sum()) - // tout ce qui est ajouté au pot en cas de tapis. -
+                        (double) (cave_non_misee + mise_deja_en_jeu); // Le tapis misé;
+        res = (int) ( (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis + 4 * mise_deja_en_jeu) / 3d /
+                2d *
                 Math.pow(2,m_audace));
+        InterfaceUtilisateur.println("Proba : " + proba + "  proba modif : " + proba_modif + " res :" + res + " tapis : " +
+                esperance_tapis + " suivi : " + esperance_suivi + " esp couché :" + esperance_sans_suivi);
+        InterfaceUtilisateur.println(Arrays.toString(statistiques_de_gain));
         if (m_bluff_sur_ce_jeu != null) {
             if (m_bluff_sur_ce_jeu != jeu_pt) m_bluff_sur_ce_jeu = null; // Si le pointeur change c'est qu'on est dans un nouveau tour
             if (res < mise_demandee) res += m_cave_initiale / 10;

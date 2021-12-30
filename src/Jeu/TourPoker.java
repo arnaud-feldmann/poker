@@ -123,18 +123,15 @@ public class TourPoker {
             if (Joueur.stream().filter(Joueur::pas_couche).count() == 1) break;
             if (joueur_actuel.get_etat() == Joueur.Etat.PEUT_MISER) {
                 mise = joueur_actuel.demander_mise(m_mise_actuelle, m_jeu_pt, m_pot_pt[0], m_relance_minimale);
-                if (mise >= joueur_actuel.get_cave()) {
-                    joueur_actuel.ajouter_mise(mise - joueur_actuel.get_mise(), m_pot_pt);
-                }
-                else if (mise < m_mise_actuelle) joueur_actuel.coucher();
-                else if (mise >= m_mise_actuelle + m_relance_minimale) {
+                if (mise >= m_mise_actuelle + m_relance_minimale && m_mise_actuelle <= joueur_actuel.get_cave()) {
                     joueur_fin = joueur_actuel;
                     joueur_actuel.ajouter_mise(mise - joueur_actuel.get_mise(), m_pot_pt);
                     m_relance_minimale = joueur_actuel.get_mise() - m_mise_actuelle;
                     m_mise_actuelle = joueur_actuel.get_mise();
-                } else {
-                    joueur_actuel.ajouter_mise(m_mise_actuelle - joueur_actuel.get_mise(), m_pot_pt);
-                }
+                } else if (mise >= joueur_actuel.get_cave()) {
+                    joueur_actuel.ajouter_mise(mise - joueur_actuel.get_mise(), m_pot_pt);
+                } else if (mise < m_mise_actuelle) joueur_actuel.coucher();
+                else joueur_actuel.ajouter_mise(m_mise_actuelle - joueur_actuel.get_mise(), m_pot_pt);
             }
             joueur_actuel = joueur_actuel.get_joueur_suivant();
         } while (joueur_actuel != joueur_fin);
