@@ -192,11 +192,11 @@ class IntelligenceArtificielle implements Intelligence {
                 .sum();
         double esperance_suivi = proba_modif * (pot + somme_suivis) - (double) mise_demandee_tronquee;
         double somme_tapis = Joueur.stream()
-                        .filter(Joueur::pas_couche)
-                        .mapToInt(joueur -> Math.max(Math.min(cave_non_misee + mise_deja_en_jeu,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
-                        .sum();
+                .filter(Joueur::pas_couche)
+                .mapToInt(joueur -> Math.max(Math.min(cave_non_misee + mise_deja_en_jeu,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
+                .sum();
         double esperance_tapis =  proba_modif * (pot + somme_tapis) - (double) (cave_non_misee + mise_deja_en_jeu);
-        res = (int) ( (2*esperance_sans_suivi + esperance_suivi + esperance_tapis + 3 * mise_deja_en_jeu) / 3d *
+        res = (int) ( (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis + 4 * mise_deja_en_jeu) / 4d *
                 Math.pow(2,m_audace));
         InterfaceUtilisateur.println("Proba : " + proba + "  proba modif : " + proba_modif + " res :" + res + " tapis : " +
                 esperance_tapis + " suivi : " + esperance_suivi + " sans suivi :" + esperance_sans_suivi + " somme suivis : " + somme_suivis +
