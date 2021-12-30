@@ -171,8 +171,6 @@ class IntelligenceArtificielle implements Intelligence {
                         max = statistiques_de_gain[i];
                     }
                 }
-                InterfaceUtilisateur.println(m_nom_joueur + " a maintenant " + m_audace + " points d'audace'");
-                InterfaceUtilisateur.println(Arrays.toString(statistiques_de_gain));
             }
             m_cave_precedente = cave;
         }
