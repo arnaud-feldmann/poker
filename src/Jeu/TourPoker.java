@@ -153,12 +153,20 @@ public class TourPoker {
     // d'ordre.
     // Cette relation est dans l'ordre décroissant car on veut redistribuer dans l'ordre décroissant des valeurs de
     // jeux.
-    private int ordre_des_gains(Joueur joueur1, Joueur joueur2) {
+    private int ordre_des_mains(Joueur joueur1, Joueur joueur2) {
         if (joueur1.get_etat() == Joueur.Etat.COUCHE) {
             if (joueur2.get_etat() == Joueur.Etat.COUCHE) return 0;
             else return 1;
         } else if (joueur2.get_etat() == Joueur.Etat.COUCHE) return -1;
         else return joueur2.get_collection(m_jeu_pt).compareTo(joueur1.get_collection(m_jeu_pt));
+    }
+
+    private int ordre_des_gains(Joueur joueur1, Joueur joueur2) {
+        int res = ordre_des_mains(joueur1,joueur2);
+        if (res == 0) res = Double.compare(joueur1.get_mise(),joueur2.get_mise());
+        // On met les mises les plus petites en premier comme ça en cas d'égalité et de pots différents, on
+        // peut acquitter les tas à la suite cf fonction suivante
+        return res;
     }
 
     private void joueur_et_ex_aequos_empochent_leur_gain(Joueur gagnant) {
@@ -168,11 +176,11 @@ public class TourPoker {
         int mise = gagnant.get_mise();
         if (mise != 0) {
             retrait_pt = new int[]{0};
-            Joueur.stream().forEach(joueur -> joueur.retirer_mise(mise, m_pot_pt, retrait_pt));
             ArrayList<Joueur> ex_aequos =
                     Joueur.stream()
-                            .filter(x -> ordre_des_gains(x, gagnant) == 0)
+                            .filter(x -> ordre_des_mains(x, gagnant) == 0 && x.get_mise() != 0) // Les petites mises sont déjà acquitées
                             .collect(Collectors.toCollection(ArrayList<Joueur>::new));
+            Joueur.stream().forEach(joueur -> joueur.retirer_mise(mise, m_pot_pt, retrait_pt));
             gains = retrait_pt[0] / ex_aequos.size();
             for (Joueur ex_aequo : ex_aequos) {
                 ex_aequo.encaisser(gains);
