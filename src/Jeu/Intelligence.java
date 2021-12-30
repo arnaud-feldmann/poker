@@ -4,6 +4,7 @@ import Cartes.Carte;
 import Cartes.CollectionDeCartes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /*
@@ -117,15 +118,15 @@ va toujours checker quand ça ne lui coute rien.
  */
 class IntelligenceArtificielle implements Intelligence {
     static Random random = new Random();
-    final static int IMPETUOSITE_MAX = 2048; // une puissance de 2
+    final static int IMPETUOSITE_MAX = 5;
     int m_impetuosite;
     int m_cave_initiale;
     int m_cave_precedente;
-    static int[] statistiques_de_gain = new int[IMPETUOSITE_MAX];
+    int[] statistiques_de_gain = new int[IMPETUOSITE_MAX];
     String m_nom_joueur;
 
     IntelligenceArtificielle(int cave_initiale, String nom_joueur) {
-        m_impetuosite = 3;
+        m_impetuosite = 0;
         m_cave_initiale = cave_initiale;
         m_cave_precedente = cave_initiale;
         m_nom_joueur = nom_joueur;
@@ -136,30 +137,20 @@ class IntelligenceArtificielle implements Intelligence {
         random.setSeed(seed);
     }
 
-    private int mil(int x, int y) {
-        return x + (y - x + 1) / 2 - 1;
-    }
-
-    private int choisir_nouvelle_prudence(int debut, int fin) {
-        if (debut == fin) return debut;
-        int meandeb = 0;
-        int meanfin = 0;
-        final int milieu = mil(debut,fin);
-        for (int i = debut; i <= milieu; i++) meandeb += statistiques_de_gain[i];
-        meandeb /= (milieu - debut + 1);
-        for (int i = milieu + 1; i <= fin; i++) meanfin += statistiques_de_gain[i];
-        meanfin /= (fin - milieu);
-        if (meandeb > meanfin) return choisir_nouvelle_prudence(debut, milieu);
-        else if (meandeb < meanfin) return choisir_nouvelle_prudence(milieu + 1, fin);
-        else if (Math.abs(mil(debut,milieu) - m_impetuosite) <= Math.abs(mil(milieu,fin) - m_impetuosite)) return choisir_nouvelle_prudence(debut, milieu);
-        else return choisir_nouvelle_prudence(milieu + 1, fin);
-    }
-
     private void changements_impetuosite(int cave) {
         if (cave != m_cave_precedente) {
-            statistiques_de_gain[m_impetuosite - 1] += cave - m_cave_precedente;
-            m_impetuosite = choisir_nouvelle_prudence(0, IMPETUOSITE_MAX - 1) + 1;
-            InterfaceUtilisateur.println(m_nom_joueur + " a maintenant " + m_impetuosite + " points de prudence");
+            statistiques_de_gain[m_impetuosite] += cave - m_cave_precedente;
+            for (int i = 0 ; i < IMPETUOSITE_MAX ; i++) statistiques_de_gain[i] -= (cave - m_cave_precedente) / IMPETUOSITE_MAX;
+            for (int i = 0 ; i < IMPETUOSITE_MAX ; i++) statistiques_de_gain[i] -= (cave - m_cave_precedente) / IMPETUOSITE_MAX;
+
+            for (int i = 0,max = Integer.MIN_VALUE ; i < IMPETUOSITE_MAX ; i++) {
+                if (max < statistiques_de_gain[i]) {
+                    m_impetuosite = i;
+                    max = statistiques_de_gain[i];
+                }
+            }
+            InterfaceUtilisateur.println(m_nom_joueur + " a maintenant " + m_impetuosite + " points d'impétuosité");
+            InterfaceUtilisateur.println(Arrays.toString(statistiques_de_gain));
             m_cave_precedente = cave;
         }
     }
@@ -169,7 +160,23 @@ class IntelligenceArtificielle implements Intelligence {
                              ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
         changements_impetuosite(cave_non_misee + mise_deja_en_jeu);
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
-        int res = (int) (proba * (double) (pot - mise_demandee) * (double) m_impetuosite);
+        double esperance_actuelle = proba * (double) (pot + mise_demandee) - (double) mise_demandee;
+        // L'espérance actuelle mais souvent faible en début de tours même sur des bonnes mains.
+        double esperance_suivi = proba * (double) (pot + Joueur.stream()
+                        .filter(Joueur::pas_couche)
+                        .mapToInt(joueur -> mise_demandee-joueur.get_mise())
+                        .sum()) -
+                (double) mise_demandee;
+        // L'espérance si tout le monde suit
+        double esperance_tapis = proba * (double) (pot + Joueur.stream()
+                .filter(Joueur::pas_couche)
+                .mapToInt(joueur -> cave_non_misee + mise_deja_en_jeu - joueur.get_mise())
+                .sum()) -
+                (double) cave_non_misee -
+                (double) mise_deja_en_jeu;
+        // l'espérance si tout le monde fait tapis
+        int res = (int) ((esperance_actuelle + esperance_tapis + esperance_suivi) / 3 * Math.pow(2,m_impetuosite));
+        InterfaceUtilisateur.println(proba);
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
         return res;
     }

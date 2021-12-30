@@ -51,6 +51,6 @@ public class Poker {
     }
 
     public static void main(String[] args) {
-        poker(new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"});
+        poker(new String[]{"Arnaud", "Loup"});
     }
 }
