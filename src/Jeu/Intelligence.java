@@ -141,7 +141,6 @@ class IntelligenceArtificielle implements Intelligence {
         if (cave != m_cave_precedente) {
             statistiques_de_gain[m_impetuosite] += cave - m_cave_precedente;
             for (int i = 0 ; i < IMPETUOSITE_MAX ; i++) statistiques_de_gain[i] -= (cave - m_cave_precedente) / IMPETUOSITE_MAX;
-            for (int i = 0 ; i < IMPETUOSITE_MAX ; i++) statistiques_de_gain[i] -= (cave - m_cave_precedente) / IMPETUOSITE_MAX;
 
             for (int i = 0,max = Integer.MIN_VALUE ; i < IMPETUOSITE_MAX ; i++) {
                 if (max < statistiques_de_gain[i]) {
@@ -175,7 +174,9 @@ class IntelligenceArtificielle implements Intelligence {
                 (double) cave_non_misee -
                 (double) mise_deja_en_jeu;
         // l'espérance si tout le monde fait tapis
-        int res = (int) ((esperance_actuelle + esperance_tapis + esperance_suivi) / 3 * Math.pow(2,m_impetuosite));
+        int res = (int) ((esperance_actuelle + esperance_tapis + esperance_suivi) /
+                3 *
+                Math.pow(2,m_impetuosite));
         InterfaceUtilisateur.println(proba);
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
         return res;

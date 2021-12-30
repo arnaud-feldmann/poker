@@ -24,7 +24,7 @@ class IntelligenceArtificielleTest {
     }
 
     @Test
-    public void faire_que_des_tapis_perd_1() {
+    public void faire_que_des_tapis_perd_trois_joueurs_1() {
         PaquetDeCartes.set_seed(1);
         IntelligenceArtificielle.set_seed(1);
 
@@ -40,7 +40,7 @@ class IntelligenceArtificielleTest {
     }
 
     @Test
-    public void faire_que_des_tapis_perd_2() {
+    public void faire_que_des_tapis_perd_trois_joueurs_2() {
         PaquetDeCartes.set_seed(2);
         IntelligenceArtificielle.set_seed(2);
 
@@ -56,7 +56,7 @@ class IntelligenceArtificielleTest {
     }
 
     @Test
-    public void faire_que_des_tapis_perd_3() {
+    public void faire_que_des_tapis_perd_trois_joueurs_3() {
         PaquetDeCartes.set_seed(3);
         IntelligenceArtificielle.set_seed(3);
 
@@ -72,7 +72,55 @@ class IntelligenceArtificielleTest {
     }
 
     @Test
-    public void faire_que_des_tapis_perd_4() {
+    public void faire_que_des_tapis_perd_deux_joueurs_1() {
+        PaquetDeCartes.set_seed(4);
+        IntelligenceArtificielle.set_seed(4);
+
+        InterfaceUtilisateur.test_mock_nextline = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            InterfaceUtilisateur.test_mock_nextline.add("2"); // que des tapis
+            InterfaceUtilisateur.test_mock_nextline.add("o"); // validation à la fin du tour
+        }
+        Poker.poker(new String[]{"Arnaud", "Loup"});
+        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 2000); // On n'a pas d'argent disparu
+
+        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas en faisant que des tapis
+    }
+
+    @Test
+    public void faire_que_des_tapis_perd_deux_joueurs_2() {
+        PaquetDeCartes.set_seed(5);
+        IntelligenceArtificielle.set_seed(4);
+
+        InterfaceUtilisateur.test_mock_nextline = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            InterfaceUtilisateur.test_mock_nextline.add("2"); // que des tapis
+            InterfaceUtilisateur.test_mock_nextline.add("o"); // validation à la fin du tour
+        }
+        Poker.poker(new String[]{"Arnaud", "Loup"});
+        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 2000); // On n'a pas d'argent disparu
+
+        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas en faisant que des tapis
+    }
+
+    @Test
+    public void faire_que_des_tapis_perd_deux_joueurs_3() {
+        PaquetDeCartes.set_seed(6);
+        IntelligenceArtificielle.set_seed(4);
+
+        InterfaceUtilisateur.test_mock_nextline = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            InterfaceUtilisateur.test_mock_nextline.add("2"); // que des tapis
+            InterfaceUtilisateur.test_mock_nextline.add("o"); // validation à la fin du tour
+        }
+        Poker.poker(new String[]{"Arnaud", "Loup"});
+        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 2000); // On n'a pas d'argent disparu
+
+        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas en faisant que des tapis
+    }
+
+    @Test
+    public void faire_que_des_tapis_perd_trois_joueurs_4() {
         PaquetDeCartes.set_seed(4);
         IntelligenceArtificielle.set_seed(4);
 
@@ -88,7 +136,7 @@ class IntelligenceArtificielleTest {
     }
 
     @Test
-    public void faire_que_suivre_perd_1() {
+    public void faire_que_suivre_perd_trois_joueurs_1() {
         PaquetDeCartes.set_seed(1);
         IntelligenceArtificielle.set_seed(1);
 
@@ -106,7 +154,7 @@ class IntelligenceArtificielleTest {
         assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas en faisant que des tapis
     }
     @Test
-    public void faire_que_suivre_perd_2() {
+    public void faire_que_suivre_perd_trois_joueurs_2() {
         PaquetDeCartes.set_seed(2);
         IntelligenceArtificielle.set_seed(2);
 
@@ -125,7 +173,7 @@ class IntelligenceArtificielleTest {
     }
 
     @Test
-    public void faire_que_suivre_perd_3() {
+    public void faire_que_suivre_perd_trois_joueurs_3() {
         PaquetDeCartes.set_seed(3);
         IntelligenceArtificielle.set_seed(3);
 
@@ -144,7 +192,7 @@ class IntelligenceArtificielleTest {
     }
 
     @Test
-    public void faire_que_suivre_perd_4() {
+    public void faire_que_suivre_perd_trois_joueurs_4() {
         PaquetDeCartes.set_seed(4);
         IntelligenceArtificielle.set_seed(4);
 
