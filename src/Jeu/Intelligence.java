@@ -145,7 +145,7 @@ class IntelligenceArtificielle implements Intelligence {
     String m_nom_joueur;
 
     IntelligenceArtificielle(int cave_initiale, String nom_joueur) {
-        m_bluffeur = 99 + random.nextInt(50);
+        m_bluffeur = 20 + random.nextInt(50);
         m_audace = 0;
         m_cave_initiale = cave_initiale;
         m_cave_precedente = cave_initiale;
