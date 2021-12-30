@@ -14,13 +14,11 @@ class IntelligenceArtificielleTest {
     @BeforeEach
     public void before() {
         InterfaceUtilisateur.test_cacher_interface_graphique = true;
-        InterfaceUtilisateur.test_arreter_si_humain_a_perdu = true;
     }
 
     @AfterEach
     public void after() {
         InterfaceUtilisateur.test_cacher_interface_graphique = false;
-        InterfaceUtilisateur.test_arreter_si_humain_a_perdu = false;
     }
 
     @Test
@@ -191,10 +189,10 @@ class IntelligenceArtificielleTest {
             InterfaceUtilisateur.test_mock_nextline.add("2"); // que des tapis
             InterfaceUtilisateur.test_mock_nextline.add("o"); // validation à la fin du tour
         }
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 3000); // On n'a pas d'argent disparu
+        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"});
+        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 7000); // On n'a pas d'argent disparu
 
         assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas en faisant que des tapis
     }
-    
+
 }

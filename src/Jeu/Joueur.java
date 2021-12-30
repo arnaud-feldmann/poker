@@ -53,12 +53,12 @@ public class Joueur {
         return res;
     }
 
-    /* On passe le jeton au donneur suivant. Si le donneur ne change pas c'est qu'on a terminé la partie ! */
+    /* On passe le jeton au donneur suivant. La partie est finie s'il n'y a plus de joueur humains ou s'il n'y */
+    /* a plus qu'un joueur */
     protected static boolean inc_donneur() {
         Joueur donneur_save = donneur;
         donneur = donneur.get_joueur_suivant();
-
-        return donneur_save != donneur;
+        return Joueur.stream().anyMatch(x -> x.m_intelligence.type_intelligence() == 0) && donneur_save != donneur;
     }
 
     /*

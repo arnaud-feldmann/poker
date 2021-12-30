@@ -11,7 +11,6 @@ public class InterfaceUtilisateur {
     protected static ArrayList<String> test_mock_nextline = null;
     protected static boolean test_tour_manuel;
     protected static boolean test_cacher_interface_graphique;
-    protected static boolean test_arreter_si_humain_a_perdu;
 
     public static <T> void println(T object) {
         System.out.println(object);

@@ -143,7 +143,7 @@ class TourPokerTest {
         assertEquals(elodie.get_joueur_suivant(), loup);
         assertEquals(loup.get_joueur_suivant(), kerry);
         assertEquals(Joueur.donneur, kerry);
-        assertTrue(Joueur.inc_donneur());
+        assertFalse(Joueur.inc_donneur()); // Arnaud a quitté le jeu
 
         // Fermeture interface graphique
         InterfaceUtilisateur.interface_graphique.ferme();
