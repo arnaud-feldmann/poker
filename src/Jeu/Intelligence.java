@@ -135,7 +135,7 @@ serait très incertaine.
 class IntelligenceArtificielle implements Intelligence {
 
     static Random random = new Random();
-    final static int AUDACE_MAX = 5;
+    final static int AUDACE_MAX = 4;
     int m_audace;
     int[] statistiques_de_gain = new int[AUDACE_MAX];
     final int m_bluffeur; // Le nombre de coups joués avant un bluff.
@@ -185,28 +185,22 @@ class IntelligenceArtificielle implements Intelligence {
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
         double proba_modif = Math.min(Math.pow(proba,2) * Joueur.nombre_de_joueurs(),proba);
         int mise_demandee_tronquee = Math.min(mise_demandee,cave_non_misee + mise_deja_en_jeu);
-        double esperance_sans_suivi = proba_modif * (double) (pot + mise_demandee_tronquee) - (double) mise_demandee_tronquee;
-        double esperance_suivi =
-                proba_modif *
-                        (double) (pot +
-                                Joueur.stream()
-                                        .filter(Joueur::pas_couche)
-                                        .mapToInt(joueur -> Math.min(mise_demandee_tronquee,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise())
-                                        .sum()) - // ce qui serait rajouté au pot dans le cas d'un suivi
-                        (double) mise_demandee_tronquee; // c'est ce qu'on mise dans ce cas
-        double esperance_tapis =
-                proba_modif *
-                        (double) (pot +
-                                Joueur.stream()
-                                        .filter(Joueur::pas_couche)
-                                        .mapToInt(joueur -> Math.min(cave_non_misee + mise_deja_en_jeu,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise())
-                                        .sum()) - // tout ce qui est ajouté au pot en cas de tapis. -
-                        (double) (cave_non_misee + mise_deja_en_jeu); // Le tapis misé;
-        res = (int) ( (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis + 4 * mise_deja_en_jeu) / 3d /
-                2d *
+        double esperance_sans_suivi = proba_modif * (double) (pot + Math.max(mise_demandee_tronquee - mise_deja_en_jeu,0)) - (double) mise_demandee_tronquee;
+        double somme_suivis = Joueur.stream()
+                .filter(Joueur::pas_couche)
+                .mapToInt(joueur -> Math.max(Math.min(mise_demandee_tronquee,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
+                .sum();
+        double esperance_suivi = proba_modif * (pot + somme_suivis) - (double) mise_demandee_tronquee;
+        double somme_tapis = Joueur.stream()
+                        .filter(Joueur::pas_couche)
+                        .mapToInt(joueur -> Math.max(Math.min(cave_non_misee + mise_deja_en_jeu,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
+                        .sum();
+        double esperance_tapis =  proba_modif * (pot + somme_tapis) - (double) (cave_non_misee + mise_deja_en_jeu);
+        res = (int) ( (2*esperance_sans_suivi + esperance_suivi + esperance_tapis + 3 * mise_deja_en_jeu) / 3d *
                 Math.pow(2,m_audace));
         InterfaceUtilisateur.println("Proba : " + proba + "  proba modif : " + proba_modif + " res :" + res + " tapis : " +
-                esperance_tapis + " suivi : " + esperance_suivi + " esp couché :" + esperance_sans_suivi);
+                esperance_tapis + " suivi : " + esperance_suivi + " sans suivi :" + esperance_sans_suivi + " somme suivis : " + somme_suivis +
+                " somme tapis : " + somme_tapis + " tronquée " + mise_demandee_tronquee);
         InterfaceUtilisateur.println(Arrays.toString(statistiques_de_gain));
         if (m_bluff_sur_ce_jeu != null) {
             if (m_bluff_sur_ce_jeu != jeu_pt) m_bluff_sur_ce_jeu = null; // Si le pointeur change c'est qu'on est dans un nouveau tour
