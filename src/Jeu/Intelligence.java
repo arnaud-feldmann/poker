@@ -114,7 +114,8 @@ L'IA sommaire est principalement appuyée sur ces points
 * La méthode probaVict de CollectionDeCartes qui simule 10000 lancers et donne une probabilité de victoire pour une main.
 * A partir de cette probabilité de victoire on calcule 2 espérances :
     - une calculée dans le cas où tout le monde suit (c'est ce que le parieur espère la plupart du temps)
-    - une calculée dans le cas où tout le monde fait tapis (c'est pour représenter l'espoir de siphoner tout le tapis de l'adversaire)
+    - une calculée dans le cas où tout le monde fait tapis (c'est pour représenter l'espoir de siphoner tout le tapis
+    de l'adversaire et ça permet d'avoir une IA agressive plus drôle à jouer que si elle n'attaque jamais)
 * On fait une moyenne de ces 3 espérances
 * On multiplie ce montant par une variable d'audace qui représente le degré de prise
 de risque d'une IA. Cette variable peut augmenter en fonction des circonstances. Sans cela, si l'IA était trop raisonnable,
