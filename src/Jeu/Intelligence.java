@@ -162,9 +162,9 @@ class IntelligenceArtificielle implements Intelligence {
         double esperance_actuelle = proba * (double) (pot + mise_demandee) - (double) mise_demandee;
         // L'espérance actuelle mais souvent faible en début de tours même sur des bonnes mains.
         double esperance_suivi = proba * (double) (pot + Joueur.stream()
-                        .filter(Joueur::pas_couche)
-                        .mapToInt(joueur -> mise_demandee-joueur.get_mise())
-                        .sum()) -
+                .filter(Joueur::pas_couche)
+                .mapToInt(joueur -> mise_demandee-joueur.get_mise())
+                .sum()) -
                 (double) mise_demandee;
         // L'espérance si tout le monde suit
         double esperance_tapis = proba * (double) (pot + Joueur.stream()
@@ -173,10 +173,13 @@ class IntelligenceArtificielle implements Intelligence {
                 .sum()) -
                 (double) cave_non_misee -
                 (double) mise_deja_en_jeu;
-        // l'espérance si tout le monde fait tapis
-        int res = (int) ((esperance_actuelle + esperance_tapis + esperance_suivi) /
-                3 *
+        double nb_esperances_positives = esperance_actuelle > 0 ? 1d : 0d +
+                esperance_suivi > 0 ? 1d : 0d +
+                esperance_tapis > 0 ? 1d : 0d;
+        int res = (int) (nb_esperances_positives / 3 *
+                (esperance_actuelle + esperance_suivi + esperance_tapis) *
                 Math.pow(2,m_impetuosite));
+        InterfaceUtilisateur.println("RES = " + res);
         InterfaceUtilisateur.println(proba);
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
         return res;
