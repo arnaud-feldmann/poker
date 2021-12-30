@@ -4,7 +4,6 @@ import Cartes.Carte;
 import Cartes.CollectionDeCartes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 /*
@@ -186,22 +185,17 @@ class IntelligenceArtificielle implements Intelligence {
         double proba_modif = Math.min(Math.pow(proba,2) * Joueur.nombre_de_joueurs(),proba);
         int mise_demandee_tronquee = Math.min(mise_demandee,cave_non_misee + mise_deja_en_jeu);
         double esperance_sans_suivi = proba_modif * (double) (pot + Math.max(mise_demandee_tronquee - mise_deja_en_jeu,0)) - (double) mise_demandee_tronquee;
-        double somme_suivis = Joueur.stream()
+        double esperance_suivi = proba_modif * (pot +
+                Joueur.stream()
                 .filter(Joueur::pas_couche)
                 .mapToInt(joueur -> Math.max(Math.min(mise_demandee_tronquee,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
-                .sum();
-        double esperance_suivi = proba_modif * (pot + somme_suivis) - (double) mise_demandee_tronquee;
-        double somme_tapis = Joueur.stream()
+                .sum()) - (double) mise_demandee_tronquee;
+        double esperance_tapis =  proba_modif * (pot + Joueur.stream()
                 .filter(Joueur::pas_couche)
                 .mapToInt(joueur -> Math.max(Math.min(cave_non_misee + mise_deja_en_jeu,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
-                .sum();
-        double esperance_tapis =  proba_modif * (pot + somme_tapis) - (double) (cave_non_misee + mise_deja_en_jeu);
+                .sum()) - (double) (cave_non_misee + mise_deja_en_jeu);
         res = (int) ( (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis + 4 * mise_deja_en_jeu) / 4d *
                 Math.pow(2,m_audace));
-        InterfaceUtilisateur.println("Proba : " + proba + "  proba modif : " + proba_modif + " res :" + res + " tapis : " +
-                esperance_tapis + " suivi : " + esperance_suivi + " sans suivi :" + esperance_sans_suivi + " somme suivis : " + somme_suivis +
-                " somme tapis : " + somme_tapis + " tronquée " + mise_demandee_tronquee);
-        InterfaceUtilisateur.println(Arrays.toString(statistiques_de_gain));
         if (m_bluff_sur_ce_jeu != null) {
             if (m_bluff_sur_ce_jeu != jeu_pt) m_bluff_sur_ce_jeu = null; // Si le pointeur change c'est qu'on est dans un nouveau tour
             if (res < mise_demandee) res += m_cave_initiale / 10;
