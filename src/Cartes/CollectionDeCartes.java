@@ -41,6 +41,7 @@ public class CollectionDeCartes {
     }
 
     public double probaVict(int nombre_autres_joueurs) {
+        final int NB_SIMULATIONS = 1000;
         CollectionDeCartes collection_joueur_ref;
         CollectionDeCartes collection_autre_joueur;
         ArrayList<Carte> main_autre_joueur;
@@ -48,7 +49,7 @@ public class CollectionDeCartes {
         boolean victoire;
         int nombre_de_victoires = 0;
         PaquetDeCartes paquet;
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < NB_SIMULATIONS; i++) {
             reference_jeu = new ArrayList<>(get_reference_jeu());
             collection_joueur_ref = new CollectionDeCartes(get_main(), reference_jeu);
             paquet = new PaquetDeCartes();
@@ -65,7 +66,7 @@ public class CollectionDeCartes {
             }
             if (victoire) nombre_de_victoires++;
         }
-        return ((double) nombre_de_victoires) / 10000d;
+        return ((double) nombre_de_victoires) / (double) NB_SIMULATIONS;
     }
 
     public void afficher() {
