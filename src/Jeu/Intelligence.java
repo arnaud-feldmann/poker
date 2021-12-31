@@ -134,7 +134,7 @@ serait très incertaine.
 class IntelligenceArtificielle implements Intelligence {
 
     static Random random = new Random();
-    final static int AUDACE_MAX = 4;
+    final static int AUDACE_MAX = 5;
     int m_audace;
     int[] statistiques_de_gain = new int[AUDACE_MAX];
     final int m_bluffeur; // Le nombre de coups joués avant un bluff.
@@ -205,19 +205,31 @@ class IntelligenceArtificielle implements Intelligence {
         return (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis) / 4d;
     }
 
+    int opacite_du_choix(int res, int mise_demandee) {
+        if (res - mise_demandee > 0) {
+            int rnd;
+            int bound = res - mise_demandee;
+            bound = bound * (bound + 1) / 2;
+            rnd = random.nextInt(bound) + 1;
+            rnd = (int) Math.ceil((Math.sqrt(8 * rnd + 1) - 1) / 2) - 1;
+            return rnd + mise_demandee;
+        }
+        else return res;
+    }
+
     @Override
     public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
                              ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
         int res;
         changements_audace(cave_non_misee + mise_deja_en_jeu);
-
         res = (int) ((
-                calcul_esperance(mise_demandee,  jeu_pt, pot, main, cave_non_misee, mise_deja_en_jeu) + mise_deja_en_jeu)  *
+                calcul_esperance(mise_demandee,  jeu_pt, pot, main, cave_non_misee, mise_deja_en_jeu) + mise_deja_en_jeu) / 2  *
                 // on cherche à savoir si l'espérence de jouer est supérieure à celle de se coucher (à savoir
                 // perdre la mise. On veut donc que esperance soit supérieur à -mise_dejà en jeu. Donc
                 // esperance + mise_deja_en_jeu >= 0.
                 Math.pow(2,m_audace));
         res = bluff(res, mise_demandee, jeu_pt);
+        res = opacite_du_choix(res, mise_demandee);
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
         return res;
     }
