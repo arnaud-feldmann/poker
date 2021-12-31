@@ -46,6 +46,10 @@ public class Joueur {
         InterfaceUtilisateur.interface_graphique.joueurSetNom(m_numero_joueur_interface_graphique, m_nom_joueur);
     }
 
+    protected boolean est_humain() {
+        return m_intelligence.type_intelligence() == 0;
+    }
+
     protected static int nombre_de_joueurs() {
         int res = 1;
         for (Joueur joueur = donneur.get_joueur_suivant(); joueur != donneur; joueur = joueur.get_joueur_suivant())
@@ -58,7 +62,7 @@ public class Joueur {
     protected static boolean inc_donneur() {
         Joueur donneur_save = donneur;
         donneur = donneur.get_joueur_suivant();
-        return Joueur.stream().anyMatch(x -> x.m_intelligence.type_intelligence() == 0) && donneur_save != donneur;
+        return Joueur.stream().anyMatch(Joueur::est_humain) && donneur_save != donneur;
     }
 
     /*

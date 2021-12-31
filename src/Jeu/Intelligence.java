@@ -227,6 +227,7 @@ class IntelligenceArtificielle implements Intelligence {
                 // on cherche à savoir si l'espérence de jouer est supérieure à celle de se coucher (à savoir
                 // perdre la mise. On veut donc que esperance soit supérieur à -mise_dejà en jeu. Donc
                 // esperance + mise_deja_en_jeu >= 0.
+                // La division par 3 est arbitraire, elle marchait bien.
                 Math.pow(2,m_audace));
         res = bluff(res, mise_demandee, jeu_pt);
         res = opacite_du_choix(res, mise_demandee);

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -40,12 +39,7 @@ class IntelligenceHumaineTest {
 
         ArrayList<String> mock_nextline_arraylist = new ArrayList<>();
         
-        InterfaceUtilisateur.test_mock_nextline = new Supplier<String>() {
-            ArrayList<String> valeurs = new ArrayList<>();
-            public String get() {
-                return mock_nextline_arraylist.remove(0);
-            }
-        };
+        InterfaceUtilisateur.test_mock_nextline = () -> mock_nextline_arraylist.remove(0);
 
         mock_nextline_arraylist.add("a"); //choix ignoré car pas le bon format
         mock_nextline_arraylist.add("0"); //choix ignoré car trop petit
