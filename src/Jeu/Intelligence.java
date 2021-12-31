@@ -176,6 +176,17 @@ class IntelligenceArtificielle implements Intelligence {
         }
     }
 
+    private int bluff(int res, int mise_demandee, ArrayList<Carte> jeu_pt) {
+        if (m_bluff_sur_ce_jeu != null) {
+            if (m_bluff_sur_ce_jeu != jeu_pt) m_bluff_sur_ce_jeu = null; // Si le pointeur change c'est qu'on est dans un nouveau tour
+            if (res < mise_demandee) res += m_cave_initiale / 10;
+        } else if (random.nextInt(m_bluffeur) == 0) {
+            if (res < mise_demandee) res += m_cave_initiale / 10;
+            m_bluff_sur_ce_jeu = jeu_pt;
+        }
+        return res;
+    }
+
     @Override
     public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
                              ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
@@ -196,13 +207,7 @@ class IntelligenceArtificielle implements Intelligence {
                 .sum()) - (double) (cave_non_misee + mise_deja_en_jeu);
         res = (int) ( (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis + 4 * mise_deja_en_jeu) / 4d *
                 Math.pow(2,m_audace));
-        if (m_bluff_sur_ce_jeu != null) {
-            if (m_bluff_sur_ce_jeu != jeu_pt) m_bluff_sur_ce_jeu = null; // Si le pointeur change c'est qu'on est dans un nouveau tour
-            if (res < mise_demandee) res += m_cave_initiale / 10;
-        } else if (random.nextInt(m_bluffeur) == 0) {
-            if (res < mise_demandee) res += m_cave_initiale / 10;
-            m_bluff_sur_ce_jeu = jeu_pt;
-        }
+        res = bluff(res, mise_demandee, jeu_pt);
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
         return res;
     }
