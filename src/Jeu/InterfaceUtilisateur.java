@@ -4,11 +4,12 @@ import interfaceGraphique.InterfacePoker;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.function.Supplier;
 
 public class InterfaceUtilisateur {
     final protected static Scanner entree_terminal = new Scanner(System.in);
     protected static InterfacePoker interface_graphique;
-    protected static ArrayList<String> test_mock_nextline = null;
+    protected static Supplier<String> test_mock_nextline = null;
     protected static boolean test_tour_manuel;
     protected static boolean test_cacher_interface_graphique;
 
@@ -27,9 +28,11 @@ public class InterfaceUtilisateur {
     protected static String nextLine() {
         String res;
         if (test_mock_nextline != null) {
-            res = test_mock_nextline.remove(0);
-            println(res);
-        } else res = entree_terminal.nextLine();
+            return test_mock_nextline.get();
+        }
+        else {
+            res = entree_terminal.nextLine();
+        }
         return res;
     }
 

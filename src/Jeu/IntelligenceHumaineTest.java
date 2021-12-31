@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -13,7 +14,6 @@ class IntelligenceHumaineTest {
     @BeforeEach
     public void before() {
         InterfaceUtilisateur.test_cacher_interface_graphique = true;
-        InterfaceUtilisateur.test_mock_nextline = new ArrayList<>();
         String[] noms_joueurs = new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"};
         Poker.init(noms_joueurs, 1000);
     }
@@ -37,21 +37,31 @@ class IntelligenceHumaineTest {
         ArrayList<Carte> main = new ArrayList<>();
         main.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Pique));
         main.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Carreau));
-        InterfaceUtilisateur.test_mock_nextline.add("a"); //choix ignoré car pas le bon format
-        InterfaceUtilisateur.test_mock_nextline.add("0"); //choix ignoré car trop petit
-        InterfaceUtilisateur.test_mock_nextline.add("5"); //choix ignoré car trop grand
-        InterfaceUtilisateur.test_mock_nextline.add("1");
+
+        ArrayList<String> mock_nextline_arraylist = new ArrayList<>();
+        
+        InterfaceUtilisateur.test_mock_nextline = new Supplier<String>() {
+            ArrayList<String> valeurs = new ArrayList<>();
+            public String get() {
+                return mock_nextline_arraylist.remove(0);
+            }
+        };
+
+        mock_nextline_arraylist.add("a"); //choix ignoré car pas le bon format
+        mock_nextline_arraylist.add("0"); //choix ignoré car trop petit
+        mock_nextline_arraylist.add("5"); //choix ignoré car trop grand
+        mock_nextline_arraylist.add("1");
         assertEquals(intelligence_humaine.demander_mise(200, jeu_pt, 2000, 20, main, 300, 0), -1);
-        InterfaceUtilisateur.test_mock_nextline.add("2");
+        mock_nextline_arraylist.add("2");
         assertEquals(intelligence_humaine.demander_mise(200, jeu_pt, 2000, 20, main, 300, 0), 300);
-        InterfaceUtilisateur.test_mock_nextline.add("3");
+        mock_nextline_arraylist.add("3");
         assertEquals(intelligence_humaine.demander_mise(200, jeu_pt, 2000, 20, main, 300, 0), 200);
-        InterfaceUtilisateur.test_mock_nextline.add("3");
+        mock_nextline_arraylist.add("3");
         assertEquals(intelligence_humaine.demander_mise(100, jeu_pt, 2000, 20, main, 300, 100), 100);
-        InterfaceUtilisateur.test_mock_nextline.add("4");
-        InterfaceUtilisateur.test_mock_nextline.add("a"); //mise ignorée car pas le bon format
-        InterfaceUtilisateur.test_mock_nextline.add("10"); //mise ignorée car inférieure à la relance minimale
-        InterfaceUtilisateur.test_mock_nextline.add("30");
+        mock_nextline_arraylist.add("4");
+        mock_nextline_arraylist.add("a"); //mise ignorée car pas le bon format
+        mock_nextline_arraylist.add("10"); //mise ignorée car inférieure à la relance minimale
+        mock_nextline_arraylist.add("30");
         assertEquals(intelligence_humaine.demander_mise(100, jeu_pt, 2000, 20, main, 300, 100), 130);
     }
 }

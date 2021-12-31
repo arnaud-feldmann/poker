@@ -216,16 +216,6 @@ public class TourPoker {
         Joueur.stream().
                 forEach(joueur -> InterfaceUtilisateur.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
         InterfaceUtilisateur.interface_graphique.raffraichit();
-        InterfaceUtilisateur.println("validez (o/n) :");
-        if (!InterfaceUtilisateur.test_tour_manuel) {
-            while (true) {
-                InterfaceUtilisateur.print("> ");
-                res = InterfaceUtilisateur.nextLine();
-                if (res.equals("o") || res.equals("O")) break;
-                else if (res.equals("n") || res.equals("N")) InterfaceUtilisateur.println("Ok j'attends un peu!");
-                else InterfaceUtilisateur.println("Un peu de sérieux !");
-            }
-        }
     }
 
     private void abattage() {
