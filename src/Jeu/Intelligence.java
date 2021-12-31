@@ -187,25 +187,31 @@ class IntelligenceArtificielle implements Intelligence {
         return res;
     }
 
-    @Override
-    public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
+    private double esperance(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
                              ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
-        int res;
-        changements_audace(cave_non_misee + mise_deja_en_jeu);
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
         double proba_modif = Math.min(Math.pow(proba,2) * Joueur.nombre_de_joueurs(),proba);
         int mise_demandee_tronquee = Math.min(mise_demandee,cave_non_misee + mise_deja_en_jeu);
         double esperance_sans_suivi = proba_modif * (double) (pot + Math.max(mise_demandee_tronquee - mise_deja_en_jeu,0)) - (double) mise_demandee_tronquee;
         double esperance_suivi = proba_modif * (pot +
                 Joueur.stream()
-                .filter(Joueur::pas_couche)
-                .mapToInt(joueur -> Math.max(Math.min(mise_demandee_tronquee,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
-                .sum()) - (double) mise_demandee_tronquee;
+                        .filter(Joueur::pas_couche)
+                        .mapToInt(joueur -> Math.max(Math.min(mise_demandee_tronquee,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
+                        .sum()) - (double) mise_demandee_tronquee;
         double esperance_tapis =  proba_modif * (pot + Joueur.stream()
                 .filter(Joueur::pas_couche)
                 .mapToInt(joueur -> Math.max(Math.min(cave_non_misee + mise_deja_en_jeu,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
                 .sum()) - (double) (cave_non_misee + mise_deja_en_jeu);
-        res = (int) ( (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis + 4 * mise_deja_en_jeu) / 4d *
+        return (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis + 4 * mise_deja_en_jeu) / 4d;
+    }
+
+    @Override
+    public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
+                             ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
+        int res;
+        changements_audace(cave_non_misee + mise_deja_en_jeu);
+
+        res = (int) (esperance(mise_demandee,  jeu_pt, pot, relance_min, main, cave_non_misee, mise_deja_en_jeu)  *
                 Math.pow(2,m_audace));
         res = bluff(res, mise_demandee, jeu_pt);
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
