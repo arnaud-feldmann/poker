@@ -187,8 +187,8 @@ class IntelligenceArtificielle implements Intelligence {
         return res;
     }
 
-    private double esperance(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
-                             ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
+    private double calcul_esperance(int mise_demandee, ArrayList<Carte> jeu_pt, int pot,
+                                    ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
         double proba_modif = Math.min(Math.pow(proba,2) * Joueur.nombre_de_joueurs(),proba);
         int mise_demandee_tronquee = Math.min(mise_demandee,cave_non_misee + mise_deja_en_jeu);
@@ -202,7 +202,7 @@ class IntelligenceArtificielle implements Intelligence {
                 .filter(Joueur::pas_couche)
                 .mapToInt(joueur -> Math.max(Math.min(cave_non_misee + mise_deja_en_jeu,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
                 .sum()) - (double) (cave_non_misee + mise_deja_en_jeu);
-        return (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis + 4 * mise_deja_en_jeu) / 4d;
+        return (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis) / 4d;
     }
 
     @Override
@@ -211,7 +211,11 @@ class IntelligenceArtificielle implements Intelligence {
         int res;
         changements_audace(cave_non_misee + mise_deja_en_jeu);
 
-        res = (int) (esperance(mise_demandee,  jeu_pt, pot, relance_min, main, cave_non_misee, mise_deja_en_jeu)  *
+        res = (int) ((
+                calcul_esperance(mise_demandee,  jeu_pt, pot, main, cave_non_misee, mise_deja_en_jeu) + mise_deja_en_jeu)  *
+                // on cherche à savoir si l'espérence de jouer est supérieure à celle de se coucher (à savoir
+                // perdre la mise. On veut donc que esperance soit supérieur à -mise_dejà en jeu. Donc
+                // esperance + mise_deja_en_jeu >= 0.
                 Math.pow(2,m_audace));
         res = bluff(res, mise_demandee, jeu_pt);
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
