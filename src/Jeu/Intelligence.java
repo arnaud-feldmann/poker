@@ -134,11 +134,13 @@ serait très incertaine.
 class IntelligenceArtificielle implements Intelligence {
 
     static Random random = new Random();
-    final static int AUDACE_MAX = 5;
+    final static int AUDACE_MAX = 4;
     int m_audace;
     int[] statistiques_de_gain = new int[AUDACE_MAX];
     final int m_bluffeur; // Le nombre de coups joués avant un bluff.
-    Object m_bluff_sur_ce_jeu = null; // Lors d'un bluff on garde en mémoire l'adresse du jeu considéré pour bluffer jusqu'à la fin
+    ArrayList<Carte> m_bluff_sur_ce_jeu = null; // Lors d'un bluff on garde en mémoire l'adresse du jeu considéré pour bluffer jusqu'à la fin
+    ArrayList<Carte> m_prorata_fixe_sur_ce_jeu = null;
+    double m_prorata;
     int m_cave_initiale;
     int m_cave_precedente;
     String m_nom_joueur;
@@ -177,44 +179,53 @@ class IntelligenceArtificielle implements Intelligence {
     }
 
     private int bluff(int res, int mise_demandee, ArrayList<Carte> jeu_pt) {
-        if (m_bluff_sur_ce_jeu != null) {
-            if (m_bluff_sur_ce_jeu != jeu_pt) m_bluff_sur_ce_jeu = null; // Si le pointeur change c'est qu'on est dans un nouveau tour
-            if (res < mise_demandee) res += m_cave_initiale / 10;
-        } else if (random.nextInt(m_bluffeur) == 0) {
-            if (res < mise_demandee) res += m_cave_initiale / 10;
-            m_bluff_sur_ce_jeu = jeu_pt;
+        boolean bluff = false;
+        if (m_bluff_sur_ce_jeu != jeu_pt) {
+            if (random.nextInt(m_bluffeur) == 0) {
+                bluff = true;
+                m_bluff_sur_ce_jeu = jeu_pt;
+            }
+        } else {
+            bluff = true;
         }
+        if (bluff && res < mise_demandee) res += m_cave_initiale / 10;
         return res;
+    }
+
+    private double esperance(int gain, int perte, double proba) {
+        return proba * (double) gain - (double) perte;
+    }
+
+    private int gain(int pot, int mise) {
+        return pot +
+                Joueur.stream()
+                        .filter(Joueur::pas_couche)
+                        .mapToInt(joueur -> Math.max(Math.min(mise,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
+                        .sum();
     }
 
     private double calcul_esperance(int mise_demandee, ArrayList<Carte> jeu_pt, int pot,
                                     ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
-        double proba_modif = Math.min(Math.pow(proba,2) * Joueur.nombre_de_joueurs(),proba);
         int mise_demandee_tronquee = Math.min(mise_demandee,cave_non_misee + mise_deja_en_jeu);
-        double esperance_sans_suivi = proba_modif * (double) (pot + Math.max(mise_demandee_tronquee - mise_deja_en_jeu,0)) - (double) mise_demandee_tronquee;
-        double esperance_suivi = proba_modif * (pot +
-                Joueur.stream()
-                        .filter(Joueur::pas_couche)
-                        .mapToInt(joueur -> Math.max(Math.min(mise_demandee_tronquee,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
-                        .sum()) - (double) mise_demandee_tronquee;
-        double esperance_tapis =  proba_modif * (pot + Joueur.stream()
-                .filter(Joueur::pas_couche)
-                .mapToInt(joueur -> Math.max(Math.min(cave_non_misee + mise_deja_en_jeu,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
-                .sum()) - (double) (cave_non_misee + mise_deja_en_jeu);
-        return (2 * esperance_sans_suivi + esperance_suivi + esperance_tapis) / 4d;
+        double non_suivi = (proba * (double) (pot + Math.max(mise_demandee_tronquee - mise_deja_en_jeu,0)) - (double) mise_demandee_tronquee)/
+                mise_demandee_tronquee;
+        double suivi = esperance(gain(pot, mise_demandee), mise_demandee_tronquee, proba)/
+                mise_demandee_tronquee;
+        int mise_tapis = cave_non_misee + mise_deja_en_jeu;
+        double tapis = esperance(gain(pot,mise_tapis), mise_tapis, proba) / mise_tapis;
+        return (non_suivi + suivi + tapis) / 3d;
     }
 
-    int opacite_du_choix(int res, int mise_demandee) {
-        if (res - mise_demandee > 0) {
-            int rnd;
-            int bound = res - mise_demandee;
-            bound = bound * (bound + 1) / 2;
-            rnd = random.nextInt(bound) + 1;
-            rnd = (int) Math.ceil((Math.sqrt(8 * rnd + 1) - 1) / 2) - 1;
-            return rnd + mise_demandee;
+    int opacite_du_choix(int res, ArrayList<Carte> jeu_pt) {
+        if (m_prorata_fixe_sur_ce_jeu != jeu_pt) {
+            m_prorata = Math.pow(random.nextDouble(),2);
+            m_prorata_fixe_sur_ce_jeu = jeu_pt;
         }
-        else return res;
+        else {
+            m_prorata += random.nextDouble()* (1 - m_prorata);
+        }
+        return Math.toIntExact(Math.round(m_prorata * res));
     }
 
     @Override
@@ -222,15 +233,12 @@ class IntelligenceArtificielle implements Intelligence {
                              ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
         int res;
         changements_audace(cave_non_misee + mise_deja_en_jeu);
-        res = (int) ((
-                calcul_esperance(mise_demandee,  jeu_pt, pot, main, cave_non_misee, mise_deja_en_jeu) + mise_deja_en_jeu) / 2  *
-                // on cherche à savoir si l'espérence de jouer est supérieure à celle de se coucher (à savoir
-                // perdre la mise. On veut donc que esperance soit supérieur à -mise_dejà en jeu. Donc
-                // esperance + mise_deja_en_jeu >= 0.
-                // La division par 3 est arbitraire, elle marchait bien.
+        res = (int) (
+                calcul_esperance(mise_demandee,  jeu_pt, pot, main, cave_non_misee, mise_deja_en_jeu) *
+                        (cave_non_misee + mise_deja_en_jeu) * 2 *
                 Math.pow(2,m_audace));
         res = bluff(res, mise_demandee, jeu_pt);
-        res = opacite_du_choix(res, mise_demandee);
+        res = opacite_du_choix(res, jeu_pt);
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut
         return res;
     }
