@@ -225,7 +225,6 @@ class IntelligenceArtificielle implements Intelligence {
         } else {
             m_prorata += random.nextDouble() * (1 - m_prorata);
         }
-        InterfaceUtilisateur.println("test prorata :" + m_prorata);
         return Math.toIntExact(Math.round(m_prorata * res));
     }
 
