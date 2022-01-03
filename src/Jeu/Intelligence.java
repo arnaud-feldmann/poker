@@ -186,9 +186,7 @@ class IntelligenceArtificielle implements Intelligence {
                 bluff = true;
                 m_bluff_sur_ce_jeu = jeu_pt;
             }
-        } else {
-            bluff = true;
-        }
+        } else bluff = true;
         if (bluff && res < mise_demandee) res += m_cave_initiale / 10;
         return res;
     }
@@ -222,9 +220,7 @@ class IntelligenceArtificielle implements Intelligence {
         if (m_prorata_fixe_sur_ce_jeu != jeu_pt) {
             m_prorata = Math.pow(random.nextDouble(), 2);
             m_prorata_fixe_sur_ce_jeu = jeu_pt;
-        } else {
-            m_prorata += random.nextDouble() * (1 - m_prorata);
-        }
+        } else m_prorata += random.nextDouble() * (1 - m_prorata);
         return Math.toIntExact(Math.round(m_prorata * res));
     }
 
