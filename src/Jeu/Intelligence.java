@@ -17,18 +17,15 @@ IA empêche de reproduire à l'infini une technique gagnante.
 public interface Intelligence {
     int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
                       ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu);
+
     int type_intelligence();
 }
 
 class IntelligenceHumaine implements Intelligence {
-    String m_nom_joueur;
+    final String m_nom_joueur;
 
-    IntelligenceHumaine(String nom_joueur) {
+    protected IntelligenceHumaine(String nom_joueur) {
         m_nom_joueur = nom_joueur;
-    }
-
-    public int type_intelligence() {
-        return 0;
     }
 
     private static int prompt_relance(int relance_min, int relance_max) {
@@ -67,6 +64,10 @@ class IntelligenceHumaine implements Intelligence {
             InterfaceUtilisateur.println("Un peu de sérieux !");
         }
         return res;
+    }
+
+    public int type_intelligence() {
+        return 0;
     }
 
     private void prompt_tour_joueur() {
@@ -125,27 +126,27 @@ on pourrait gagner contre elle en faisant que des tapis.
 Il y a aussi deux modifications annexes :
 * A chaque fois que l'IA joue, elle a une chance sur m_bluffeur de "bluffer" en rajoutant  m_cave_initiale / 10 à ses
 mises. Ce comportement est fait pour éviter d'avoir un comportement trop mécanique de l'IA où l'on pourrait savoir
-que toutes ses hautes mises correspondent à des bonnes cartes. Lorsque l'IA bluffe, elle bluffe jusqu'à la fin du tour.
-* La probabilité probaVict est légèrement et arbitrairement baissée en dessous de 1/nombre_de_joueurs car,
-même dans le cas d'une forte espérance, celle-ci serait dûe uniquement à un fort gain potentiel, mais cette victoire
-serait très incertaine.
+que toutes ses hautes mises correspondent à des bonnes cartes. Lorsque l'IA bluffe, elle bluffe jusqu'à la fin du tour
+* La méthode d'opacité du choix fait que la probabilité de rester augmente aléatoirement pendant le tour, pour éviter
+qu'un joueur humain puisse trop facilement battre l'IA en sachant qu'elle se couche systématiquement si on la relance.
  */
 
 class IntelligenceArtificielle implements Intelligence {
 
-    static Random random = new Random();
-    final static int AUDACE_MAX = 4;
-    int m_audace;
-    int[] statistiques_de_gain = new int[AUDACE_MAX];
-    final int m_bluffeur; // Le nombre de coups joués avant un bluff.
-    ArrayList<Carte> m_bluff_sur_ce_jeu = null; // Lors d'un bluff on garde en mémoire l'adresse du jeu considéré pour bluffer jusqu'à la fin
-    ArrayList<Carte> m_prorata_fixe_sur_ce_jeu = null;
-    double m_prorata;
-    int m_cave_initiale;
-    int m_cave_precedente;
-    String m_nom_joueur;
+    final static Random random = new Random();
+    final static int AUDACE_MAX = 4; // L'audace décide de la prise de risque
+    final int[] statistiques_de_gain = new int[AUDACE_MAX]; // Les stats de jeu qui décident de la prise de risque
+    final int m_bluffeur; // Le nombre de coups joués avant un (rare) bluff.
+    final int m_cave_initiale; // La cave initiale du joueur
+    final String m_nom_joueur; // Le nom du joueur
+    int m_audace; // La prise de risque, logarithmique, du joueur.
+    ArrayList<Carte> m_bluff_sur_ce_jeu = null; // Utilisé en tant que pointeur pour identifier un jeu bluffé
+    ArrayList<Carte> m_prorata_fixe_sur_ce_jeu = null; // Utilisé en tant que pointeur pour identifier un jeu pour lequel
+    // on a déjà déterminé un prorata d'opacité du choix, qu'on ne peut qu'augmenter
+    double m_prorata; // Le prorata pour l'opacité du choix
+    int m_cave_precedente; // La cave précédente, pour savoir réagir quand on perd ou gagne de l'argent
 
-    IntelligenceArtificielle(int cave_initiale, String nom_joueur) {
+    protected IntelligenceArtificielle(int cave_initiale, String nom_joueur) {
         m_bluffeur = 20 + random.nextInt(50);
         m_audace = 0;
         m_cave_initiale = cave_initiale;
@@ -153,12 +154,12 @@ class IntelligenceArtificielle implements Intelligence {
         m_nom_joueur = nom_joueur;
     }
 
-    public int type_intelligence() {
-        return 1;
-    }
-
     public static void set_seed(long seed) {
         random.setSeed(seed);
+    }
+
+    public int type_intelligence() {
+        return 1;
     }
 
     private void changements_audace(int cave) {
@@ -200,31 +201,31 @@ class IntelligenceArtificielle implements Intelligence {
         return pot +
                 Joueur.stream()
                         .filter(Joueur::pas_couche)
-                        .mapToInt(joueur -> Math.max(Math.min(mise,joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(),0))
+                        .mapToInt(joueur -> Math.max(Math.min(mise, joueur.get_cave() + joueur.get_mise()) - joueur.get_mise(), 0))
                         .sum();
     }
 
     private double calcul_esperance(int mise_demandee, ArrayList<Carte> jeu_pt, int pot,
                                     ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
         double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
-        int mise_demandee_tronquee = Math.min(mise_demandee,cave_non_misee + mise_deja_en_jeu);
-        double non_suivi = (proba * (double) (pot + Math.max(mise_demandee_tronquee - mise_deja_en_jeu,0)) - (double) mise_demandee_tronquee)/
+        int mise_demandee_tronquee = Math.min(mise_demandee, cave_non_misee + mise_deja_en_jeu);
+        double non_suivi = (proba * (double) (pot + Math.max(mise_demandee_tronquee - mise_deja_en_jeu, 0)) - (double) mise_demandee_tronquee) /
                 mise_demandee_tronquee;
-        double suivi = esperance(gain(pot, mise_demandee), mise_demandee_tronquee, proba)/
+        double suivi = esperance(gain(pot, mise_demandee), mise_demandee_tronquee, proba) /
                 mise_demandee_tronquee;
         int mise_tapis = cave_non_misee + mise_deja_en_jeu;
-        double tapis = esperance(gain(pot,mise_tapis), mise_tapis, proba) / mise_tapis;
+        double tapis = esperance(gain(pot, mise_tapis), mise_tapis, proba) / mise_tapis;
         return (non_suivi + suivi + tapis) / 3d;
     }
 
     int opacite_du_choix(int res, ArrayList<Carte> jeu_pt) {
         if (m_prorata_fixe_sur_ce_jeu != jeu_pt) {
-            m_prorata = Math.pow(random.nextDouble(),2);
+            m_prorata = Math.pow(random.nextDouble(), 2);
             m_prorata_fixe_sur_ce_jeu = jeu_pt;
+        } else {
+            m_prorata += random.nextDouble() * (1 - m_prorata);
         }
-        else {
-            m_prorata += random.nextDouble()* (1 - m_prorata);
-        }
+        InterfaceUtilisateur.println("test prorata :" + m_prorata);
         return Math.toIntExact(Math.round(m_prorata * res));
     }
 
@@ -234,9 +235,9 @@ class IntelligenceArtificielle implements Intelligence {
         int res;
         changements_audace(cave_non_misee + mise_deja_en_jeu);
         res = (int) (
-                calcul_esperance(mise_demandee,  jeu_pt, pot, main, cave_non_misee, mise_deja_en_jeu) *
+                calcul_esperance(mise_demandee, jeu_pt, pot, main, cave_non_misee, mise_deja_en_jeu) *
                         (cave_non_misee + mise_deja_en_jeu) * 2 *
-                Math.pow(2,m_audace));
+                        Math.pow(2, m_audace));
         res = bluff(res, mise_demandee, jeu_pt);
         res = opacite_du_choix(res, jeu_pt);
         if (res < mise_deja_en_jeu) res = mise_deja_en_jeu; // On checke toujours par défaut

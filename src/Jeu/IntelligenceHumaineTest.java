@@ -38,7 +38,7 @@ class IntelligenceHumaineTest {
         main.add(new Carte(Carte.Valeur.Roi, Carte.Couleur.Carreau));
 
         ArrayList<String> mock_nextline_arraylist = new ArrayList<>();
-        
+
         InterfaceUtilisateur.test_mock_nextline = () -> mock_nextline_arraylist.remove(0);
 
         mock_nextline_arraylist.add("a"); //choix ignoré car pas le bon format

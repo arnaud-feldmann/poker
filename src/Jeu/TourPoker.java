@@ -160,8 +160,8 @@ public class TourPoker {
     }
 
     private int ordre_des_gains(Joueur joueur1, Joueur joueur2) {
-        int res = ordre_des_mains(joueur1,joueur2);
-        if (res == 0) res = Double.compare(joueur1.get_mise(),joueur2.get_mise());
+        int res = ordre_des_mains(joueur1, joueur2);
+        if (res == 0) res = Double.compare(joueur1.get_mise(), joueur2.get_mise());
         // On met les mises les plus petites en premier comme ça en cas d'égalité et de pots différents, on
         // peut acquitter les tas à la suite cf fonction suivante
         return res;
@@ -202,7 +202,6 @@ public class TourPoker {
      */
 
     protected void repartition_gains() {
-        String res;
 
         InterfaceUtilisateur.println("-----------");
         InterfaceUtilisateur.println("|LES GAINS|");

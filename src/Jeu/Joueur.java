@@ -46,10 +46,6 @@ public class Joueur {
         InterfaceUtilisateur.interface_graphique.joueurSetNom(m_numero_joueur_interface_graphique, m_nom_joueur);
     }
 
-    protected boolean est_humain() {
-        return m_intelligence.type_intelligence() == 0;
-    }
-
     protected static int nombre_de_joueurs() {
         int res = 1;
         for (Joueur joueur = donneur.get_joueur_suivant(); joueur != donneur; joueur = joueur.get_joueur_suivant())
@@ -78,6 +74,10 @@ public class Joueur {
             joueur_temp = joueur_temp.get_joueur_suivant();
         }
         return builder.build();
+    }
+
+    protected boolean est_humain() {
+        return m_intelligence.type_intelligence() == 0;
     }
 
     protected int get_numero_joueur_interface() {

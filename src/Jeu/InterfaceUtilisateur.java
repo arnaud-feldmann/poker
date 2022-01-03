@@ -2,7 +2,6 @@ package Jeu;
 
 import interfaceGraphique.InterfacePoker;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
@@ -29,8 +28,7 @@ public class InterfaceUtilisateur {
         String res;
         if (test_mock_nextline != null) {
             return test_mock_nextline.get();
-        }
-        else {
+        } else {
             res = entree_terminal.nextLine();
         }
         return res;

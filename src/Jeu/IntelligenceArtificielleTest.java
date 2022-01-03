@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class IntelligenceArtificielleTest {
 
@@ -85,6 +86,7 @@ class IntelligenceArtificielleTest {
 
         assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas en faisant que des tapis
     }
+
     @Test
     public void faire_que_suivre_perd_trois_joueurs_2() {
         PaquetDeCartes.set_seed(6);
@@ -163,8 +165,7 @@ class IntelligenceArtificielleTest {
                 Joueur joueur_humain = Joueur.stream().filter(Joueur::est_humain).findAny().orElseThrow(RuntimeException::new);
                 if (4 * mise_max > joueur_humain.get_cave()) {
                     mock_nextline_arraylist.add("2"); // Tapis
-                }
-                else {
+                } else {
                     mock_nextline_arraylist.add("4");
                     mock_nextline_arraylist.add(Integer.toString(2 * mise_max));
                 }
@@ -190,8 +191,7 @@ class IntelligenceArtificielleTest {
                 Joueur joueur_humain = Joueur.stream().filter(Joueur::est_humain).findAny().orElseThrow(RuntimeException::new);
                 if (4 * mise_max > joueur_humain.get_cave()) {
                     mock_nextline_arraylist.add("2"); // Tapis
-                }
-                else {
+                } else {
                     mock_nextline_arraylist.add("4");
                     mock_nextline_arraylist.add(Integer.toString(2 * mise_max));
                 }
@@ -217,8 +217,7 @@ class IntelligenceArtificielleTest {
                 Joueur joueur_humain = Joueur.stream().filter(Joueur::est_humain).findAny().orElseThrow(RuntimeException::new);
                 if (4 * mise_max > joueur_humain.get_cave()) {
                     mock_nextline_arraylist.add("2"); // Tapis
-                }
-                else {
+                } else {
                     mock_nextline_arraylist.add("4");
                     mock_nextline_arraylist.add(Integer.toString(2 * mise_max));
                 }
@@ -244,8 +243,7 @@ class IntelligenceArtificielleTest {
                 Joueur joueur_humain = Joueur.stream().filter(Joueur::est_humain).findAny().orElseThrow(RuntimeException::new);
                 if (4 * mise_max > joueur_humain.get_cave()) {
                     mock_nextline_arraylist.add("2"); // Tapis
-                }
-                else {
+                } else {
                     mock_nextline_arraylist.add("4");
                     mock_nextline_arraylist.add(Integer.toString(2 * mise_max));
                 }
