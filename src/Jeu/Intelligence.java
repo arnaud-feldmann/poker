@@ -9,9 +9,9 @@ import java.util.Random;
 /*
 Une Intelligence est définie comme la réponse à la question "Combien voulez-vous miser ?" en fonction de la mise
 demandée, du jeu, du pot, de la main, de la cave, de la mise déjà en jeu et de la relance minimale.
-Dans la mesure où les implémentations ne sont pas statiques, il est aussi envisageable de faire un peu évoluer le
+Puisque les implémentations ne sont pas statiques, il est aussi envisageable de faire un peu évoluer le
 comportement des Intelligences artificielles au cours du jeu en fonction des défaites et victoires. C'est ce qui est
-fait très sommairement avec les changements de "prudence" via le "sang-froid". Faire un peu varier le comportement des
+fait ici avec les statistiques de gain et l'audace. Faire un peu varier (un peu) le comportement des
 IA empêche de reproduire à l'infini une technique gagnante.
  */
 public interface Intelligence {

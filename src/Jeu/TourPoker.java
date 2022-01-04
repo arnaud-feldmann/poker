@@ -220,6 +220,7 @@ public class TourPoker {
     private void abattage() {
         affichage_mains();
         repartition_gains();
+        InterfaceUtilisateur.prompt_fin_du_tour();
     }
 
     /* La méthode qui met hors-jeu les joueurs qui ont tout perdu à la fin du tour */

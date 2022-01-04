@@ -11,6 +11,7 @@ public class InterfaceUtilisateur {
     protected static Supplier<String> test_mock_nextline = null;
     protected static boolean test_tour_manuel;
     protected static boolean test_cacher_interface_graphique;
+    protected static boolean test_is_fin_tour = false;
 
     public static <T> void println(T object) {
         System.out.println(object);
@@ -20,14 +21,29 @@ public class InterfaceUtilisateur {
         System.out.print(object);
     }
 
-    protected static void println() {
+    public static void println() {
         System.out.println();
     }
 
-    protected static String nextLine() {
+    public static void prompt_fin_du_tour() {
+        String res;
+        test_is_fin_tour = true;
+        println("validez (o/n) :");
+        while (true) {
+            print("> ");
+            res = nextLine();
+            if (res.equals("o") || res.equals("O")) break;
+            else if (res.equals("n") || res.equals("N")) println("Ok j'attends un peu!");
+            else println("Un peu de sérieux !");
+        }
+        test_is_fin_tour = false;
+    }
+
+    public static String nextLine() {
         String res;
         if (test_mock_nextline != null) {
-            return test_mock_nextline.get();
+            res = test_mock_nextline.get();
+            println(res);
         } else {
             res = entree_terminal.nextLine();
         }
