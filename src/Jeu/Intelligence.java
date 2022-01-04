@@ -8,7 +8,7 @@ import java.util.Random;
 
 /*
 Une Intelligence est définie comme la réponse à la question "Combien voulez-vous miser ?" en fonction de la mise
-demandée, du jeu, du pot, de la main, de la cave, de la mise déjà en jeu et de la relance minimale.
+demandée, du jeu, du pot, de la main, de la cave non-misée, de la mise déjà en jeu et de la relance minimale.
 Puisque les implémentations ne sont pas statiques, il est aussi envisageable de faire un peu évoluer le
 comportement des Intelligences artificielles au cours du jeu en fonction des défaites et victoires. C'est ce qui est
 fait ici avec les statistiques de gain et l'audace. Faire un peu varier (un peu) le comportement des
@@ -113,20 +113,24 @@ class IntelligenceHumaine implements Intelligence {
 /*
 L'IA sommaire est principalement appuyée sur ces points
 * La méthode probaVict de CollectionDeCartes qui simule 10000 lancers et donne une probabilité de victoire pour une main.
-* A partir de cette probabilité de victoire on calcule 3 espérances :
-    - une calculée sans suivi, pour pouvoir inclure les cas où l'on suit mais tout le monde se couche puis on perd.
-    - une calculée dans le cas où tout le monde suit (c'est ce que le parieur espère la plupart du temps)
-    - une calculée dans le cas où tout le monde fait tapis (c'est pour représenter l'espoir de siphoner tout le tapis
+* A partir de cette probabilité de victoire on calcule 3 taux de gain :
+    - un calculé sans suivi, pour pouvoir inclure les cas où l'on suit mais tout le monde se couche puis on perd.
+    - un calculé dans le cas où tout le monde suit (c'est ce que le parieur espère la plupart du temps)
+    - un calculé dans le cas où tout le monde fait tapis (c'est pour représenter l'espoir de siphoner tout le tapis
     de l'adversaire et ça permet d'avoir une IA agressive plus drôle à jouer que si elle n'attaque jamais)
 * On fait une moyenne de ces 3 espérances
 * On multiplie ce montant par une variable d'audace qui représente le degré de prise
-de risque d'une IA. Cette variable peut augmenter en fonction des circonstances. Sans cela, si l'IA était trop raisonnable,
-on pourrait gagner contre elle en faisant que des tapis.
+de risque d'une IA : Elle va parier une mise maximale plus forte mais sur des cartes différentes. Cette variable peut
+augmenter en fonction des circonstances. Sans cela, si l'IA était trop raisonnable, on pourrait gagner contre elle trop
+facilement en faisant que des tapis. Et puis elle serait nettement moins drôle.
 
-Il y a aussi deux modifications annexes :
+Le calcul ne prétend pas du tout être mathématiquement juste, aussi l'IA reste largement battable : en particulier,
+rien n'est fait pour estimer le nombre de personnes qui se couchent. L'IA ne fait que faire systématiquement la même
+moyenne.
+
+Il y a aussi deux modifications annexes pour rendre le jeu moins mécanique:
 * A chaque fois que l'IA joue, elle a une chance sur m_bluffeur de "bluffer" en rajoutant  m_cave_initiale / 10 à ses
-mises. Ce comportement est fait pour éviter d'avoir un comportement trop mécanique de l'IA où l'on pourrait savoir
-que toutes ses hautes mises correspondent à des bonnes cartes. Lorsque l'IA bluffe, elle bluffe jusqu'à la fin du tour
+mises. Ce comportement est fait pour donner la possiblité à l'IA de jouer des mauvais coups.
 * La méthode d'opacité du choix fait que la probabilité de rester augmente aléatoirement pendant le tour, pour éviter
 qu'un joueur humain puisse trop facilement battre l'IA en sachant qu'elle se couche systématiquement si on la relance.
  */
@@ -162,9 +166,9 @@ class IntelligenceArtificielle implements Intelligence {
         return 1;
     }
 
-    private void changements_audace(int cave) {
+    private void changements_audace(int cave, ArrayList<Carte> jeu_pt) {
         if (cave != m_cave_precedente) {
-            if (m_bluff_sur_ce_jeu == null) {
+            if (m_bluff_sur_ce_jeu != jeu_pt) { // On ne fait pas de statistiques sur un bluff.
                 statistiques_de_gain[m_audace] += cave - m_cave_precedente;
                 for (int i = 0; i < AUDACE_MAX; i++) statistiques_de_gain[i] -= (cave - m_cave_precedente) / AUDACE_MAX;
 
@@ -180,12 +184,12 @@ class IntelligenceArtificielle implements Intelligence {
     }
 
     private int bluff(int res, int mise_demandee, ArrayList<Carte> jeu_pt) {
-        boolean bluff = false;
+        boolean bluff;
         if (m_bluff_sur_ce_jeu != jeu_pt) {
             if (random.nextInt(m_bluffeur) == 0) {
                 bluff = true;
                 m_bluff_sur_ce_jeu = jeu_pt;
-            }
+            } else bluff = false;
         } else bluff = true;
         if (bluff && res < mise_demandee) res += m_cave_initiale / 10;
         return res;
@@ -203,16 +207,18 @@ class IntelligenceArtificielle implements Intelligence {
                         .sum();
     }
 
-    private double calcul_esperance(int mise_demandee, ArrayList<Carte> jeu_pt, int pot,
+    /* Cette méthode calcul une estimation du taux de gain, à savoir l'espérance divisée par la mise */
+    private double calcul_taux_de_gain(int mise_demandee, ArrayList<Carte> jeu_pt, int pot,
                                     ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
-        double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
-        int mise_demandee_tronquee = Math.min(mise_demandee, cave_non_misee + mise_deja_en_jeu);
-        double non_suivi = (proba * (double) (pot + Math.max(mise_demandee_tronquee - mise_deja_en_jeu, 0)) - (double) mise_demandee_tronquee) /
+        final double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
+        final int mise_demandee_tronquee = Math.min(mise_demandee, cave_non_misee + mise_deja_en_jeu);
+        final double non_suivi = (proba * (double) (pot + Math.max(mise_demandee_tronquee - mise_deja_en_jeu, 0)) - (double) mise_demandee_tronquee) /
                 mise_demandee_tronquee;
-        double suivi = esperance(gain(pot, mise_demandee), mise_demandee_tronquee, proba) /
+        final double suivi = esperance(gain(pot, mise_demandee), mise_demandee_tronquee, proba) /
                 mise_demandee_tronquee;
-        int mise_tapis = cave_non_misee + mise_deja_en_jeu;
-        double tapis = esperance(gain(pot, mise_tapis), mise_tapis, proba) / mise_tapis;
+        final int mise_tapis = cave_non_misee + mise_deja_en_jeu;
+        final double tapis = esperance(gain(pot, mise_tapis), mise_tapis, proba) / mise_tapis;
+
         return (non_suivi + suivi + tapis) / 3d;
     }
 
@@ -228,10 +234,10 @@ class IntelligenceArtificielle implements Intelligence {
     public int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min,
                              ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
         int res;
-        changements_audace(cave_non_misee + mise_deja_en_jeu);
+        changements_audace(cave_non_misee + mise_deja_en_jeu, jeu_pt);
         res = (int) (
-                calcul_esperance(mise_demandee, jeu_pt, pot, main, cave_non_misee, mise_deja_en_jeu) *
-                        (cave_non_misee + mise_deja_en_jeu) * 2 *
+                calcul_taux_de_gain(mise_demandee, jeu_pt, pot, main, cave_non_misee, mise_deja_en_jeu) *
+                        (cave_non_misee + mise_deja_en_jeu) * 4 *
                         Math.pow(2, m_audace));
         res = bluff(res, mise_demandee, jeu_pt);
         res = opacite_du_choix(res, jeu_pt);
