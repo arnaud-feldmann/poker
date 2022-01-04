@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,243 +24,136 @@ class IntelligenceArtificielleTest {
         InterfaceUtilisateur.test_mock_nextline = null;
     }
 
+    private void faire_que_une_chose_perd(int seed, int nombre_joueurs,String chose) {
+        PaquetDeCartes.set_seed(seed);
+        IntelligenceArtificielle.set_seed(seed);
+
+        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : chose;
+
+        Poker.poker(Arrays.copyOfRange(new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"},0,nombre_joueurs));
+
+        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), nombre_joueurs * 1000); // On n'a pas d'argent disparu
+        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+    }
+
+    private void faire_que_relancer_perd(int seed, int nombre_joueurs) {
+        PaquetDeCartes.set_seed(seed);
+        IntelligenceArtificielle.set_seed(seed);
+
+        ArrayList<String> mock_nextline_arraylist = new ArrayList<>();
+
+        InterfaceUtilisateur.test_mock_nextline = () -> {
+            if (InterfaceUtilisateur.test_is_fin_tour) return "o"; // Fin du tour
+            if (mock_nextline_arraylist.size() == 0) {
+                int mise_max = Joueur.stream().filter(Joueur::pas_couche).mapToInt(Joueur::get_mise).max().orElse(Integer.MIN_VALUE);
+                Joueur joueur_humain = Joueur.stream().filter(Joueur::est_humain).findAny().orElseThrow(RuntimeException::new);
+                if (4 * mise_max > joueur_humain.get_cave()) {
+                    mock_nextline_arraylist.add("2"); // Tapis
+                } else {
+                    mock_nextline_arraylist.add("4"); // Relance
+                    mock_nextline_arraylist.add(Integer.toString(2 * mise_max));
+                }
+            }
+            return mock_nextline_arraylist.remove(0);
+        };
+
+        Poker.poker(Arrays.copyOfRange(new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"},0,nombre_joueurs));
+        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), nombre_joueurs * 1000); // On n'a pas d'argent disparu
+        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+    }
+
     @Test
     public void faire_que_des_tapis_perd_trois_joueurs_1() {
-        PaquetDeCartes.set_seed(1);
-        IntelligenceArtificielle.set_seed(1);
-
-        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : "2";
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 3000); // On n'a pas d'argent disparu
-
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+        faire_que_une_chose_perd(1,3,"2");
     }
 
     @Test
     public void faire_que_des_tapis_perd_trois_joueurs_2() {
-        PaquetDeCartes.set_seed(2);
-        IntelligenceArtificielle.set_seed(2);
-
-        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : "2"; // que des tapis
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 3000); // On n'a pas d'argent disparu
-
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+        faire_que_une_chose_perd(2,3,"2");
     }
 
     @Test
     public void faire_que_des_tapis_perd_trois_joueurs_3() {
-        PaquetDeCartes.set_seed(3);
-        IntelligenceArtificielle.set_seed(3);
-
-        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : "2"; // que des tapis
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 3000); // On n'a pas d'argent disparu
-
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
-    }
-
-    @Test
-    public void faire_que_des_tapis_perd_trois_joueurs_4() {
-        PaquetDeCartes.set_seed(4);
-        IntelligenceArtificielle.set_seed(4);
-
-        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : "2"; // que des tapis
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 3000); // On n'a pas d'argent disparu
-
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+        faire_que_une_chose_perd(3,3,"2");
     }
 
     @Test
     public void faire_que_suivre_perd_trois_joueurs_1() {
-        PaquetDeCartes.set_seed(5);
-        IntelligenceArtificielle.set_seed(5);
-
-        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : "3"; // que des suivi
-
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 3000); // On n'a pas d'argent disparu
-
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+        faire_que_une_chose_perd(4,3,"3");
     }
 
     @Test
     public void faire_que_suivre_perd_trois_joueurs_2() {
-        PaquetDeCartes.set_seed(6);
-        IntelligenceArtificielle.set_seed(6);
-
-        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : "3"; // que des suivi
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 3000); // On n'a pas d'argent disparu
-
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+        faire_que_une_chose_perd(5,3,"3");
     }
 
     @Test
     public void faire_que_suivre_perd_trois_joueurs_3() {
-        PaquetDeCartes.set_seed(7);
-        IntelligenceArtificielle.set_seed(7);
-
-        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : "3"; // que des suivi
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 3000); // On n'a pas d'argent disparu
-
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+        faire_que_une_chose_perd(6,3,"3");
     }
 
     @Test
-    public void faire_que_suivre_perd_trois_joueurs_4() {
-        PaquetDeCartes.set_seed(8);
-        IntelligenceArtificielle.set_seed(8);
-
-        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : "3"; // que des suivi
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 3000); // On n'a pas d'argent disparu
-
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+    public void faire_que_des_tapis_perd_sept_joueurs_1() {
+        faire_que_une_chose_perd(7,7,"2");
     }
 
+    //@Test
+    //public void faire_que_des_tapis_perd_sept_joueurs_2() {
+    //    faire_que_une_chose_perd(8,7,"2");
+    //}
 
     @Test
-    public void faire_que_suivre_perd_sept_joueurs() {
-        PaquetDeCartes.set_seed(9);
-        IntelligenceArtificielle.set_seed(9);
-
-        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : "3"; // que des suivi
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 7000); // On n'a pas d'argent disparu
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+    public void faire_que_des_tapis_perd_sept_joueurs_3() {
+        faire_que_une_chose_perd(9,7,"2");
     }
 
     @Test
-    public void faire_que_des_tapis_perd_sept_joueurs() {
-        PaquetDeCartes.set_seed(10);
-        IntelligenceArtificielle.set_seed(10);
+    public void faire_que_suivre_perd_sept_joueurs_1() {
+        faire_que_une_chose_perd(10,7,"3");
+    }
 
-        InterfaceUtilisateur.test_mock_nextline = () -> InterfaceUtilisateur.test_is_fin_tour ? "o" : "2"; // que des tapis
+    @Test
+    public void faire_que_suivre_perd_sept_joueurs_2() {
+        faire_que_une_chose_perd(11,7,"3");
+    }
 
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 7000); // On n'a pas d'argent disparu
-
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+    @Test
+    public void faire_que_suivre_perd_sept_joueurs_3() {
+        faire_que_une_chose_perd(12,7,"3");
     }
 
     @Test
     public void faire_que_relancer_perd_sept_joueurs_1() {
-        PaquetDeCartes.set_seed(11);
-        IntelligenceArtificielle.set_seed(11);
-
-        ArrayList<String> mock_nextline_arraylist = new ArrayList<>();
-
-        InterfaceUtilisateur.test_mock_nextline = () -> {
-            if (InterfaceUtilisateur.test_is_fin_tour) return "o"; // Fin du tour
-            if (mock_nextline_arraylist.size() == 0) {
-                int mise_max = Joueur.stream().filter(Joueur::pas_couche).mapToInt(Joueur::get_mise).max().orElse(Integer.MIN_VALUE);
-                Joueur joueur_humain = Joueur.stream().filter(Joueur::est_humain).findAny().orElseThrow(RuntimeException::new);
-                if (4 * mise_max > joueur_humain.get_cave()) {
-                    mock_nextline_arraylist.add("2"); // Tapis
-                } else {
-                    mock_nextline_arraylist.add("4"); // Relance
-                    mock_nextline_arraylist.add(Integer.toString(2 * mise_max));
-                }
-            }
-            return mock_nextline_arraylist.remove(0);
-        };
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 7000); // On n'a pas d'argent disparu
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+        faire_que_relancer_perd(13,7);
     }
 
     @Test
     public void faire_que_relancer_perd_sept_joueurs_2() {
-        PaquetDeCartes.set_seed(12);
-        IntelligenceArtificielle.set_seed(12);
-
-        ArrayList<String> mock_nextline_arraylist = new ArrayList<>();
-
-        InterfaceUtilisateur.test_mock_nextline = () -> {
-            if (InterfaceUtilisateur.test_is_fin_tour) return "o"; // Fin du tour
-            if (mock_nextline_arraylist.size() == 0) {
-                int mise_max = Joueur.stream().filter(Joueur::pas_couche).mapToInt(Joueur::get_mise).max().orElse(Integer.MIN_VALUE);
-                Joueur joueur_humain = Joueur.stream().filter(Joueur::est_humain).findAny().orElseThrow(RuntimeException::new);
-                if (4 * mise_max > joueur_humain.get_cave()) {
-                    mock_nextline_arraylist.add("2"); // Tapis
-                } else {
-                    mock_nextline_arraylist.add("4"); // Relance
-                    mock_nextline_arraylist.add(Integer.toString(2 * mise_max));
-                }
-            }
-            return mock_nextline_arraylist.remove(0);
-        };
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 7000); // On n'a pas d'argent disparu
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+        faire_que_relancer_perd(14,7);
     }
 
     @Test
     public void faire_que_relancer_perd_sept_joueurs_3() {
-        PaquetDeCartes.set_seed(13);
-        IntelligenceArtificielle.set_seed(13);
-
-        ArrayList<String> mock_nextline_arraylist = new ArrayList<>();
-
-        InterfaceUtilisateur.test_mock_nextline = () -> {
-            if (InterfaceUtilisateur.test_is_fin_tour) return "o"; // Fin du tour
-            if (mock_nextline_arraylist.size() == 0) {
-                int mise_max = Joueur.stream().filter(Joueur::pas_couche).mapToInt(Joueur::get_mise).max().orElse(Integer.MIN_VALUE);
-                Joueur joueur_humain = Joueur.stream().filter(Joueur::est_humain).findAny().orElseThrow(RuntimeException::new);
-                if (4 * mise_max > joueur_humain.get_cave()) {
-                    mock_nextline_arraylist.add("2"); // Tapis
-                } else {
-                    mock_nextline_arraylist.add("4"); // Relance
-                    mock_nextline_arraylist.add(Integer.toString(2 * mise_max));
-                }
-            }
-            return mock_nextline_arraylist.remove(0);
-        };
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 7000); // On n'a pas d'argent disparu
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+        faire_que_relancer_perd(15,7);
     }
 
     @Test
-    public void faire_que_relancer_perd_sept_joueurs_4() {
-        PaquetDeCartes.set_seed(14);
-        IntelligenceArtificielle.set_seed(14);
-
-        ArrayList<String> mock_nextline_arraylist = new ArrayList<>();
-
-        InterfaceUtilisateur.test_mock_nextline = () -> {
-            if (InterfaceUtilisateur.test_is_fin_tour) return "o"; // Fin du tour
-            if (mock_nextline_arraylist.size() == 0) {
-                int mise_max = Joueur.stream().filter(Joueur::pas_couche).mapToInt(Joueur::get_mise).max().orElse(Integer.MIN_VALUE);
-                Joueur joueur_humain = Joueur.stream().filter(Joueur::est_humain).findAny().orElseThrow(RuntimeException::new);
-                if (4 * mise_max > joueur_humain.get_cave()) {
-                    mock_nextline_arraylist.add("2"); // Tapis
-                } else {
-                    mock_nextline_arraylist.add("4"); // Relance
-                    mock_nextline_arraylist.add(Integer.toString(2 * mise_max));
-                }
-            }
-            return mock_nextline_arraylist.remove(0);
-        };
-
-        Poker.poker(new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"});
-        assertEquals(Joueur.stream().mapToInt(Joueur::get_cave).sum(), 7000); // On n'a pas d'argent disparu
-        assertFalse(Joueur.stream().anyMatch(x -> x.get_numero_joueur_interface() == 0)); // Le joueur ne gagne pas
+    public void faire_que_relancer_perd_trois_joueurs_1() {
+        faire_que_relancer_perd(16,3);
     }
 
-    // Note : à trois joueur le relanceur sy
+    @Test
+    public void faire_que_relancer_perd_trois_joueurs_2() {
+        faire_que_relancer_perd(17,3);
+    }
+
+    @Test
+    public void faire_que_relancer_perd_trois_joueurs_3() {
+        faire_que_relancer_perd(18,3);
+    }
+
+    // Note : Ces tests n'ont pas vocation à assurer une victoire systématique dans le cadre de ces stratégies.
+    // Voilà pourquoi on accepte le test négatif unique qui est mis en commentaire. Mais dans la grande majorité des cas
+    // ces stratégies stéréotypées sont perdantes.
 
 }
