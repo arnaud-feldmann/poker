@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 // Cette classe a pour but d'implémenter l'idée d'un "jeu", dont une partie est commune entre joueurs donc m_jeu_pt
 // est un pointeur
-
 public class CollectionDeCartes {
 
     private final ArrayList<Carte> m_main;

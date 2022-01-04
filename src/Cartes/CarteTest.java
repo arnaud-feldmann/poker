@@ -22,12 +22,10 @@ class CarteTest {
 
     @Test
     void testEquals() {
-        assertTrue(new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique).equals(new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique)));
-        assertFalse(new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique).equals(new Carte(Carte.Valeur.Trois, Carte.Couleur.Pique)));
-        assertFalse(new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique).equals(new Carte(Carte.Valeur.Deux, Carte.Couleur.Coeur)));
-        Carte c = null;
-        assertFalse(new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique).equals(c));
-        assertFalse(new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique).equals("String"));
+        assertEquals(new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique), new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique));
+        assertNotEquals(new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique), new Carte(Carte.Valeur.Trois, Carte.Couleur.Pique));
+        assertNotEquals(new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique), new Carte(Carte.Valeur.Deux, Carte.Couleur.Coeur));
+        assertNotEquals(new Carte(Carte.Valeur.Deux, Carte.Couleur.Pique), null);
     }
 
     @Test
