@@ -122,7 +122,8 @@ L'IA sommaire est principalement appuyée sur ces points
 * On multiplie ce montant par une variable d'audace qui représente le degré de prise
 de risque d'une IA : Elle va parier une mise maximale plus forte mais sur des cartes différentes. Cette variable peut
 augmenter en fonction des circonstances. Sans cela, si l'IA était trop raisonnable, on pourrait gagner contre elle trop
-facilement en faisant que des tapis. Et puis elle serait nettement moins drôle.
+facilement en faisant que des tapis. Et puis elle serait nettement moins drôle. Là on a une IA qui attaque et ne fait
+pas que défendre en attendant la fin du jeu.
 
 Le calcul ne prétend pas du tout être mathématiquement juste, aussi l'IA reste largement battable : en particulier,
 rien n'est fait pour estimer le nombre de personnes qui se couchent. L'IA ne fait que faire systématiquement la même
