@@ -244,7 +244,7 @@ public class TourPoker {
 
     /* Accesseur de test */
 
-    public int[] get_pot_pt() {
+    protected int[] get_pot_pt() {
         if (!InterfaceUtilisateur.test_tour_manuel) throw new MethodeDeTestException();
         return m_pot_pt;
     }
