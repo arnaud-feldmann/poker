@@ -183,6 +183,7 @@ class IntelligenceArtificielle implements Intelligence {
         }
     }
 
+    /* Tous les m_bluffeur tours, on ajoute m_cave_initiale / 10 à res */
     private int bluff(int res, int mise_demandee, ArrayList<Carte> jeu_pt) {
         boolean bluff;
         if (m_bluff_sur_ce_jeu != jeu_pt) {
@@ -222,6 +223,7 @@ class IntelligenceArtificielle implements Intelligence {
         return (non_suivi + suivi + tapis) / 3d;
     }
 
+    /* On se rapproche d'un coefficient de 1 progressivement pendant le tour */
     int opacite_du_choix(int res, ArrayList<Carte> jeu_pt) {
         if (m_prorata_fixe_sur_ce_jeu != jeu_pt) {
             m_prorata = Math.pow(random.nextDouble(), 2);
