@@ -19,10 +19,6 @@ public class CollectionDeCartes {
         return res;
     }
 
-    public ArrayList<Carte> get_main() {
-        return new ArrayList<>(m_main);
-    }
-
     public ArrayList<Carte> get_reference_jeu() {
         return m_jeu_pt;
     }
@@ -51,7 +47,7 @@ public class CollectionDeCartes {
         PaquetDeCartes paquet;
         for (int i = 0; i < NB_SIMULATIONS; i++) {
             reference_jeu = new ArrayList<>(get_reference_jeu());
-            collection_joueur_ref = new CollectionDeCartes(get_main(), reference_jeu);
+            collection_joueur_ref = new CollectionDeCartes(m_main, reference_jeu);
             paquet = new PaquetDeCartes();
             paquet.melanger_cartes();
             paquet.retirer_des_cartes_du_jeu(get_collection());
