@@ -99,7 +99,7 @@ class IntelligenceArtificielleTest {
 
     @Test
     public void faire_que_des_tapis_perd_sept_joueurs_2() {
-        faire_que_une_chose_perd(8,7,"2");
+        faire_que_une_chose_perd(8, 7, "2");
     }
 
     @Test

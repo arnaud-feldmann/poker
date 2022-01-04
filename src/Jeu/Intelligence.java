@@ -211,7 +211,7 @@ class IntelligenceArtificielle implements Intelligence {
 
     /* Cette méthode calcul une estimation du taux de gain, à savoir l'espérance divisée par la mise */
     private double calcul_taux_de_gain(int mise_demandee, ArrayList<Carte> jeu_pt, int pot,
-                                    ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
+                                       ArrayList<Carte> main, int cave_non_misee, int mise_deja_en_jeu) {
         final double proba = new CollectionDeCartes(main, jeu_pt).probaVict(Joueur.nombre_de_joueurs() - 1);
         final int mise_demandee_tronquee = Math.min(mise_demandee, cave_non_misee + mise_deja_en_jeu);
         final double non_suivi = (proba * (double) (pot + Math.max(mise_demandee_tronquee - mise_deja_en_jeu, 0)) - (double) mise_demandee_tronquee) /

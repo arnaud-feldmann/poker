@@ -14,32 +14,23 @@ class ComplementMiseNegatifException extends IllegalArgumentException {
 }
 
 /*
-La classe Joueur rassemble tout ce qui est individualisable dans le jeu de poker :
-- Le jeton de donneur qui circule
-- Le nom du joueur
-- La cave actuelle dont on ôte directement les mises
-- Le joueur suivant (Joueur est une structure récursive
-- La mise actuelle
-- Les cartes de la main
-- L'état du joueur (PEUT_MISER, TAPIS ou COUCHE)
-- Son Intelligence, à savoir une interface qui est soit humaine soit artificielle
-- Le numéro du joueur dans l'interface graphique
+La classe Joueur rassemble tout ce qui est individualisable dans le jeu de poker.
  */
 public class Joueur {
-    protected static Joueur donneur;
-    final private String m_nom_joueur;
-    final private Intelligence m_intelligence;
-    final private int m_numero_joueur_interface_graphique;
-    private int m_cave;
-    private Joueur m_joueur_suivant;
-    private int m_mise;
-    private ArrayList<Carte> m_main;
-    private Etat m_etat;
+    protected static Joueur donneur; // Le jeton de donneur qui circule
+    final private String m_nom_joueur; // Le nom du joueur
+    final private Intelligence m_intelligence; // Son intelligence
+    final private int m_numero_joueur_interface_graphique; // Son numéro dans l'interface graphique
+    private int m_cave_non_misee; // La cave actuelle dont on a ôté directement les mises
+    private Joueur m_joueur_suivant; // Le Joueur suivant (Joueur est une structure récursive)
+    private int m_mise_deja_en_jeu; // La mise du joueur
+    private ArrayList<Carte> m_main; // La main du joueur
+    private Etat m_etat; // L'état du joueur (PEUT_MISER, TAPIS ou COUCHE)
 
     protected Joueur(String nom_joueur, int cave, Joueur joueur_suivant, Intelligence intelligence, int numero_joueur_interface) {
         m_nom_joueur = nom_joueur;
         m_main = null;
-        m_cave = cave;
+        m_cave_non_misee = cave;
         m_joueur_suivant = joueur_suivant;
         m_intelligence = intelligence;
         m_numero_joueur_interface_graphique = numero_joueur_interface;
@@ -89,7 +80,7 @@ public class Joueur {
     }
 
     protected int get_cave() {
-        return m_cave;
+        return m_cave_non_misee;
     }
 
     protected CollectionDeCartes get_collection(ArrayList<Carte> m_jeu_pt) {
@@ -97,7 +88,7 @@ public class Joueur {
     }
 
     protected int get_mise() {
-        return m_mise;
+        return m_mise_deja_en_jeu;
     }
 
     protected boolean pas_couche() {
@@ -128,11 +119,11 @@ public class Joueur {
         main.add(paquet.piocher_une_carte());
         m_main = new ArrayList<>(main);
         m_etat = Etat.PEUT_MISER;
-        m_mise = 0;
+        m_mise_deja_en_jeu = 0;
         if (m_numero_joueur_interface_graphique == 0)
             InterfaceUtilisateur.interface_graphique.joueurSetCartesVisibles(m_numero_joueur_interface_graphique, main.get(0), main.get(1));
         else InterfaceUtilisateur.interface_graphique.joueurSetCartesCachees(m_numero_joueur_interface_graphique);
-        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave));
+        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave_non_misee));
     }
 
     /*
@@ -143,14 +134,14 @@ public class Joueur {
      */
     protected int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min) {
         InterfaceUtilisateur.interface_graphique.raffraichit();
-        return m_intelligence.demander_mise(mise_demandee, jeu_pt, pot, relance_min, m_main, m_cave, m_mise);
+        return m_intelligence.demander_mise(mise_demandee, jeu_pt, pot, relance_min, m_main, m_cave_non_misee, m_mise_deja_en_jeu);
     }
 
     /* Cette méthode met de côté les mises en attendant le partage des gains, et les ajoute également au pot */
     protected void ajouter_mise(int complement, int[] pot_pt) {
         if (complement < 0) throw new ComplementMiseNegatifException();
-        else if (complement >= m_cave) {         // Quand on suit la mise demandée est parfois supérieure à la cave
-            complement = m_cave;
+        else if (complement >= m_cave_non_misee) {         // Quand on suit la mise demandée est parfois supérieure à la cave
+            complement = m_cave_non_misee;
             m_etat = Etat.TAPIS;
             InterfaceUtilisateur.println(m_nom_joueur + " a misé tout son tapis !");
         } else if (complement == 0) {
@@ -158,11 +149,11 @@ public class Joueur {
             return;
         }
         InterfaceUtilisateur.println(m_nom_joueur + " ajoute " + complement + " dans le pot.");
-        m_cave -= complement;
+        m_cave_non_misee -= complement;
         pot_pt[0] += complement;
-        m_mise += complement;
-        InterfaceUtilisateur.println("Sa mise est maintenant de " + m_mise + " et le pot vaut " + pot_pt[0]);
-        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave));
+        m_mise_deja_en_jeu += complement;
+        InterfaceUtilisateur.println("Sa mise est maintenant de " + m_mise_deja_en_jeu + " et le pot vaut " + pot_pt[0]);
+        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave_non_misee));
         InterfaceUtilisateur.interface_graphique.fixeMises(InterfaceUtilisateur.jetons_ig(pot_pt[0]));
     }
 
@@ -172,17 +163,17 @@ public class Joueur {
      */
     protected void retirer_mise(int montant, int[] pot_pt, int[] retrait_pt) {
         if (montant < 0) throw new ComplementMiseNegatifException();
-        if (montant >= m_mise) montant = m_mise;
+        if (montant >= m_mise_deja_en_jeu) montant = m_mise_deja_en_jeu;
         pot_pt[0] -= montant;
         retrait_pt[0] += montant;
-        m_mise -= montant;
+        m_mise_deja_en_jeu -= montant;
         InterfaceUtilisateur.interface_graphique.fixeMises(InterfaceUtilisateur.jetons_ig(pot_pt[0]));
     }
 
     /* cette méthode encaisse les gains */
     protected void encaisser(int montant) {
-        m_cave += montant;
-        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave));
+        m_cave_non_misee += montant;
+        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave_non_misee));
     }
 
     /* Cette méthode révèle la main à la fin d'un tour */
