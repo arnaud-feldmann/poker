@@ -1,11 +1,10 @@
 package Cartes;
 
 import Jeu.InterfaceUtilisateur;
-import interfaceGraphique.IGPokerable;
 
 import java.util.ArrayList;
 
-public class Carte implements IGPokerable {
+public class Carte {
     final private Valeur m_valeur;
     final private Couleur m_couleur;
 
@@ -56,31 +55,6 @@ public class Carte implements IGPokerable {
     @Override
     public String toString() {
         return get_valeur() + " de " + get_couleur();
-    }
-
-    @Override
-    public int toIGPInt() {
-        int couleur, valeur;
-        switch (m_couleur) {
-            case Trefle:
-                couleur = 0;
-                break;
-            case Carreau:
-                couleur = 100;
-                break;
-            case Coeur:
-                couleur = 200;
-                break;
-            case Pique:
-                couleur = 300;
-                break;
-            default:
-                couleur = -1;
-                break;
-        }
-        if (m_valeur == Valeur.As) valeur = 1;
-        else valeur = m_valeur.ordinal() + 2;
-        return valeur + couleur;
     }
 
     public enum Valeur {Deux, Trois, Quatre, Cinq, Six, Sept, Huit, Neuf, Dix, Valet, Dame, Roi, As}

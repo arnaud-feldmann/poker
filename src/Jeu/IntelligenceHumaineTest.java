@@ -12,14 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class IntelligenceHumaineTest {
     @BeforeEach
     public void before() {
-        InterfaceUtilisateur.test_cacher_interface_graphique = true;
         String[] noms_joueurs = new String[]{"Arnaud", "Loup", "Ludo", "Elodie", "Kerry", "Bettie", "Peppa Pig"};
         Poker.init(noms_joueurs, 1000);
     }
 
     @AfterEach
     public void after() {
-        InterfaceUtilisateur.test_cacher_interface_graphique = false;
         InterfaceUtilisateur.test_mock_nextline = null;
     }
 

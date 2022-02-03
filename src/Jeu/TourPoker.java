@@ -53,8 +53,6 @@ public class TourPoker {
         InterfaceUtilisateur.println(Joueur.donneur + " est le donneur !!");
         InterfaceUtilisateur.println(joueur_petite_blinde + " pose la petite blinde (" + petite_blinde + " euros) !!");
         InterfaceUtilisateur.println(joueur_grosse_blinde + " pose la grosse blinde (" + grosse_blinde + " euros) !!");
-        InterfaceUtilisateur.interface_graphique.fixeFlop(new Carte[0]);
-        InterfaceUtilisateur.interface_graphique.raffraichit();
     }
 
     private void deroulement_du_tour() {
@@ -88,7 +86,6 @@ public class TourPoker {
         InterfaceUtilisateur.println("******************");
         InterfaceUtilisateur.println("****** Flop ******");
         InterfaceUtilisateur.println("******************");
-        InterfaceUtilisateur.interface_graphique.fixeFlop(new Carte[]{m_jeu_pt.get(0), m_jeu_pt.get(1), m_jeu_pt.get(2)});
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
@@ -97,7 +94,6 @@ public class TourPoker {
         InterfaceUtilisateur.println("******************");
         InterfaceUtilisateur.println("****** Turn ******");
         InterfaceUtilisateur.println("******************");
-        InterfaceUtilisateur.interface_graphique.ajouteCarteFlop(m_jeu_pt.get(3));
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
@@ -106,7 +102,6 @@ public class TourPoker {
         InterfaceUtilisateur.println("******************");
         InterfaceUtilisateur.println("**** Rivière *****");
         InterfaceUtilisateur.println("******************");
-        InterfaceUtilisateur.interface_graphique.ajouteCarteFlop(m_jeu_pt.get(4));
         tour_encheres(Joueur.donneur.get_joueur_suivant());
     }
 
@@ -214,7 +209,6 @@ public class TourPoker {
                 .forEach(this::joueur_et_ex_aequos_empochent_leur_gain);
         Joueur.stream().
                 forEach(joueur -> InterfaceUtilisateur.println(joueur + " a maintenant " + joueur.get_cave() + " euros."));
-        InterfaceUtilisateur.interface_graphique.raffraichit();
     }
 
     private void abattage() {
@@ -231,8 +225,6 @@ public class TourPoker {
             suivant = joueur.get_joueur_suivant();
             if (suivant.get_cave() == 0) {
                 InterfaceUtilisateur.println(suivant + " quitte le jeu !");
-                InterfaceUtilisateur.interface_graphique.joueurPasDeCarte(suivant.get_numero_joueur_interface());
-                InterfaceUtilisateur.interface_graphique.joueurSetAnnotation(suivant.get_numero_joueur_interface(), "(hors-jeu)");
                 joueur.set_joueur_suivant(suivant.get_joueur_suivant());
                 if (suivant == Joueur.donneur) Joueur.donneur = suivant.get_joueur_suivant();
             } else {

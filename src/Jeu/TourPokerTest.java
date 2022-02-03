@@ -18,13 +18,11 @@ class TourPokerTest {
 
     @BeforeEach
     void before() {
-        InterfaceUtilisateur.test_cacher_interface_graphique = true;
         InterfaceUtilisateur.test_tour_manuel = true;
     }
 
     @AfterEach
     void after() {
-        InterfaceUtilisateur.test_cacher_interface_graphique = false;
         InterfaceUtilisateur.test_tour_manuel = false;
     }
 
@@ -83,8 +81,6 @@ class TourPokerTest {
         assertEquals(loup.get_joueur_suivant(), arnaud);
         assertTrue(Joueur.inc_donneur());
 
-        // Fermeture interface graphique
-        InterfaceUtilisateur.interface_graphique.ferme();
     }
 
     @Test
@@ -144,9 +140,6 @@ class TourPokerTest {
         assertEquals(loup.get_joueur_suivant(), kerry);
         assertEquals(Joueur.donneur, kerry);
         assertFalse(Joueur.inc_donneur()); // Arnaud a quitté le jeu
-
-        // Fermeture interface graphique
-        InterfaceUtilisateur.interface_graphique.ferme();
     }
 
     @Test
@@ -204,9 +197,6 @@ class TourPokerTest {
         assertEquals(loup.get_joueur_suivant(), arnaud);
         assertEquals(Joueur.donneur, arnaud);
         assertTrue(Joueur.inc_donneur());
-
-        // Fermeture interface graphique
-        InterfaceUtilisateur.interface_graphique.ferme();
     }
 
     @Test
@@ -272,9 +262,6 @@ class TourPokerTest {
         assertEquals(loup.get_joueur_suivant(), arnaud);
         assertEquals(Joueur.donneur, arnaud);
         assertTrue(Joueur.inc_donneur());
-
-        // Fermeture interface graphique
-        InterfaceUtilisateur.interface_graphique.ferme();
     }
 
     @Test
@@ -326,8 +313,5 @@ class TourPokerTest {
         assertEquals(elodie.get_joueur_suivant(), elodie);
         assertEquals(Joueur.donneur, elodie);
         assertFalse(Joueur.inc_donneur());
-
-        // Fermeture interface graphique
-        InterfaceUtilisateur.interface_graphique.ferme();
     }
 }

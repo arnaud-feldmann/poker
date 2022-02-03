@@ -1,16 +1,12 @@
 package Jeu;
 
-import interfaceGraphique.InterfacePoker;
-
 import java.util.Scanner;
 import java.util.function.Supplier;
 
 public class InterfaceUtilisateur {
     final protected static Scanner entree_terminal = new Scanner(System.in);
-    protected static InterfacePoker interface_graphique;
     protected static Supplier<String> test_mock_nextline = null;
     protected static boolean test_tour_manuel;
-    protected static boolean test_cacher_interface_graphique;
     protected static boolean test_is_fin_tour = false;
 
     public static <T> void println(T object) {

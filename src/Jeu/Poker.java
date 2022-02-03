@@ -1,7 +1,5 @@
 package Jeu;
 
-import interfaceGraphique.InterfacePoker;
-
 class NombreJoueursException extends IllegalArgumentException {
     NombreJoueursException() {
         super("Le nombre de joueurs doit être entre 2 et 8!!!");
@@ -14,10 +12,6 @@ public class Poker {
 
     protected static void init(String[] noms_joueurs, int CAVE_INITIALE) {
         if (noms_joueurs.length < 2 || noms_joueurs.length > 8) throw new NombreJoueursException();
-        else if (noms_joueurs.length == 2) InterfaceUtilisateur.interface_graphique = new InterfacePoker(1, 1, 5, true);
-        else InterfaceUtilisateur.interface_graphique = new InterfacePoker(2, noms_joueurs.length / 2, 5, true);
-        if (!InterfaceUtilisateur.test_cacher_interface_graphique)
-            InterfaceUtilisateur.interface_graphique.afficheFenetre();
         Joueur.donneur = new Joueur(noms_joueurs[0], CAVE_INITIALE, null,
                 new IntelligenceHumaine(noms_joueurs[0]), 0);
         Joueur joueur_temp = Joueur.donneur;
@@ -44,7 +38,6 @@ public class Poker {
         } while (Joueur.inc_donneur());
         if (Joueur.nombre_de_joueurs() == 1) InterfaceUtilisateur.println(Joueur.donneur + " a gagné la partie");
         else InterfaceUtilisateur.println(noms_joueurs[0] + " a perdu la partie");
-        InterfaceUtilisateur.interface_graphique.ferme();
     }
 
     public static void main(String[] args) {

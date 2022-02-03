@@ -34,7 +34,6 @@ public class Joueur {
         m_joueur_suivant = joueur_suivant;
         m_intelligence = intelligence;
         m_numero_joueur_interface_graphique = numero_joueur_interface;
-        InterfaceUtilisateur.interface_graphique.joueurSetNom(m_numero_joueur_interface_graphique, m_nom_joueur);
     }
 
     protected static int nombre_de_joueurs() {
@@ -109,7 +108,6 @@ public class Joueur {
 
     protected void coucher() {
         m_etat = Etat.COUCHE;
-        InterfaceUtilisateur.interface_graphique.joueurPasDeCarte(m_numero_joueur_interface_graphique);
         InterfaceUtilisateur.println(m_nom_joueur + " se couche.");
     }
 
@@ -120,10 +118,6 @@ public class Joueur {
         m_main = new ArrayList<>(main);
         m_etat = Etat.PEUT_MISER;
         m_mise_deja_en_jeu = 0;
-        if (m_numero_joueur_interface_graphique == 0)
-            InterfaceUtilisateur.interface_graphique.joueurSetCartesVisibles(m_numero_joueur_interface_graphique, main.get(0), main.get(1));
-        else InterfaceUtilisateur.interface_graphique.joueurSetCartesCachees(m_numero_joueur_interface_graphique);
-        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave_non_misee));
     }
 
     /*
@@ -133,7 +127,6 @@ public class Joueur {
      rester en jeu, le joueur se couche.
      */
     protected int demander_mise(int mise_demandee, ArrayList<Carte> jeu_pt, int pot, int relance_min) {
-        InterfaceUtilisateur.interface_graphique.raffraichit();
         return m_intelligence.demander_mise(mise_demandee, jeu_pt, pot, relance_min, m_main, m_cave_non_misee, m_mise_deja_en_jeu);
     }
 
@@ -153,8 +146,6 @@ public class Joueur {
         pot_pt[0] += complement;
         m_mise_deja_en_jeu += complement;
         InterfaceUtilisateur.println("Sa mise est maintenant de " + m_mise_deja_en_jeu + " et le pot vaut " + pot_pt[0]);
-        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave_non_misee));
-        InterfaceUtilisateur.interface_graphique.fixeMises(InterfaceUtilisateur.jetons_ig(pot_pt[0]));
     }
 
     /*
@@ -167,20 +158,16 @@ public class Joueur {
         pot_pt[0] -= montant;
         retrait_pt[0] += montant;
         m_mise_deja_en_jeu -= montant;
-        InterfaceUtilisateur.interface_graphique.fixeMises(InterfaceUtilisateur.jetons_ig(pot_pt[0]));
     }
 
     /* cette méthode encaisse les gains */
     protected void encaisser(int montant) {
         m_cave_non_misee += montant;
-        InterfaceUtilisateur.interface_graphique.joueurSetJetons(m_numero_joueur_interface_graphique, InterfaceUtilisateur.jetons_ig(m_cave_non_misee));
     }
 
     /* Cette méthode révèle la main à la fin d'un tour */
     protected void affiche_main() {
         Carte.affiche(m_main, "Main de " + m_nom_joueur);
-        InterfaceUtilisateur.interface_graphique.joueurSetCartesVisibles(m_numero_joueur_interface_graphique,
-                m_main.get(0), m_main.get(1));
     }
 
     @Override

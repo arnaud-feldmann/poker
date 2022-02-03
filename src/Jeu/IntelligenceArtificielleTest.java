@@ -2,7 +2,6 @@ package Jeu;
 
 import Cartes.PaquetDeCartes;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,14 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class IntelligenceArtificielleTest {
 
-    @BeforeEach
-    public void before() {
-        InterfaceUtilisateur.test_cacher_interface_graphique = true;
-    }
-
     @AfterEach
     public void after() {
-        InterfaceUtilisateur.test_cacher_interface_graphique = false;
         InterfaceUtilisateur.test_mock_nextline = null;
     }
 
